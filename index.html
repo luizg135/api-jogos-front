@@ -440,7 +440,6 @@
     </div>
 
     <script>
-        // Lembre-se de substituir `SUA_URL_DO_RENDER` pela URL do seu serviço no Render
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         
         let fullData = {
@@ -450,7 +449,6 @@
         };
         let createdCharts = {};
 
-        // --- AUTENTICAÇÃO E CARREGAMENTO INICIAL ---
         const token = localStorage.getItem('jwt_token');
         if (!token) {
             window.location.href = 'login.html';
@@ -470,20 +468,19 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 fullData = await response.json();
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-
                 renderAllPages();
             } catch (err) {
                 console.error('Erro ao buscar dados:', err);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
             }
         }
         
         function renderAllPages() {
-            renderGamerCard(fullData.estatisticas);
-            renderSummaryCards(fullData.estatisticas, 'summary');
+            // A sua API precisa retornar estes dados para que esta função funcione
+            const mockStats = { nivel_gamer: 52, rank_gamer: "Mestre", exp_nivel_atual: 750, exp_para_proximo_nivel: 1000, total_jogos: 48, total_na_fila: 15, total_horas_jogadas: 2450, custo_total_biblioteca: 7850.50, media_notas: 8.7, total_platinados: 12, total_conquistas: 1530 };
+            const effectiveStats = fullData.estatisticas || mockStats;
+            
+            renderGamerCard(effectiveStats);
+            renderSummaryCards(effectiveStats, 'summary');
             renderRecentPlatinums(fullData.biblioteca);
             renderWishlist(fullData.desejos);
             
@@ -502,16 +499,13 @@
         }
 
         function renderGamerCard(stats) {
-            const mockStats = { nivel_gamer: 52, rank_gamer: "Mestre", exp_nivel_atual: 750, exp_para_proximo_nivel: 1000, total_jogos: 48, total_na_fila: 15, total_horas_jogadas: 2450, custo_total_biblioteca: 7850.50, media_notas: 8.7, total_platinados: 12, total_conquistas: 1530 };
-            const effectiveStats = stats || mockStats;
-            
-            const rankClass = `rank-${effectiveStats.rank_gamer}`;
+            const rankClass = `rank-${stats.rank_gamer}`;
             const gamerName = document.getElementById('gamerName');
             const expBar = document.getElementById('expBar');
             
-            document.getElementById('levelDisplay').textContent = `${effectiveStats.rank_gamer} (Nível ${effectiveStats.nivel_gamer})`;
-            document.getElementById('expText').textContent = `${effectiveStats.exp_nivel_atual.toLocaleString('pt-BR')} / ${effectiveStats.exp_para_proximo_nivel.toLocaleString('pt-BR')} EXP`;
-            expBar.style.width = `${(effectiveStats.exp_nivel_atual / effectiveStats.exp_para_proximo_nivel) * 100}%`;
+            document.getElementById('levelDisplay').textContent = `${stats.rank_gamer} (Nível ${stats.nivel_gamer})`;
+            document.getElementById('expText').textContent = `${stats.exp_nivel_atual.toLocaleString('pt-BR')} / ${stats.exp_para_proximo_nivel.toLocaleString('pt-BR')} EXP`;
+            expBar.style.width = `${(stats.exp_nivel_atual / stats.exp_para_proximo_nivel) * 100}%`;
             
             gamerName.className = '';
             expBar.className = 'exp-bar-progress';
