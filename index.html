@@ -399,6 +399,14 @@
                     <label for="gameStyle">Estilo (separado por vírgula)</label>
                     <input type="text" id="gameStyle" placeholder="Ex: RPG, Aventura">
                 </div>
+                <div class="form-group">
+                    <label for="gamePrice">Preço (R$)</label>
+                    <input type="number" id="gamePrice" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="gameConquistas">Conquistas Obtidas</label>
+                    <input type="number" id="gameConquistas" min="0">
+                </div>
                 <button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
             </form>
         </div>
@@ -432,7 +440,6 @@
     </div>
 
     <script>
-        // Lembre-se de substituir `SUA_URL_DO_RENDER` pela URL do seu serviço no Render
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         
         let fullData = {
@@ -494,9 +501,8 @@
         }
 
         function renderGamerCard(stats) {
-            // A sua API precisa retornar estes dados para que esta função funcione
             const mockStats = { nivel_gamer: 52, rank_gamer: "Mestre", exp_nivel_atual: 750, exp_para_proximo_nivel: 1000, total_jogos: 48, total_na_fila: 15, total_horas_jogadas: 2450, custo_total_biblioteca: 7850.50, media_notas: 8.7, total_platinados: 12, total_conquistas: 1530 };
-            const effectiveStats = stats || mockStats; // Usar mock se a API não retornar
+            const effectiveStats = stats || mockStats;
             
             const rankClass = `rank-${effectiveStats.rank_gamer}`;
             const gamerName = document.getElementById('gamerName');
@@ -620,7 +626,7 @@
                 total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (g['Tempo de Jogo'] || 0), 0),
                 custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (g.Preço || 0), 0),
                 media_notas: notas.length > 0 ? (notas.reduce((a,b) => a+b, 0) / notas.length).toFixed(1) : 0,
-                total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: 0 // Conquistas serão tratadas no backend
+                total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: 0
             };
             
             if (suffix === '-graficos') {
@@ -631,7 +637,6 @@
             }
         }
 
-        // Funções para o modal de biblioteca
         function openGameModal() {
             document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo';
             document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
@@ -672,7 +677,6 @@
             }
         }
         
-        // Funções para o modal de desejos
         function openWishModal() {
             document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos';
             document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
@@ -707,7 +711,6 @@
             }
         }
 
-        // Funções para Ações de Edição e Exclusão
         async function editGame(gameName) {
             const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName);
             if (!gameToEdit) {
