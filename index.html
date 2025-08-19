@@ -190,6 +190,7 @@
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
         </div>
         <div class="sidebar-footer">
+            <button class="nav-button" id="settingsBtn" title="Configurações"><span class="material-symbols-outlined">settings</span></button>
             <button class="nav-button" id="theme-toggle" title="Mudar Tema"><span class="material-symbols-outlined">light_mode</span></button>
             <button class="nav-button" id="logoutBtn" title="Sair"><span class="material-symbols-outlined">logout</span></button>
         </div>
@@ -200,10 +201,10 @@
             <section id="perfil" class="page active">
                 <header class="profile-header">
                     <div class="profile-main">
-                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar">
+                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
                         <div class="profile-info">
-                            <h1 id="gamerName">Luiz Gabriel</h1>
-                            <p>Resumo da jornada!</p>
+                            <h1 id="gamerName">Carregando...</h1>
+                            <p id="profileSubtitle">Resumo da jornada!</p>
                         </div>
                         <div class="profile-level">
                             <div id="levelDisplay" class="level-text">Nível 0</div>
@@ -367,17 +368,33 @@
         </div>
     </div>
 
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeSettingsModal()">&times;</span>
+            <h2>Configurações do Perfil</h2>
+            <form id="settingsForm">
+                <div class="form-group">
+                    <label for="profileNameInput">Nome do Perfil</label>
+                    <input type="text" id="profileNameInput" required>
+                </div>
+                <div class="form-group">
+                    <label for="profileSubtitleInput">Subtítulo do Perfil</label>
+                    <input type="text" id="profileSubtitleInput">
+                </div>
+                <div class="form-group">
+                    <label for="profileAvatarInput">URL da Foto de Perfil</label>
+                    <input type="url" id="profileAvatarInput">
+                </div>
+                <button type="submit">Salvar Alterações</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
-        
-        const chartColors = {
-            purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)',
-            lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)',
-        };
-
-        let fullData = { estatisticas: {}, biblioteca: [], desejos: [] };
+        const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
+        let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {} };
         let createdCharts = {};
-        
         const token = localStorage.getItem('jwt_token');
         if (!token) { window.location.href = 'login.html'; }
 
@@ -390,11 +407,12 @@
                 renderAllPages();
             } catch (err) {
                 console.error('Erro ao buscar dados:', err);
-                document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados. Verifique a conexão com a API e o console (F12).</p>`;
+                document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
             }
         }
         
         function renderAllPages() {
+            loadProfileSettings(fullData.perfil);
             renderGamerCard(fullData.estatisticas);
             renderSummaryCards(fullData.estatisticas, 'summary');
             renderRecentPlatinums(fullData.biblioteca);
@@ -412,40 +430,31 @@
         }
 
         function renderGamerCard(stats = {}) {
-            const rank = stats.rank_gamer || 'Bronze';
-            const rankClass = `rank-${rank}`;
-            const mainContent = document.getElementById('main-content');
-            mainContent.className = 'main-content'; mainContent.classList.add(`rank-colors-${rank}`);
+            const rank = stats.rank_gamer || 'Bronze'; const rankClass = `rank-${rank}`;
+            const mainContent = document.getElementById('main-content'); mainContent.className = 'main-content'; mainContent.classList.add(`rank-colors-${rank}`);
             document.getElementById('levelDisplay').textContent = `${rank} (Nível ${stats.nivel_gamer || 0})`;
             document.getElementById('expText').textContent = `${(stats.exp_nivel_atual || 0).toLocaleString('pt-BR')} / ${(stats.exp_para_proximo_nivel || 1000).toLocaleString('pt-BR')} EXP`;
-            const expBar = document.getElementById('expBar');
-            expBar.className = 'exp-bar-progress';
+            const expBar = document.getElementById('expBar'); expBar.className = 'exp-bar-progress';
             setTimeout(() => {
                 expBar.style.width = `${((stats.exp_nivel_atual || 0) / (stats.exp_para_proximo_nivel || 1000)) * 100}%`;
                 expBar.classList.add(rankClass);
             }, 100);
-            const gamerName = document.getElementById('gamerName');
-            gamerName.className = ''; gamerName.classList.add(rankClass);
+            const gamerName = document.getElementById('gamerName'); gamerName.className = ''; gamerName.classList.add(rankClass);
         }
 
         function renderSummaryCards(stats = {}, containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
+            const container = document.getElementById(containerId); if (!container) return;
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             const cards = [
-                { t: 'Total de Jogos', v: stats.total_jogos || 0, i: 'sports_esports' },
-                { t: 'Horas Jogadas', v: `${(stats.total_horas_jogadas || 0).toLocaleString('pt-BR')}h`, i: 'timer' },
-                { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' },
-                { t: 'Média das Notas', v: stats.media_notas || 'N/A', i: 'star' },
-                { t: 'Platinados', v: stats.total_platinados || 0, i: 'military_tech' },
-                { t: 'Conquistas', v: stats.total_conquistas || 0, i: 'emoji_events' }
+                { t: 'Total de Jogos', v: stats.total_jogos || 0, i: 'sports_esports' }, { t: 'Horas Jogadas', v: `${(stats.total_horas_jogadas || 0).toLocaleString('pt-BR')}h`, i: 'timer' },
+                { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' }, { t: 'Média das Notas', v: stats.media_notas || 'N/A', i: 'star' },
+                { t: 'Platinados', v: stats.total_platinados || 0, i: 'military_tech' }, { t: 'Conquistas', v: stats.total_conquistas || 0, i: 'emoji_events' }
             ];
             container.innerHTML = cards.map(c => `<div class="card"><div class="card-header"><span class="material-symbols-outlined">${c.i}</span><span>${c.t}</span></div><p class="card-content">${c.v}</p></div>`).join('');
         }
 
         function renderRecentPlatinums(library = []) {
-            const container = document.getElementById('recent-platinums');
-            if (!container) return;
+            const container = document.getElementById('recent-platinums'); if (!container) return;
             const platinados = library.filter(g => g['Platinado?'] === 'Sim' && g.Link).sort((a, b) => new Date(b['Terminado em']) - new Date(a['Terminado em'])).slice(0, 5);
             container.innerHTML = platinados.length === 0 ? `<p style="color: var(--secondary-text);">Nenhum jogo platinado com imagem encontrada.</p>` : platinados.map(g => `<div class="platinum-card" title="${g.Nome}"><img src="${g.Link}" alt="${g.Nome}"><div class="game-title">${g.Nome}</div></div>`).join('');
         }
@@ -459,22 +468,18 @@
             games.forEach(game => {
                 const isPlatinado = game['Platinado?'] === 'Sim';
                 tbody.innerHTML += `<tr class="${isPlatinado ? 'platinado-row' : ''}">
-                        <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
-                        <td>${game.Plataforma || '-'}</td><td>${game.Status || '-'}</td>
-                        <td class="nota-cell">${game.Nota || '-'}</td><td>${game['Tempo de Jogo'] || 0}h</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-button" onclick="editGame('${game.Nome}')"><span class="material-symbols-outlined">edit</span></button>
-                                <button class="action-button" onclick="deleteGame('${game.Nome}')"><span class="material-symbols-outlined">delete</span></button>
-                            </div>
-                        </td>
-                    </tr>`;
+                    <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
+                    <td>${game.Plataforma || '-'}</td><td>${game.Status || '-'}</td><td class="nota-cell">${game.Nota || '-'}</td>
+                    <td>${game['Tempo de Jogo'] || 0}h</td>
+                    <td><div class="action-buttons">
+                        <button class="action-button" onclick="editGame('${game.Nome}')"><span class="material-symbols-outlined">edit</span></button>
+                        <button class="action-button" onclick="deleteGame('${game.Nome}')"><span class="material-symbols-outlined">delete</span></button>
+                    </div></td></tr>`;
             });
         }
         
         function renderWishlist(wishlist = []) {
-            const container = document.getElementById('wishlist-container');
-            if (!container) return;
+            const container = document.getElementById('wishlist-container'); if (!container) return;
             if (wishlist.length === 0) { container.innerHTML = `<p style="color: var(--secondary-text);">Sua lista de desejos está vazia.</p>`; return; }
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             container.innerHTML = wishlist.map(game => `
@@ -487,8 +492,7 @@
                     <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
                         <button class="action-button" onclick="editWish('${game.Nome}')" title="Editar"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></button>
                         <button class="action-button" onclick="deleteWish('${game.Nome}')" title="Excluir"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button>
-                    </div>
-                </div>`).join('');
+                    </div></div>`).join('');
         }
 
         function destroyCharts() { Object.values(createdCharts).forEach(chart => chart.destroy()); createdCharts = {}; }
@@ -498,14 +502,11 @@
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
             const processMultiData = (key) => games.reduce((acc, game) => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
             const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
-            const platformData = processData('Plataforma');
-            const statusData = processData('Status');
+            const platformData = processData('Plataforma'); const statusData = processData('Status');
             const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
-
             if(document.getElementById('platinadosChart')) createdCharts.platinados = new Chart('platinadosChart', { type: 'pie', data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.grey], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
             if(document.getElementById('platformChart')) createdCharts.platform = new Chart('platformChart', { type: 'bar', data: { labels: Object.keys(platformData), datasets: [{ data: Object.values(platformData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }}}, plugins: { legend: { display: false }}} });
             if(document.getElementById('statusChart')) createdCharts.status = new Chart('statusChart', { type: 'doughnut', data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.purple, chartColors.lightBlue, chartColors.cyan, chartColors.grey], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
-            // CORREÇÃO: Cor do gráfico de estilos alterada para roxo
             if(document.getElementById('styleChart')) createdCharts.style = new Chart('styleChart', { type: 'bar', data: { labels: Object.keys(styleData), datasets: [{ data: Object.values(styleData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }}} });
         }
         
@@ -514,25 +515,15 @@
             const statuses = [...new Set(library.map(g => g.Status).filter(Boolean))].sort();
             const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort();
             const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))].sort((a,b) => b-a);
-            
-            const populate = (elId, items) => {
-                const select = document.getElementById(elId);
-                if (!select) return;
-                select.innerHTML = '<option value="all">Todos</option>';
-                items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`);
-            }
+            const populate = (elId, items) => { const select = document.getElementById(elId); if (!select) return; select.innerHTML = '<option value="all">Todos</option>'; items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); }
             ['', '-biblioteca', '-graficos'].forEach(suffix => {
-                populate('statusFilter' + suffix, statuses);
-                populate('styleFilter' + suffix, styles);
-                populate('yearFilter' + suffix, years);
+                populate('statusFilter' + suffix, statuses); populate('styleFilter' + suffix, styles); populate('yearFilter' + suffix, years);
             });
         }
         
         function applyFilters(suffix) {
-            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || '';
-            const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
-            const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
-            const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
+            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || ''; const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
+            const style = document.getElementById('styleFilter' + suffix)?.value || 'all'; const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
             const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) && (status !== 'all' ? g.Status === status : true) && (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true) && (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
@@ -543,11 +534,8 @@
                     total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length,
                     total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0)
                 };
-                renderSummaryCards(stats, 'summary-graficos');
-                renderAllCharts(filteredGames);
-            } else if (suffix === '-biblioteca') {
-                renderGameTable(filteredGames);
-            }
+                renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
+            } else if (suffix === '-biblioteca') { renderGameTable(filteredGames); }
         }
 
         function openGameModalForAdd() {
@@ -600,8 +588,7 @@
         }
         
         function editGame(gameName) { openGameModalForEdit(gameName); }
-
-        // CORREÇÃO: Funções da lista de desejos implementadas
+        
         function openWishModal() {
             document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = '';
             document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos'; document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
@@ -623,10 +610,7 @@
             event.preventDefault();
             const editModeValue = document.getElementById('editWishMode').value; const isEditing = editModeValue !== '';
             const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
-            const wishData = {
-                Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value,
-                "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0
-            };
+            const wishData = { Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value, "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0 };
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
             try {
@@ -644,13 +628,38 @@
                 } catch(err) { alert("Erro de conexão ao deletar."); }
             }
         }
+        
+        function openSettingsModal() {
+            const profile = fullData.perfil || {};
+            document.getElementById('profileNameInput').value = profile.profileName || '';
+            document.getElementById('profileSubtitleInput').value = profile.profileSubtitle || '';
+            document.getElementById('profileAvatarInput').value = profile.profileAvatar || '';
+            document.getElementById('settingsModal').classList.add('active');
+        }
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
+        async function handleSettingsFormSubmit(event) {
+            event.preventDefault();
+            const newProfileData = { profileName: document.getElementById('profileNameInput').value, profileSubtitle: document.getElementById('profileSubtitleInput').value, profileAvatar: document.getElementById('profileAvatarInput').value };
+            try {
+                const response = await fetch(`${API_URL}/games/profile/edit`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(newProfileData) });
+                if (response.ok) { alert('Perfil atualizado com sucesso!'); closeSettingsModal(); fullData.perfil = newProfileData; loadProfileSettings(fullData.perfil); }
+                else { alert('Erro ao atualizar o perfil.'); }
+            } catch(err) { alert('Erro de conexão ao salvar as configurações.'); }
+        }
+        function loadProfileSettings(profile = {}) {
+            document.getElementById('gamerName').textContent = profile.profileName || 'Seu Nome';
+            document.getElementById('profileSubtitle').textContent = profile.profileSubtitle || 'Resumo da jornada!';
+            document.getElementById('profileAvatar').src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); } else { console.error(`Elemento com ID '${id}' não encontrado.`); }};
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
-            setupListener('addWishForm', 'submit', handleWishFormSubmit); // Listener para o form da wishlist
+            setupListener('addWishForm', 'submit', handleWishFormSubmit);
+            setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
             setupListener('addGameBtn', 'click', openGameModalForAdd);
             setupListener('addWishBtn', 'click', openWishModal);
+            setupListener('settingsBtn', 'click', openSettingsModal);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             setupListener('theme-toggle', 'click', () => {
                 const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
