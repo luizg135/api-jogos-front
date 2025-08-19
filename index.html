@@ -88,12 +88,12 @@
         }
         .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
         /* CORREÇÃO: Linha colorida dinâmica nos cards */
-        .rank-colors-Bronze .card:hover { border-bottom-color: var(--rank-bronze); }
-        .rank-colors-Prata .card:hover { border-bottom-color: var(--rank-prata); }
-        .rank-colors-Ouro .card:hover { border-bottom-color: var(--rank-ouro); }
-        .rank-colors-Platina .card:hover { border-bottom-color: var(--rank-platina); }
-        .rank-colors-Diamante .card:hover { border-bottom-color: var(--rank-diamante); }
-        .rank-colors-Mestre .card:hover { border-bottom-color: var(--rank-mestre); }
+        .rank-colors-Bronze .card:hover, .rank-colors-Bronze .platinum-card:hover, .rank-colors-Bronze .wish-card:hover { border-bottom-color: var(--rank-bronze); }
+        .rank-colors-Prata .card:hover, .rank-colors-Prata .platinum-card:hover, .rank-colors-Prata .wish-card:hover { border-bottom-color: var(--rank-prata); }
+        .rank-colors-Ouro .card:hover, .rank-colors-Ouro .platinum-card:hover, .rank-colors-Ouro .wish-card:hover { border-bottom-color: var(--rank-ouro); }
+        .rank-colors-Platina .card:hover, .rank-colors-Platina .platinum-card:hover, .rank-colors-Platina .wish-card:hover { border-bottom-color: var(--rank-platina); }
+        .rank-colors-Diamante .card:hover, .rank-colors-Diamante .platinum-card:hover, .rank-colors-Diamante .wish-card:hover { border-bottom-color: var(--rank-diamante); }
+        .rank-colors-Mestre .card:hover, .rank-colors-Mestre .platinum-card:hover, .rank-colors-Mestre .wish-card:hover { border-bottom-color: var(--rank-mestre); }
         .card-header { display: flex; align-items: center; gap: 12px; color: var(--secondary-text); font-weight: 500; font-size: 14px; }
         .card-header .material-symbols-outlined { font-size: 20px; }
         .card-content { font-size: 24px; font-weight: 700; margin-top: 8px; }
@@ -142,11 +142,11 @@
         .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
         .wish-card {
             background-color: var(--surface-color); border-radius: 12px;
-            border: 1px solid var(--border-color); overflow: hidden;
+            border: 1px solid var(--border-color); overflow: hidden; border-bottom: 3px solid transparent;
             transition: all 0.2s ease;
             position: relative;
         }
-        .wish-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); border-color: var(--accent-purple); }
+        .wish-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .wish-card-img { width: 100%; height: 180px; object-fit: cover; display: block; background-color: #010409; }
         .wish-card-info { padding: 12px; }
         .wish-card-title { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 0 8px 0; }
@@ -271,7 +271,7 @@
             
             <section id="desejos" class="page">
                 <header class="profile-header">
-                     <div class="profile-main" style="justify-content: space-between;">
+                    <div class="profile-main" style="justify-content: space-between;">
                         <div class="profile-info">
                             <h1 style="color: var(--accent-purple);">Lista de Desejos</h1>
                             <p>Seus próximos jogos e futuras aventuras.</p>
@@ -400,8 +400,7 @@
             renderSummaryCards(fullData.estatisticas, 'summary');
             renderRecentPlatinums(fullData.biblioteca);
             renderWishlist(fullData.desejos);
-            populateFilters('-graficos');
-            populateFilters('-biblioteca');
+            populateFilters();
             applyFilters('-graficos');
             applyFilters('-biblioteca');
         }
@@ -417,19 +416,16 @@
             const rank = stats.rank_gamer || 'Bronze';
             const rankClass = `rank-${rank}`;
             const mainContent = document.getElementById('main-content');
-            mainContent.className = 'main-content'; // Limpa classes antigas
-            mainContent.classList.add(`rank-colors-${rank}`); // CORREÇÃO: Adiciona classe para hover dinâmico
-            
+            mainContent.className = 'main-content';
+            mainContent.classList.add(`rank-colors-${rank}`);
             document.getElementById('levelDisplay').textContent = `${rank} (Nível ${stats.nivel_gamer || 0})`;
             document.getElementById('expText').textContent = `${(stats.exp_nivel_atual || 0).toLocaleString('pt-BR')} / ${(stats.exp_para_proximo_nivel || 1000).toLocaleString('pt-BR')} EXP`;
-            
             const expBar = document.getElementById('expBar');
             expBar.className = 'exp-bar-progress';
-            setTimeout(() => { // Timeout para a transição funcionar
+            setTimeout(() => {
                 expBar.style.width = `${((stats.exp_nivel_atual || 0) / (stats.exp_para_proximo_nivel || 1000)) * 100}%`;
                 expBar.classList.add(rankClass);
             }, 100);
-            
             const gamerName = document.getElementById('gamerName');
             gamerName.className = '';
             gamerName.classList.add(rankClass);
@@ -461,13 +457,8 @@
             const tbody = document.getElementById('game-list-tbody'), noResults = document.getElementById('no-results-message'), tableContainer = document.querySelector('#biblioteca .table-container');
             if (!tbody || !noResults || !tableContainer) return;
             tbody.innerHTML = '';
-            if (games.length === 0) {
-                tableContainer.style.display = 'none';
-                noResults.style.display = 'block';
-                return;
-            }
-            tableContainer.style.display = 'block';
-            noResults.style.display = 'none';
+            if (games.length === 0) { tableContainer.style.display = 'none'; noResults.style.display = 'block'; return; }
+            tableContainer.style.display = 'block'; noResults.style.display = 'none';
             games.forEach(game => {
                 const isPlatinado = game['Platinado?'] === 'Sim';
                 tbody.innerHTML += `<tr class="${isPlatinado ? 'platinado-row' : ''}">
@@ -487,10 +478,7 @@
         function renderWishlist(wishlist = []) {
             const container = document.getElementById('wishlist-container');
             if (!container) return;
-            if (wishlist.length === 0) {
-                container.innerHTML = `<p style="color: var(--secondary-text);">Sua lista de desejos está vazia.</p>`;
-                return;
-            }
+            if (wishlist.length === 0) { container.innerHTML = `<p style="color: var(--secondary-text);">Sua lista de desejos está vazia.</p>`; return; }
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             container.innerHTML = wishlist.map(game => `
                 <div class="wish-card">
@@ -507,30 +495,57 @@
         }
 
         function destroyCharts() { Object.values(createdCharts).forEach(chart => chart.destroy()); createdCharts = {}; }
-        function renderAllCharts(games) { /* ... permanece a mesma da versão anterior ... */ }
-        function populateFilters(suffix) { /* ... permanece a mesma da versão anterior ... */ }
         
-        // CORREÇÃO: Função applyFilters atualizada
+        // CORREÇÃO: Função de renderizar gráficos completa
+        function renderAllCharts(games = []) {
+            destroyCharts();
+            const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
+            const processMultiData = (key) => games.reduce((acc, game) => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
+            
+            const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
+            const platformData = processData('Plataforma');
+            const statusData = processData('Status');
+            const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
+
+            if(document.getElementById('platinadosChart')) createdCharts.platinados = new Chart('platinadosChart', { type: 'pie', data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.grey], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
+            if(document.getElementById('platformChart')) createdCharts.platform = new Chart('platformChart', { type: 'bar', data: { labels: Object.keys(platformData), datasets: [{ data: Object.values(platformData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }}}, plugins: { legend: { display: false }}} });
+            if(document.getElementById('statusChart')) createdCharts.status = new Chart('statusChart', { type: 'doughnut', data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.purple, chartColors.lightBlue, chartColors.cyan, chartColors.grey], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
+            if(document.getElementById('styleChart')) createdCharts.style = new Chart('styleChart', { type: 'bar', data: { labels: Object.keys(styleData), datasets: [{ data: Object.values(styleData), backgroundColor: chartColors.lightBlue, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }}} });
+        }
+        
+        // CORREÇÃO: Função de popular filtros corrigida e unificada
+        function populateFilters() {
+            const library = fullData.biblioteca || [];
+            const statuses = [...new Set(library.map(g => g.Status).filter(Boolean))];
+            const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))];
+            const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))];
+            
+            const populate = (elId, items, asc = false) => {
+                const select = document.getElementById(elId);
+                if (!select) return;
+                select.innerHTML = '<option value="all">Todos</option>';
+                const sorted = asc ? items.sort() : items.sort((a,b) => b-a);
+                sorted.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`);
+            }
+            ['', '-biblioteca', '-graficos'].forEach(suffix => {
+                populate('statusFilter' + suffix, statuses, true);
+                populate('styleFilter' + suffix, styles, true);
+                populate('yearFilter' + suffix, years);
+            });
+        }
+        
         function applyFilters(suffix) {
             const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || '';
             const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
             const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
             const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
-            
-            const filteredGames = (fullData.biblioteca || []).filter(g => 
-                (name ? g.Nome.toLowerCase().includes(name) : true) &&
-                (status !== 'all' ? g.Status === status : true) &&
-                (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true) &&
-                (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true)
-            );
-            
+            const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) && (status !== 'all' ? g.Status === status : true) && (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true) && (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
             if (suffix === '-graficos') {
-                const notas = filteredGames.map(g => g.Nota).filter(n => n);
+                const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
                 const stats = {
-                    total_jogos: filteredGames.length,
-                    total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0),
+                    total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0),
                     custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0),
-                    media_notas: notas.length > 0 ? (notas.reduce((a,b) => a+b, 0) / notas.length).toFixed(1) : 'N/A',
+                    media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A',
                     total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length,
                     total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0)
                 };
@@ -542,30 +557,20 @@
         }
 
         function openGameModalForAdd() {
-            document.getElementById('addGameForm').reset();
-            document.getElementById('editMode').value = '';
-            document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo';
-            document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
+            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = '';
+            document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
             document.getElementById('addGameModal').classList.add('active');
         }
         
         function openGameModalForEdit(gameName) {
-            const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName);
-            if (!gameToEdit) { alert("Jogo não encontrado."); return; }
-            document.getElementById('addGameForm').reset();
-            document.getElementById('editMode').value = gameName;
-            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`;
-            document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
-            document.getElementById('gameName').value = gameToEdit.Nome;
-            document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
-            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila';
-            document.getElementById('gameRating').value = gameToEdit.Nota || '';
-            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || '';
-            document.getElementById('gameLink').value = gameToEdit.Link || '';
-            document.getElementById('gameStyle').value = gameToEdit.Estilo || '';
-            document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
-            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || '';
-            document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
+            const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { alert("Jogo não encontrado."); return; }
+            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = gameName;
+            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`; document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
+            document.getElementById('gameName').value = gameToEdit.Nome; document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
+            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = gameToEdit.Nota || '';
+            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
+            document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
+            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
             document.getElementById('addGameModal').classList.add('active');
         }
 
@@ -574,19 +579,15 @@
         
         async function handleGameFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editMode').value;
-            const isEditing = editModeValue !== '';
+            const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
             const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
             const gameData = {
-                Nome: document.getElementById('gameName').value, Plataforma: document.getElementById('gamePlatform').value,
-                Status: document.getElementById('gameStatus').value, Nota: parseFloat(document.getElementById('gameRating').value) || null,
-                "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0, Link: document.getElementById('gameLink').value,
-                Estilo: document.getElementById('gameStyle').value, "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
-                Preço: parseFloat(priceValue) || 0, "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
-                "Terminado em": document.getElementById('gameTermino').value || ''
+                Nome: document.getElementById('gameName').value, Plataforma: document.getElementById('gamePlatform').value, Status: document.getElementById('gameStatus').value,
+                Nota: parseFloat(document.getElementById('gameRating').value) || null, "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
+                Link: document.getElementById('gameLink').value, Estilo: document.getElementById('gameStyle').value, "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
+                Preço: parseFloat(priceValue) || 0, "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0, "Terminado em": document.getElementById('gameTermino').value || ''
             };
-            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`;
-            let method = isEditing ? 'PUT' : 'POST';
+            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
             try {
                 const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
@@ -599,8 +600,7 @@
             if (confirm(`Tem certeza que deseja excluir "${gameName}"?`)) {
                 try {
                     const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                    if (response.ok) { alert("Jogo deletado com sucesso!"); fetchGameData(); } 
-                    else { alert("Erro ao deletar jogo."); }
+                    if (response.ok) { alert("Jogo deletado com sucesso!"); fetchGameData(); } else { alert("Erro ao deletar jogo."); }
                 } catch(err) { alert("Erro de conexão ao deletar."); }
             }
         }
@@ -608,16 +608,11 @@
         function editGame(gameName) { openGameModalForEdit(gameName); }
         async function editWish(wishName) { /* ... permanece o mesmo ... */ }
         async function deleteWish(wishName) { /* ... permanece o mesmo ... */ }
-        function openWishModal() { /* ... permanece o mesmo ... */ }
+        function openWishModal() { document.getElementById('addWishModal').classList.add('active'); }
         async function handleNewWishlistItemSubmission(event) { /* ... permanece o mesmo ... */ }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const setupListener = (id, event, handler) => {
-                const element = document.getElementById(id);
-                if (element) { element.addEventListener(event, handler); } 
-                else { console.error(`Elemento com ID '${id}' não encontrado.`); }
-            };
-
+            const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); } else { console.error(`Elemento com ID '${id}' não encontrado.`); }};
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
             setupListener('addGameBtn', 'click', openGameModalForAdd);
             setupListener('addWishBtn', 'click', openWishModal);
@@ -628,22 +623,13 @@
                 const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
-            
             const setupFilterListeners = (suffix) => {
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => setupListener(id + suffix, 'input', () => applyFilters(suffix)));
                 const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
-                if (clearBtn) {
-                    clearBtn.addEventListener('click', () => {
-                        ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
-                            const el = document.getElementById(id + suffix); if(el) el.value = el.tagName === 'SELECT' ? 'all' : '';
-                        });
-                        applyFilters(suffix);
-                    });
-                }
+                if (clearBtn) { clearBtn.addEventListener('click', () => { ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { const el = document.getElementById(id + suffix); if(el) el.value = el.tagName === 'SELECT' ? 'all' : ''; }); applyFilters(suffix); }); }
             };
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
-            
             fetchGameData();
         });
     </script>
