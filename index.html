@@ -323,25 +323,62 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchGameData();
 
-            // Setup dos filtros... (permanece o mesmo)
-            
-            // NOVO: Listener único para o formulário de jogo
-            document.getElementById('addGameForm').addEventListener('submit', handleGameFormSubmit);
+            // Função auxiliar para configurar listeners de forma segura
+            const setupListener = (id, event, handler) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener(event, handler);
+                } else {
+                    // Se o elemento não for encontrado, um erro será exibido no console
+                    // em vez de quebrar a aplicação.
+                    console.error(`Erro crítico: Elemento com o ID '${id}' não foi encontrado no HTML.`);
+                }
+            };
 
-            // Listener para o botão de Adicionar Jogo (agora chama a função correta)
-            document.getElementById('addGameBtn').addEventListener('click', openGameModalForAdd);
+            // Configuração de todos os listeners usando a nova função
+            setupListener('addGameForm', 'submit', handleGameFormSubmit);
+            setupListener('addGameBtn', 'click', openGameModalForAdd);
+            setupListener('addWishBtn', 'click', openWishModal);
+            setupListener('addWishForm', 'submit', handleNewWishlistItemSubmission);
             
-            // Os outros listeners (wishlist, tema, logout) permanecem os mesmos
-            document.getElementById('addWishBtn').addEventListener('click', openWishModal);
-            document.getElementById('addWishForm').addEventListener('submit', handleNewWishlistItemSubmission);
-            document.getElementById('theme-toggle').addEventListener('click', () => { /* ... */ });
-            document.getElementById('logoutBtn').addEventListener('click', () => { /* ... */ });
+            setupListener('theme-toggle', 'click', () => {
+                const body = document.body;
+                const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
+                body.classList.toggle('light-mode');
+                body.classList.toggle('dark-mode');
+                icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
+            });
+            
+            setupListener('logoutBtn', 'click', () => {
+                localStorage.removeItem('jwt_token');
+                window.location.href = 'login.html';
+            });
+
+            // Configuração dos listeners de filtro (eles já eram seguros, mas padronizamos)
+            const setupFilterListeners = (suffix) => {
+                ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
+                    setupListener(id + suffix, 'input', () => applyFilters(suffix));
+                });
+                const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', () => {
+                        ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
+                            const el = document.getElementById(id + suffix);
+                            if (el) el.value = el.tagName === 'SELECT' ? 'all' : '';
+                        });
+                        applyFilters(suffix);
+                    });
+                }
+            };
+            
+            setupFilterListeners('-graficos');
+            setupFilterListeners('-biblioteca');
         });
 
-        // NOVO: A função 'editGame' agora apenas abre o modal no modo de edição
+        // O restante das suas funções JS (editGame, deleteGame, etc.) permanecem as mesmas
         function editGame(gameName) {
             openGameModalForEdit(gameName);
         }
-    </script>
 </body>
 </html>
+
