@@ -392,6 +392,10 @@
                     <input type="number" id="gameHours" min="0">
                 </div>
                 <div class="form-group">
+                    <label for="gameTermino">Data de Conclusão</label>
+                    <input type="date" id="gameTermino">
+                </div>
+                <div class="form-group">
                     <label for="gameLink">Link da Capa (URL)</label>
                     <input type="url" id="gameLink" placeholder="URL da imagem">
                 </div>
@@ -401,7 +405,7 @@
                 </div>
                 <div class="form-group">
                     <label for="gamePrice">Preço (R$)</label>
-                    <input type="number" id="gamePrice" step="0.01" min="0">
+                    <input type="text" inputmode="decimal" id="gamePrice" placeholder="Ex: 149,90">
                 </div>
                 <div class="form-group">
                     <label for="gameConquistas">Conquistas Obtidas</label>
@@ -442,12 +446,23 @@
     <script>
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         
+        // NOVO: Objeto de cores para os gráficos
+        const chartColors = {
+            purple: 'rgba(147, 112, 219, 0.8)',
+            grey: 'rgba(125, 133, 144, 0.5)',
+            lightBlue: 'rgba(56, 139, 253, 0.8)',
+            cyan: 'rgba(0, 255, 255, 0.8)',
+        };
+
         let fullData = {
             estatisticas: {},
             biblioteca: [],
             desejos: []
         };
         let createdCharts = {};
+        
+        // NOVO: Variável global para controlar o listener do formulário de edição
+        let handleEditSubmission;
 
         const token = localStorage.getItem('jwt_token');
         if (!token) {
@@ -630,19 +645,29 @@
                 renderGameTable(filteredGames);
             }
         }
-
+        
+        // NOVO: Funções de abrir e fechar o modal de jogo revisadas
         function openGameModal() {
             document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo';
             document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
-            document.getElementById('addGameForm').reset();
             document.getElementById('addGameModal').classList.add('active');
         }
         function closeGameModal() {
+            const gameForm = document.getElementById('addGameForm');
+            
             document.getElementById('addGameModal').classList.remove('active');
-            document.getElementById('addGameForm').reset();
+            gameForm.reset();
+            
+            // Limpa qualquer listener de 'edição' que possa existir
+            if (handleEditSubmission) {
+                gameForm.removeEventListener('submit', handleEditSubmission);
+                handleEditSubmission = null;
+            }
         }
+        
         async function handleNewGameSubmission(event) {
             event.preventDefault();
+            const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
             const newGameData = {
                 Nome: document.getElementById('gameName').value,
                 Plataforma: document.getElementById('gamePlatform').value,
@@ -652,8 +677,9 @@
                 Link: document.getElementById('gameLink').value,
                 Estilo: document.getElementById('gameStyle').value,
                 "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
-                Preço: parseFloat(document.getElementById('gamePrice').value) || 0,
+                Preço: parseFloat(priceValue) || 0,
                 "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
+                "Terminado em": document.getElementById('gameTermino').value || ''
             };
             
             const response = await fetch(`${API_URL}/games/add`, {
@@ -704,7 +730,8 @@
                 alert("Erro ao adicionar à lista de desejos. Tente novamente.");
             }
         }
-
+        
+        // NOVO: Função de edição completamente refeita para evitar duplicatas
         async function editGame(gameName) {
             const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName);
             if (!gameToEdit) {
@@ -712,8 +739,11 @@
                 return;
             }
             
+            const gameForm = document.getElementById('addGameForm');
+            
             document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`;
             document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
+            
             document.getElementById('originalGameName').value = gameName;
             document.getElementById('gameName').value = gameToEdit.Nome;
             document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
@@ -722,13 +752,15 @@
             document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || '';
             document.getElementById('gameLink').value = gameToEdit.Link || '';
             document.getElementById('gameStyle').value = gameToEdit.Estilo || '';
-            document.getElementById('gamePrice').value = gameToEdit.Preço || '';
+            document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
             document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || '';
+            document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
 
             document.getElementById('addGameModal').classList.add('active');
-
-            document.getElementById('addGameForm').onsubmit = async (event) => {
+            
+            handleEditSubmission = async (event) => {
                 event.preventDefault();
+                const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
                 const updatedGameData = {
                     Nome: document.getElementById('gameName').value,
                     Plataforma: document.getElementById('gamePlatform').value,
@@ -738,14 +770,15 @@
                     Link: document.getElementById('gameLink').value,
                     Estilo: document.getElementById('gameStyle').value,
                     "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
-                    Preço: parseFloat(document.getElementById('gamePrice').value) || 0,
+                    Preço: parseFloat(priceValue) || 0,
                     "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
+                    "Terminado em": document.getElementById('gameTermino').value || ''
                 };
                 
                 const response = await fetch(`${API_URL}/games/edit`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ list_type: 'games', item_name: document.getElementById('originalGameName').value, updated_data: updatedGameData })
+                    body: JSON.stringify({ list_type: 'games', item_name: gameName, updated_data: updatedGameData })
                 });
 
                 if (response.ok) {
@@ -756,8 +789,10 @@
                     alert("Erro ao atualizar jogo. Tente novamente.");
                 }
             };
+            
+            gameForm.addEventListener('submit', handleEditSubmission);
         }
-        
+
         async function deleteGame(gameName) {
             if (confirm(`Tem certeza que deseja excluir o jogo "${gameName}" da sua biblioteca?`)) {
                 const response = await fetch(`${API_URL}/games/delete/games/${gameName}`, {
@@ -831,22 +866,20 @@
                 }
             }
         }
-
+        
+        // NOVO: A lógica de listeners foi simplificada e corrigida
         document.addEventListener('DOMContentLoaded', () => {
             fetchGameData();
 
             const setupFilterListeners = (suffix) => {
-                const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
-                const filterIds = ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'];
-                
-                filterIds.forEach(id => {
+                ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
                     const el = document.getElementById(id + suffix);
                     if (el) el.addEventListener('input', () => applyFilters(suffix));
                 });
-                
+                const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
                 if (clearBtn) {
                     clearBtn.addEventListener('click', () => {
-                        filterIds.forEach(id => {
+                        ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
                             const el = document.getElementById(id + suffix);
                             if(el) el.value = el.tagName === 'SELECT' ? 'all' : '';
                         });
@@ -858,18 +891,17 @@
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
 
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('click', () => {
+            document.getElementById('theme-toggle').addEventListener('click', () => {
                 const body = document.body;
-                const icon = themeToggle.querySelector('.material-symbols-outlined');
+                const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
                 body.classList.toggle('light-mode');
                 body.classList.toggle('dark-mode');
-                
-                if (body.classList.contains('light-mode')) {
-                    icon.textContent = 'dark_mode';
-                } else {
-                    icon.textContent = 'light_mode';
-                }
+                icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('jwt_token');
+                window.location.href = 'login.html';
             });
 
             const addGameBtn = document.getElementById('addGameBtn');
@@ -877,11 +909,11 @@
             const addWishBtn = document.getElementById('addWishBtn');
             const addWishForm = document.getElementById('addWishForm');
 
-            if (addGameBtn) addGameBtn.addEventListener('click', openGameModal);
-            if (addGameForm) addGameForm.addEventListener('submit', handleNewGameSubmission);
+            addGameBtn.addEventListener('click', openGameModal);
+            addGameForm.addEventListener('submit', handleNewGameSubmission);
             
-            if(addWishBtn) addWishBtn.addEventListener('click', openWishModal);
-            if(addWishForm) addWishForm.addEventListener('submit', handleNewWishlistItemSubmission);
+            addWishBtn.addEventListener('click', openWishModal);
+            addWishForm.addEventListener('submit', handleNewWishlistItemSubmission);
         });
     </script>
 </body>
