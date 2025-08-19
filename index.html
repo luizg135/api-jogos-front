@@ -711,6 +711,15 @@
             document.getElementById('profileAvatar').src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
         }
 
+        function openAchievementsModal() { document.getElementById('achievementsModal').classList.add('active'); }
+        function closeAchievementsModal() { document.getElementById('achievementsModal').classList.remove('active'); }
+        function switchAchievementTab(event, tabName) {
+            document.querySelectorAll('#achievementsModal .tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('#achievementsModal .tab-button').forEach(tb => tb.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); } else { console.error(`Elemento com ID '${id}' não encontrado.`); }};
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
