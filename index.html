@@ -397,25 +397,66 @@
             <span class="close-button" onclick="closeGameModal()">&times;</span>
             <h2 id="gameModalTitle">Adicionar Novo Jogo</h2>
             <form id="addGameForm">
-                    <input type="hidden" id="editMode" value="">
-                    <div class="form-group">
-                        <label for="gameName">Nome do Jogo</label>
-                        <input type="text" id="gameName" required autocomplete="off">
-                        <div id="searchResultsContainer"></div>
-                    </div>
-                    </form>
-                <input type="hidden" id="editMode" value="">
-                <div class="form-group"><label for="gameName">Nome do Jogo</label><input type="text" id="gameName" required></div>
-                <div class="form-group"><label for="gamePlatform">Plataforma</label><input type="text" id="gamePlatform" placeholder="Ex: PC, PS5"></div>
-                <div class="form-group"><label for="gameStatus">Status</label><select id="gameStatus"><option value="Na Fila">Na Fila</option><option value="Jogando">Jogando</option><option value="Finalizado">Finalizado</option><option value="Platinado">Platinado</option><option value="Abandonado">Abandonado</option></select></div>
-                <div class="form-group"><label for="gameRating">Nota</label><input type="number" id="gameRating" step="0.1" min="0" max="10"></div>
-                <div class="form-group"><label for="gameHours">Horas de Jogo</label><input type="number" id="gameHours" min="0"></div>
-                <div class="form-group"><label for="gameTermino">Data de Conclusão</label><input type="date" id="gameTermino"></div>
-                <div class="form-group"><label for="gameLink">Link da Capa (URL)</label><input type="url" id="gameLink" placeholder="URL da imagem"></div>
-                <div class="form-group"><label for="gameStyle">Estilo (separado por vírgula)</label><input type="text" id="gameStyle" placeholder="Ex: RPG, Aventura"></div>
-                <div class="form-group"><label for="gamePrice">Preço (R$)</label><input type="text" inputmode="decimal" id="gamePrice" placeholder="Ex: 149,90"></div>
-                <div class="form-group"><label for="gameConquistas">Conquistas Obtidas</label><input type="number" id="gameConquistas" min="0"></div>
-                <button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
+<input type="hidden" id="editMode" value="">
+
+<div class="form-group">
+    <label for="gameName">Nome do Jogo</label>
+    <input type="text" id="gameName" required autocomplete="off">
+    <div id="searchResultsContainer"></div>
+</div>
+
+<div class="form-group">
+    <label for="gamePlatform">Plataforma</label>
+    <input type="text" id="gamePlatform" placeholder="Ex: PC, PS5">
+</div>
+
+<div class="form-group">
+    <label for="gameStatus">Status</label>
+    <select id="gameStatus">
+        <option value="Na Fila">Na Fila</option>
+        <option value="Jogando">Jogando</option>
+        <option value="Finalizado">Finalizado</option>
+        <option value="Platinado">Platinado</option>
+        <option value="Abandonado">Abandonado</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="gameRating">Nota</label>
+    <input type="number" id="gameRating" step="0.1" min="0" max="10">
+</div>
+
+<div class="form-group">
+    <label for="gameHours">Horas de Jogo</label>
+    <input type="number" id="gameHours" min="0">
+</div>
+
+<div class="form-group">
+    <label for="gameTermino">Data de Conclusão</label>
+    <input type="date" id="gameTermino">
+</div>
+
+<div class="form-group">
+    <label for="gameLink">Link da Capa (URL)</label>
+    <input type="url" id="gameLink" placeholder="URL da imagem">
+</div>
+
+<div class="form-group">
+    <label for="gameStyle">Estilo (separado por vírgula)</label>
+    <input type="text" id="gameStyle" placeholder="Ex: RPG, Aventura">
+</div>
+
+<div class="form-group">
+    <label for="gamePrice">Preço (R$)</label>
+    <input type="text" inputmode="decimal" id="gamePrice" placeholder="Ex: 149,90">
+</div>
+
+<div class="form-group">
+    <label for="gameConquistas">Conquistas Obtidas</label>
+    <input type="number" id="gameConquistas" min="0">
+</div>
+
+<button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
             </form>
         </div>
     </div>
@@ -864,4 +905,5 @@
     </script>
 </body>
 </html>
+
 
