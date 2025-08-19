@@ -916,15 +916,65 @@
                     if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
                         searchContainer.innerHTML = '';
                     }
-                });
+                    const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
+                    const wishNameInput = document.getElementById('wishGameName');
+                    if (wishSearchContainer && !wishSearchContainer.contains(event.target) && event.target !== wishNameInput) {
+                        wishSearchContainer.innerHTML = '';
+                    }
+                });                    
+            let wishSearchTimeout;
+
+            async function handleWishSearch(query) {
+                const resultsContainer = document.getElementById('wishSearchResultsContainer');
+                if (query.length < 3) {
+                    resultsContainer.innerHTML = '';
+                    return;
+                }
+                const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+    });
+                const games = await response.json();
+    
+                if (!games || games.length === 0) {
+                    resultsContainer.innerHTML = '';
+                    return;
+    }
+
+                const listHTML = games.map(game => {
+                    const safeName = game.name.replace(/'/g, "\\'");
+                    const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
+
+                    return `
+                        <div class="search-result-item" 
+                             onclick="selectWishGame({
+                                 name: '${safeName}', 
+                                 background_image: '${game.background_image || ''}', 
+                                 released_for_input: '${game.released_for_input || ''}'
+                             })">
+                            <img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.name}">
+                            <div class="search-result-info">
+                                <span>${game.name}</span>
+                                <small>Lançamento: ${year}</small>
+                            </div>
+                        </div>`;
+                }).join('');
+    
+                resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
+            }
+
+            function selectWishGame(game) {
+                document.getElementById('wishGameName').value = game.name;
+                document.getElementById('wishGameLink').value = game.background_image;
+                if (game.released_for_input) {
+                    const parts = game.released_for_input.split('-'); // [AAAA, MM, DD]
+                    document.getElementById('wishGameRelease').value = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                } else {
+                    document.getElementById('wishGameRelease').value = 'Data não informada';
+                }
+                document.getElementById('wishSearchResultsContainer').innerHTML = ''; // Limpa os resultados
+            }
             fetchGameData();
         });
     </script>
 </body>
 </html>
-
-
-
-
-
-
