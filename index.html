@@ -222,6 +222,32 @@
         .achievement-icon.tier-Platina .material-symbols-outlined { color: var(--rank-platina); }
         .achievement-icon.tier-Diamante .material-symbols-outlined { color: var(--rank-diamante); }
         .achievement-icon.tier-Mestre .material-symbols-outlined { color: var(--rank-mestre); }
+    
+    /* NOVO: Estilos para a barra de scroll customizada */
+        .achievements-list::-webkit-scrollbar {
+            width: 8px; /* Largura da barra */
+        }
+
+        .achievements-list::-webkit-scrollbar-track {
+            background: transparent; /* Fundo da barra transparente */
+        }
+
+        .achievements-list::-webkit-scrollbar-thumb {
+            background-color: var(--border-color); /* Cor da barra */
+            border-radius: 10px; /* Bordas arredondadas */
+            border: 2px solid var(--surface-color); /* Espaçamento interno */
+        }
+
+        .achievements-list::-webkit-scrollbar-thumb:hover {
+            background-color: var(--secondary-text); /* Cor da barra ao passar o mouse */
+        }
+
+        /* Compatibilidade para Firefox */
+        .achievements-list {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--surface-color);
+        }
+    
     </style>
 </head>
 
@@ -746,4 +772,5 @@
     </script>
 </body>
 </html>
+
 
