@@ -87,7 +87,6 @@
             transition: all 0.2s ease;
         }
         .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
-        /* CORREÇÃO: Linha colorida dinâmica nos cards */
         .rank-colors-Bronze .card:hover, .rank-colors-Bronze .platinum-card:hover, .rank-colors-Bronze .wish-card:hover { border-bottom-color: var(--rank-bronze); }
         .rank-colors-Prata .card:hover, .rank-colors-Prata .platinum-card:hover, .rank-colors-Prata .wish-card:hover { border-bottom-color: var(--rank-prata); }
         .rank-colors-Ouro .card:hover, .rank-colors-Ouro .platinum-card:hover, .rank-colors-Ouro .wish-card:hover { border-bottom-color: var(--rank-ouro); }
@@ -346,7 +345,7 @@
             <span class="close-button" onclick="closeWishModal()">&times;</span>
             <h2 id="wishModalTitle">Adicionar à Lista de Desejos</h2>
             <form id="addWishForm">
-                <input type="hidden" id="originalWishName">
+                <input type="hidden" id="editWishMode" value="">
                 <div class="form-group">
                     <label for="wishGameName">Nome do Jogo</label>
                     <input type="text" id="wishGameName" required>
@@ -361,7 +360,7 @@
                 </div>
                 <div class="form-group">
                     <label for="wishGamePrice">Preço (R$)</label>
-                    <input type="number" id="wishGamePrice" step="0.01" min="0">
+                    <input type="text" inputmode="decimal" id="wishGamePrice" placeholder="Ex: 59,90">
                 </div>
                 <button type="submit" id="wishModalSubmitBtn">Adicionar à Lista</button>
             </form>
@@ -416,8 +415,7 @@
             const rank = stats.rank_gamer || 'Bronze';
             const rankClass = `rank-${rank}`;
             const mainContent = document.getElementById('main-content');
-            mainContent.className = 'main-content';
-            mainContent.classList.add(`rank-colors-${rank}`);
+            mainContent.className = 'main-content'; mainContent.classList.add(`rank-colors-${rank}`);
             document.getElementById('levelDisplay').textContent = `${rank} (Nível ${stats.nivel_gamer || 0})`;
             document.getElementById('expText').textContent = `${(stats.exp_nivel_atual || 0).toLocaleString('pt-BR')} / ${(stats.exp_para_proximo_nivel || 1000).toLocaleString('pt-BR')} EXP`;
             const expBar = document.getElementById('expBar');
@@ -427,8 +425,7 @@
                 expBar.classList.add(rankClass);
             }, 100);
             const gamerName = document.getElementById('gamerName');
-            gamerName.className = '';
-            gamerName.classList.add(rankClass);
+            gamerName.className = ''; gamerName.classList.add(rankClass);
         }
 
         function renderSummaryCards(stats = {}, containerId) {
@@ -496,12 +493,10 @@
 
         function destroyCharts() { Object.values(createdCharts).forEach(chart => chart.destroy()); createdCharts = {}; }
         
-        // CORREÇÃO: Função de renderizar gráficos completa
         function renderAllCharts(games = []) {
             destroyCharts();
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
             const processMultiData = (key) => games.reduce((acc, game) => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
-            
             const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
             const platformData = processData('Plataforma');
             const statusData = processData('Status');
@@ -510,26 +505,25 @@
             if(document.getElementById('platinadosChart')) createdCharts.platinados = new Chart('platinadosChart', { type: 'pie', data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.grey], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
             if(document.getElementById('platformChart')) createdCharts.platform = new Chart('platformChart', { type: 'bar', data: { labels: Object.keys(platformData), datasets: [{ data: Object.values(platformData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }}}, plugins: { legend: { display: false }}} });
             if(document.getElementById('statusChart')) createdCharts.status = new Chart('statusChart', { type: 'doughnut', data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.purple, chartColors.lightBlue, chartColors.cyan, chartColors.grey], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
-            if(document.getElementById('styleChart')) createdCharts.style = new Chart('styleChart', { type: 'bar', data: { labels: Object.keys(styleData), datasets: [{ data: Object.values(styleData), backgroundColor: chartColors.lightBlue, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }}} });
+            // CORREÇÃO: Cor do gráfico de estilos alterada para roxo
+            if(document.getElementById('styleChart')) createdCharts.style = new Chart('styleChart', { type: 'bar', data: { labels: Object.keys(styleData), datasets: [{ data: Object.values(styleData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }}} });
         }
         
-        // CORREÇÃO: Função de popular filtros corrigida e unificada
         function populateFilters() {
             const library = fullData.biblioteca || [];
-            const statuses = [...new Set(library.map(g => g.Status).filter(Boolean))];
-            const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))];
-            const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))];
+            const statuses = [...new Set(library.map(g => g.Status).filter(Boolean))].sort();
+            const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort();
+            const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))].sort((a,b) => b-a);
             
-            const populate = (elId, items, asc = false) => {
+            const populate = (elId, items) => {
                 const select = document.getElementById(elId);
                 if (!select) return;
                 select.innerHTML = '<option value="all">Todos</option>';
-                const sorted = asc ? items.sort() : items.sort((a,b) => b-a);
-                sorted.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`);
+                items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`);
             }
             ['', '-biblioteca', '-graficos'].forEach(suffix => {
-                populate('statusFilter' + suffix, statuses, true);
-                populate('styleFilter' + suffix, styles, true);
+                populate('statusFilter' + suffix, statuses);
+                populate('styleFilter' + suffix, styles);
                 populate('yearFilter' + suffix, years);
             });
         }
@@ -606,17 +600,57 @@
         }
         
         function editGame(gameName) { openGameModalForEdit(gameName); }
-        async function editWish(wishName) { /* ... permanece o mesmo ... */ }
-        async function deleteWish(wishName) { /* ... permanece o mesmo ... */ }
-        function openWishModal() { document.getElementById('addWishModal').classList.add('active'); }
-        async function handleNewWishlistItemSubmission(event) { /* ... permanece o mesmo ... */ }
+
+        // CORREÇÃO: Funções da lista de desejos implementadas
+        function openWishModal() {
+            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = '';
+            document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos'; document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
+            document.getElementById('addWishModal').classList.add('active');
+        }
+
+        function editWish(wishName) {
+            const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { alert("Item não encontrado."); return; }
+            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = wishName;
+            document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`; document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Item';
+            document.getElementById('wishGameName').value = wishToEdit.Nome;
+            document.getElementById('wishGameLink').value = wishToEdit.Link || '';
+            document.getElementById('wishGameRelease').value = wishToEdit["Data Lançamento"] || '';
+            document.getElementById('wishGamePrice').value = String(wishToEdit.Preço || '').replace('.', ',');
+            document.getElementById('addWishModal').classList.add('active');
+        }
+
+        async function handleWishFormSubmit(event) {
+            event.preventDefault();
+            const editModeValue = document.getElementById('editWishMode').value; const isEditing = editModeValue !== '';
+            const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
+            const wishData = {
+                Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value,
+                "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0
+            };
+            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
+            let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
+            try {
+                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
+                if (response.ok) { alert(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeWishModal(); fetchGameData(); }
+                else { const error = await response.json(); alert(`Erro: ${error.message || 'Falha na operação.'}`); }
+            } catch (err) { alert(`Erro de conexão.`); }
+        }
+
+        async function deleteWish(wishName) {
+            if (confirm(`Tem certeza que deseja excluir "${wishName}" da lista de desejos?`)) {
+                try {
+                    const response = await fetch(`${API_URL}/games/delete/wishlist/${encodeURIComponent(wishName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                    if (response.ok) { alert("Item deletado com sucesso!"); fetchGameData(); } else { alert("Erro ao deletar item."); }
+                } catch(err) { alert("Erro de conexão ao deletar."); }
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); } else { console.error(`Elemento com ID '${id}' não encontrado.`); }};
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
+            setupListener('addWishForm', 'submit', handleWishFormSubmit); // Listener para o form da wishlist
             setupListener('addGameBtn', 'click', openGameModalForAdd);
             setupListener('addWishBtn', 'click', openWishModal);
-            setupListener('addWishForm', 'submit', handleNewWishlistItemSubmission);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             setupListener('theme-toggle', 'click', () => {
                 const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
