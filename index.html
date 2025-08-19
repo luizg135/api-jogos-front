@@ -245,7 +245,28 @@
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) var(--surface-color);
         }
-    
+
+        #searchResultsContainer {
+            position: relative;
+        }
+        .search-results-list {
+            position: absolute; width: 100%; background-color: var(--surface-color);
+            border: 1px solid var(--border-color); border-radius: 8px;
+            margin-top: 5px; max-height: 300px; overflow-y: auto; z-index: 1001;
+        }
+        .search-result-item {
+            display: flex; align-items: center; padding: 10px; cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover { background-color: var(--bg-color); }
+        .search-result-item img {
+            width: 90px; height: 60px; object-fit: cover;
+            border-radius: 4px; margin-right: 12px;
+        }
+        .search-result-info span { display: block; font-size: 14px; font-weight: 500; }
+        .search-result-info small { font-size: 12px; color: var(--secondary-text); margin-top: 4px; }
+        
     </style>
 </head>
 
@@ -376,6 +397,13 @@
             <span class="close-button" onclick="closeGameModal()">&times;</span>
             <h2 id="gameModalTitle">Adicionar Novo Jogo</h2>
             <form id="addGameForm">
+                    <input type="hidden" id="editMode" value="">
+                    <div class="form-group">
+                        <label for="gameName">Nome do Jogo</label>
+                        <input type="text" id="gameName" required autocomplete="off">
+                        <div id="searchResultsContainer"></div>
+                    </div>
+                    </form>
                 <input type="hidden" id="editMode" value="">
                 <div class="form-group"><label for="gameName">Nome do Jogo</label><input type="text" id="gameName" required></div>
                 <div class="form-group"><label for="gamePlatform">Plataforma</label><input type="text" id="gamePlatform" placeholder="Ex: PC, PS5"></div>
@@ -743,6 +771,55 @@
             event.currentTarget.classList.add('active');
         }
 
+        let searchTimeout; // Variável para controlar o tempo de digitação
+
+        async function handleSearch(query) {
+            const resultsContainer = document.getElementById('searchResultsContainer');
+            if (query.length < 3) {
+                resultsContainer.innerHTML = '';
+                return;
+            }
+            const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const games = await response.json();
+    
+            if (!games || games.length === 0) {
+                resultsContainer.innerHTML = '';
+                return;
+            }
+
+            const listHTML = games.map(game => {
+                const safeName = game.name.replace(/'/g, "\\'");
+                const safeStyles = game.styles.replace(/'/g, "\\'");
+                const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
+
+                return `
+                    <div class="search-result-item" 
+                         onclick="selectGame({
+                             name: '${safeName}', 
+                             background_image: '${game.background_image || ''}', 
+                             released_for_input: '${game.released_for_input || ''}',
+                             styles: '${safeStyles}'
+                         })">
+                        <img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.name}">
+                        <div class="search-result-info">
+                            <span>${game.name}</span>
+                            <small>Lançamento: ${year}</small>
+                        </div>
+                    </div>`;
+            }).join('');
+    
+            resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
+        }
+
+        function selectGame(game) {
+            document.getElementById('gameName').value = game.name;
+            document.getElementById('gameLink').value = game.background_image;
+            document.getElementById('gameStyle').value = game.styles;
+            document.getElementById('gameTermino').value = game.released_for_input;
+            document.getElementById('searchResultsContainer').innerHTML = '';
+        }
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); } else { console.error(`Elemento com ID '${id}' não encontrado.`); }};
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
@@ -765,8 +842,26 @@
             };
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
+                const gameNameInput = document.getElementById('gameName');
+                if (gameNameInput) {
+                    gameNameInput.addEventListener('keyup', (event) => {
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(() => {
+                            handleSearch(event.target.value);
+                        }, 500); // Espera 0.5s após digitar para buscar
+                    });
+                }
+
+                document.addEventListener('click', function(event) {
+                    const searchContainer = document.getElementById('searchResultsContainer');
+                    const nameInput = document.getElementById('gameName');
+                    if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
+                        searchContainer.innerHTML = '';
+                    }
+                });
             fetchGameData();
         });
     </script>
 </body>
 </html>
+
