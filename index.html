@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <style>
         :root {
             --rank-bronze: #CD7F32; --rank-prata: #C0C0C0; --rank-ouro: #FFD700;
@@ -398,6 +401,22 @@
         const token = localStorage.getItem('jwt_token');
         if (!token) { window.location.href = 'login.html'; }
 
+        // NOVO: Funções de notificação
+        function showToast(message, isError = false) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                style: {
+                    background: isError 
+                        ? "linear-gradient(to right, #ff5f6d, #ffc371)" 
+                        : "linear-gradient(to right, #00b09b, #96c93d)",
+                },
+            }).showToast();
+        }
+
         async function fetchGameData() {
             try {
                 const response = await fetch(`${API_URL}/games/data`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -545,7 +564,7 @@
         }
         
         function openGameModalForEdit(gameName) {
-            const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { alert("Jogo não encontrado."); return; }
+            const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { showToast("Jogo não encontrado.", true); return; }
             document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = gameName;
             document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`; document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
             document.getElementById('gameName').value = gameToEdit.Nome; document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
@@ -573,17 +592,17 @@
             let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
             try {
                 const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
-                if (response.ok) { alert(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeGameModal(); fetchGameData(); }
-                else { const error = await response.json(); alert(`Erro: ${error.message || 'Falha na operação.'}`); }
-            } catch (err) { alert(`Erro de conexão.`); }
+                if (response.ok) { showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeGameModal(); fetchGameData(); }
+                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
+            } catch (err) { showToast(`Erro de conexão.`, true); }
         }
         
         async function deleteGame(gameName) {
             if (confirm(`Tem certeza que deseja excluir "${gameName}"?`)) {
                 try {
                     const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                    if (response.ok) { alert("Jogo deletado com sucesso!"); fetchGameData(); } else { alert("Erro ao deletar jogo."); }
-                } catch(err) { alert("Erro de conexão ao deletar."); }
+                    if (response.ok) { showToast("Jogo deletado com sucesso!"); fetchGameData(); } else { showToast("Erro ao deletar jogo.", true); }
+                } catch(err) { showToast("Erro de conexão ao deletar.", true); }
             }
         }
         
@@ -596,7 +615,7 @@
         }
 
         function editWish(wishName) {
-            const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { alert("Item não encontrado."); return; }
+            const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
             document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = wishName;
             document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`; document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Item';
             document.getElementById('wishGameName').value = wishToEdit.Nome;
@@ -615,17 +634,17 @@
             let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
             try {
                 const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
-                if (response.ok) { alert(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeWishModal(); fetchGameData(); }
-                else { const error = await response.json(); alert(`Erro: ${error.message || 'Falha na operação.'}`); }
-            } catch (err) { alert(`Erro de conexão.`); }
+                if (response.ok) { showToast(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeWishModal(); fetchGameData(); }
+                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
+            } catch (err) { showToast(`Erro de conexão.`, true); }
         }
 
         async function deleteWish(wishName) {
             if (confirm(`Tem certeza que deseja excluir "${wishName}" da lista de desejos?`)) {
                 try {
                     const response = await fetch(`${API_URL}/games/delete/wishlist/${encodeURIComponent(wishName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                    if (response.ok) { alert("Item deletado com sucesso!"); fetchGameData(); } else { alert("Erro ao deletar item."); }
-                } catch(err) { alert("Erro de conexão ao deletar."); }
+                    if (response.ok) { showToast("Item deletado com sucesso!"); fetchGameData(); } else { showToast("Erro ao deletar item.", true); }
+                } catch(err) { showToast("Erro de conexão ao deletar.", true); }
             }
         }
         
@@ -642,9 +661,9 @@
             const newProfileData = { profileName: document.getElementById('profileNameInput').value, profileSubtitle: document.getElementById('profileSubtitleInput').value, profileAvatar: document.getElementById('profileAvatarInput').value };
             try {
                 const response = await fetch(`${API_URL}/games/profile/edit`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(newProfileData) });
-                if (response.ok) { alert('Perfil atualizado com sucesso!'); closeSettingsModal(); fullData.perfil = newProfileData; loadProfileSettings(fullData.perfil); }
-                else { alert('Erro ao atualizar o perfil.'); }
-            } catch(err) { alert('Erro de conexão ao salvar as configurações.'); }
+                if (response.ok) { showToast('Perfil atualizado com sucesso!'); closeSettingsModal(); fullData.perfil = newProfileData; loadProfileSettings(fullData.perfil); }
+                else { showToast('Erro ao atualizar o perfil.', true); }
+            } catch(err) { showToast('Erro de conexão ao salvar as configurações.', true); }
         }
         function loadProfileSettings(profile = {}) {
             document.getElementById('gamerName').textContent = profile.profileName || 'Seu Nome';
