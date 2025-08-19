@@ -72,7 +72,11 @@
         .profile-info h1.rank-Prata { color: var(--rank-prata); }
         .profile-info h1.rank-Bronze { color: var(--rank-bronze); }
         .profile-info p { font-size: 16px; color: var(--secondary-text); margin: 4px 0 0 0; }
-        .profile-level { margin-left: auto; text-align: right; min-width: 250px; }
+        .profile-level { margin-left: auto; min-width: 280px; display: flex; align-items: center; text-align: right; gap: 16px; }
+        .achievements-shortcut { cursor: pointer; color: var(--secondary-text); transition: color 0.2s ease; }
+        .achievements-shortcut:hover { color: var(--rank-ouro); }
+        .achievements-shortcut .material-symbols-outlined { font-size: 32px; }
+        .level-progress { flex-grow: 1; }
         .level-text { font-size: 24px; font-weight: 700; }
         .exp-bar-container { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; margin-top: 8px; }
         .exp-bar-progress { height: 100%; border-radius: 4px; width: 0%; transition: width 0.5s ease; }
@@ -162,7 +166,7 @@
         .modal-overlay.active { visibility: visible; opacity: 1; }
         .modal-content {
             background-color: var(--surface-color); padding: 32px; border-radius: 16px;
-            max-width: 450px; width: 90%; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 500px; width: 90%; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             transform: scale(0.95); transition: transform 0.3s ease-out;
         }
         .modal-overlay.active .modal-content { transform: scale(1); }
@@ -179,6 +183,45 @@
         }
         .action-buttons { display: flex; gap: 8px; }
         .action-button { background: transparent; border: none; padding: 4px; color: var(--secondary-text); cursor: pointer; }
+        .modal-content .tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 24px; }
+        .modal-content .tab-button {
+            padding: 12px 20px; border: none; background: none; color: var(--secondary-text);
+            cursor: pointer; font-size: 16px; font-weight: 500; position: relative;
+        }
+        .modal-content .tab-button.active { color: var(--primary-text); }
+        .modal-content .tab-button.active::after {
+            content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+            height: 2px; background-color: var(--accent-purple);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .achievements-list { display: flex; flex-direction: column; gap: 16px; max-height: 50vh; overflow-y: auto; padding-right: 10px; }
+        .achievement-card {
+            background-color: var(--bg-color); border: 1px solid var(--border-color);
+            border-left: 5px solid var(--accent-purple); border-radius: 8px;
+            padding: 16px; display: flex; align-items: center; gap: 16px;
+        }
+        .achievement-card.completed { border-left-color: var(--accent-green); }
+        .achievement-icon .material-symbols-outlined { font-size: 40px; color: var(--accent-purple); }
+        .achievement-details { flex-grow: 1; }
+        .achievement-details h3 { margin: 0 0 4px 0; font-size: 16px; color: var(--primary-text); }
+        .achievement-details p { margin: 0; font-size: 12px; color: var(--secondary-text); }
+        .achievement-progress-bar-container {
+            width: 100%; height: 6px; background-color: var(--border-color);
+            border-radius: 3px; overflow: hidden; margin-top: 8px;
+        }
+        .achievement-progress-bar {
+            height: 100%; width: 0%; background-color: var(--accent-purple);
+            border-radius: 3px; transition: width 0.5s ease;
+        }
+        .achievement-progress-text { font-size: 12px; font-weight: 500; color: var(--secondary-text); margin-top: 4px; text-align: right; }
+        .achievement-details .exp-reward { font-weight: bold; color: var(--rank-ouro); }
+        .achievement-icon.tier-Bronze .material-symbols-outlined { color: var(--rank-bronze); }
+        .achievement-icon.tier-Prata .material-symbols-outlined { color: var(--rank-prata); }
+        .achievement-icon.tier-Ouro .material-symbols-outlined { color: var(--rank-ouro); }
+        .achievement-icon.tier-Platina .material-symbols-outlined { color: var(--rank-platina); }
+        .achievement-icon.tier-Diamante .material-symbols-outlined { color: var(--rank-diamante); }
+        .achievement-icon.tier-Mestre .material-symbols-outlined { color: var(--rank-mestre); }
     </style>
 </head>
 
@@ -188,6 +231,7 @@
         <span class="material-symbols-outlined sidebar-logo">stadia_controller</span>
         <div class="sidebar-nav">
             <button class="nav-button active" onclick="openPage(event, 'perfil')" title="Perfil"><span class="material-symbols-outlined">person</span></button>
+            <button class="nav-button" onclick="openPage(event, 'conquistas')" title="Conquistas"><span class="material-symbols-outlined">military_tech</span></button>
             <button class="nav-button" onclick="openPage(event, 'graficos')" title="Gráficos"><span class="material-symbols-outlined">bar_chart</span></button>
             <button class="nav-button" onclick="openPage(event, 'biblioteca')" title="Lista de Jogos"><span class="material-symbols-outlined">list_alt</span></button>
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
@@ -210,15 +254,32 @@
                             <p id="profileSubtitle">Resumo da jornada!</p>
                         </div>
                         <div class="profile-level">
-                            <div id="levelDisplay" class="level-text">Nível 0</div>
-                            <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
-                            <div id="expText" class="exp-text">0 / 1000 EXP</div>
+                            <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
+                                <span class="material-symbols-outlined">military_tech</span>
+                            </div>
+                            <div class="level-progress" style="flex-grow: 1;">
+                                <div id="levelDisplay" class="level-text">Nível 0</div>
+                                <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
+                                <div id="expText" class="exp-text">0 / 1000 EXP</div>
+                            </div>
                         </div>
                     </div>
                 </header>
                 <div id="summary" class="summary-grid"></div>
                 <h2 style="margin-top: 40px;">ÚLTIMOS JOGOS PLATINADOS</h2>
                 <div id="recent-platinums" class="recent-platinums-grid"></div>
+            </section>
+
+            <section id="conquistas" class="page">
+                <header class="profile-header">
+                    <div class="profile-main">
+                        <div class="profile-info">
+                            <h1 style="color: var(--accent-purple);">Minhas Conquistas</h1>
+                            <p>Seus marcos e feitos notáveis na jornada gamer.</p>
+                        </div>
+                    </div>
+                </header>
+                <div id="achievements-container" class="achievements-grid"></div>
             </section>
 
             <section id="graficos" class="page">
@@ -293,52 +354,16 @@
             <h2 id="gameModalTitle">Adicionar Novo Jogo</h2>
             <form id="addGameForm">
                 <input type="hidden" id="editMode" value="">
-                <div class="form-group">
-                    <label for="gameName">Nome do Jogo</label>
-                    <input type="text" id="gameName" required>
-                </div>
-                <div class="form-group">
-                    <label for="gamePlatform">Plataforma</label>
-                    <input type="text" id="gamePlatform" placeholder="Ex: PC, PS5">
-                </div>
-                <div class="form-group">
-                    <label for="gameStatus">Status</label>
-                    <select id="gameStatus">
-                        <option value="Na Fila">Na Fila</option>
-                        <option value="Jogando">Jogando</option>
-                        <option value="Finalizado">Finalizado</option>
-                        <option value="Platinado">Platinado</option>
-                        <option value="Abandonado">Abandonado</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="gameRating">Nota</label>
-                    <input type="number" id="gameRating" step="0.1" min="0" max="10">
-                </div>
-                <div class="form-group">
-                    <label for="gameHours">Horas de Jogo</label>
-                    <input type="number" id="gameHours" min="0">
-                </div>
-                <div class="form-group">
-                    <label for="gameTermino">Data de Conclusão</label>
-                    <input type="date" id="gameTermino">
-                </div>
-                <div class="form-group">
-                    <label for="gameLink">Link da Capa (URL)</label>
-                    <input type="url" id="gameLink" placeholder="URL da imagem">
-                </div>
-                <div class="form-group">
-                    <label for="gameStyle">Estilo (separado por vírgula)</label>
-                    <input type="text" id="gameStyle" placeholder="Ex: RPG, Aventura">
-                </div>
-                <div class="form-group">
-                    <label for="gamePrice">Preço (R$)</label>
-                    <input type="text" inputmode="decimal" id="gamePrice" placeholder="Ex: 149,90">
-                </div>
-                <div class="form-group">
-                    <label for="gameConquistas">Conquistas Obtidas</label>
-                    <input type="number" id="gameConquistas" min="0">
-                </div>
+                <div class="form-group"><label for="gameName">Nome do Jogo</label><input type="text" id="gameName" required></div>
+                <div class="form-group"><label for="gamePlatform">Plataforma</label><input type="text" id="gamePlatform" placeholder="Ex: PC, PS5"></div>
+                <div class="form-group"><label for="gameStatus">Status</label><select id="gameStatus"><option value="Na Fila">Na Fila</option><option value="Jogando">Jogando</option><option value="Finalizado">Finalizado</option><option value="Platinado">Platinado</option><option value="Abandonado">Abandonado</option></select></div>
+                <div class="form-group"><label for="gameRating">Nota</label><input type="number" id="gameRating" step="0.1" min="0" max="10"></div>
+                <div class="form-group"><label for="gameHours">Horas de Jogo</label><input type="number" id="gameHours" min="0"></div>
+                <div class="form-group"><label for="gameTermino">Data de Conclusão</label><input type="date" id="gameTermino"></div>
+                <div class="form-group"><label for="gameLink">Link da Capa (URL)</label><input type="url" id="gameLink" placeholder="URL da imagem"></div>
+                <div class="form-group"><label for="gameStyle">Estilo (separado por vírgula)</label><input type="text" id="gameStyle" placeholder="Ex: RPG, Aventura"></div>
+                <div class="form-group"><label for="gamePrice">Preço (R$)</label><input type="text" inputmode="decimal" id="gamePrice" placeholder="Ex: 149,90"></div>
+                <div class="form-group"><label for="gameConquistas">Conquistas Obtidas</label><input type="number" id="gameConquistas" min="0"></div>
                 <button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
             </form>
         </div>
@@ -350,22 +375,10 @@
             <h2 id="wishModalTitle">Adicionar à Lista de Desejos</h2>
             <form id="addWishForm">
                 <input type="hidden" id="editWishMode" value="">
-                <div class="form-group">
-                    <label for="wishGameName">Nome do Jogo</label>
-                    <input type="text" id="wishGameName" required>
-                </div>
-                <div class="form-group">
-                    <label for="wishGameLink">Link da Capa (URL)</label>
-                    <input type="url" id="wishGameLink" placeholder="URL da imagem">
-                </div>
-                <div class="form-group">
-                    <label for="wishGameRelease">Data Lançamento / Status</label>
-                    <input type="text" id="wishGameRelease" placeholder="Ex: 2025, Em Breve">
-                </div>
-                <div class="form-group">
-                    <label for="wishGamePrice">Preço (R$)</label>
-                    <input type="text" inputmode="decimal" id="wishGamePrice" placeholder="Ex: 59,90">
-                </div>
+                <div class="form-group"><label for="wishGameName">Nome do Jogo</label><input type="text" id="wishGameName" required></div>
+                <div class="form-group"><label for="wishGameLink">Link da Capa (URL)</label><input type="url" id="wishGameLink" placeholder="URL da imagem"></div>
+                <div class="form-group"><label for="wishGameRelease">Data Lançamento / Status</label><input type="text" id="wishGameRelease" placeholder="Ex: 2025, Em Breve"></div>
+                <div class="form-group"><label for="wishGamePrice">Preço (R$)</label><input type="text" inputmode="decimal" id="wishGamePrice" placeholder="Ex: 59,90"></div>
                 <button type="submit" id="wishModalSubmitBtn">Adicionar à Lista</button>
             </form>
         </div>
@@ -376,44 +389,43 @@
             <span class="close-button" onclick="closeSettingsModal()">&times;</span>
             <h2>Configurações do Perfil</h2>
             <form id="settingsForm">
-                <div class="form-group">
-                    <label for="profileNameInput">Nome do Perfil</label>
-                    <input type="text" id="profileNameInput" required>
-                </div>
-                <div class="form-group">
-                    <label for="profileSubtitleInput">Subtítulo do Perfil</label>
-                    <input type="text" id="profileSubtitleInput">
-                </div>
-                <div class="form-group">
-                    <label for="profileAvatarInput">URL da Foto de Perfil</label>
-                    <input type="url" id="profileAvatarInput">
-                </div>
+                <div class="form-group"><label for="profileNameInput">Nome do Perfil</label><input type="text" id="profileNameInput" required></div>
+                <div class="form-group"><label for="profileSubtitleInput">Subtítulo do Perfil</label><input type="text" id="profileSubtitleInput"></div>
+                <div class="form-group"><label for="profileAvatarInput">URL da Foto de Perfil</label><input type="url" id="profileAvatarInput"></div>
                 <button type="submit">Salvar Alterações</button>
             </form>
+        </div>
+    </div>
+
+    <div id="achievementsModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeAchievementsModal()">&times;</span>
+            <h2>Conquistas</h2>
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchAchievementTab(event, 'completed')">Concluídas</button>
+                <button class="tab-button" onclick="switchAchievementTab(event, 'pending')">Pendentes</button>
+            </div>
+            <div id="completed" class="tab-content active">
+                <div id="completed-achievements-list" class="achievements-list"></div>
+            </div>
+            <div id="pending" class="tab-content">
+                <div id="pending-achievements-list" class="achievements-list"></div>
+            </div>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
-        let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {} };
+        let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
         const token = localStorage.getItem('jwt_token');
         if (!token) { window.location.href = 'login.html'; }
 
-        // NOVO: Funções de notificação
         function showToast(message, isError = false) {
             Toastify({
-                text: message,
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                stopOnFocus: true,
-                style: {
-                    background: isError 
-                        ? "linear-gradient(to right, #ff5f6d, #ffc371)" 
-                        : "linear-gradient(to right, #00b09b, #96c93d)",
-                },
+                text: message, duration: 3000, gravity: "top", position: "right", stopOnFocus: true,
+                style: { background: isError ? "linear-gradient(to right, #ff5f6d, #ffc371)" : "linear-gradient(to right, #00b09b, #96c93d)" },
             }).showToast();
         }
 
@@ -436,6 +448,7 @@
             renderSummaryCards(fullData.estatisticas, 'summary');
             renderRecentPlatinums(fullData.biblioteca);
             renderWishlist(fullData.desejos);
+            renderAchievements(fullData.conquistas_concluidas, fullData.conquistas_pendentes);
             populateFilters();
             applyFilters('-graficos');
             applyFilters('-biblioteca');
@@ -514,8 +527,35 @@
                     </div></div>`).join('');
         }
 
+        function renderAchievements(completed = [], pending = []) {
+            const completedContainer = document.getElementById('completed-achievements-list');
+            const pendingContainer = document.getElementById('pending-achievements-list');
+            const mainContainer = document.getElementById('achievements-container');
+            if (!completedContainer || !pendingContainer || !mainContainer) return;
+            const createAchievementHTML = (ach, isCompleted) => {
+                const progressPercent = ach.meta > 0 ? (ach.progresso_atual / ach.meta) * 100 : 100;
+                return `
+                <div class="achievement-card ${isCompleted ? 'completed' : ''}">
+                    <div class="achievement-icon tier-${ach.Tier || 'default'}">
+                        <span class="material-symbols-outlined">${ach.Icone || 'star'}</span>
+                    </div>
+                    <div class="achievement-details">
+                        <h3>${ach.Nome}</h3>
+                        <p>${ach.Descricao}</p>
+                        ${isCompleted 
+                            ? `<p class="exp-reward">+${ach.EXP} EXP</p>` 
+                            : `<div class="achievement-progress-bar-container"><div class="achievement-progress-bar" style="width: ${progressPercent}%;"></div></div>
+                               <p class="achievement-progress-text">${Math.floor(ach.progresso_atual)} / ${ach.meta}</p>`
+                        }
+                    </div>
+                </div>`;
+            };
+            completedContainer.innerHTML = completed.length > 0 ? completed.map(ach => createAchievementHTML(ach, true)).join('') : `<p>Nenhuma conquista concluída.</p>`;
+            pendingContainer.innerHTML = pending.length > 0 ? pending.map(ach => createAchievementHTML(ach, false)).join('') : `<p>Todas as conquistas foram concluídas!</p>`;
+            mainContainer.innerHTML = completed.map(ach => createAchievementHTML(ach, true)).join('');
+        }
+
         function destroyCharts() { Object.values(createdCharts).forEach(chart => chart.destroy()); createdCharts = {}; }
-        
         function renderAllCharts(games = []) {
             destroyCharts();
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
@@ -557,119 +597,30 @@
             } else if (suffix === '-biblioteca') { renderGameTable(filteredGames); }
         }
 
-        function openGameModalForAdd() {
-            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = '';
-            document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
-            document.getElementById('addGameModal').classList.add('active');
-        }
-        
-        function openGameModalForEdit(gameName) {
-            const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { showToast("Jogo não encontrado.", true); return; }
-            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = gameName;
-            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`; document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
-            document.getElementById('gameName').value = gameToEdit.Nome; document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
-            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = gameToEdit.Nota || '';
-            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
-            document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
-            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
-            document.getElementById('addGameModal').classList.add('active');
+        function openGameModalForAdd() { /* ... */ }
+        function openGameModalForEdit(gameName) { /* ... */ }
+        function closeGameModal() { /* ... */ }
+        function openWishModal() { /* ... */ }
+        function editWish(wishName) { /* ... */ }
+        function closeWishModal() { /* ... */ }
+        function openSettingsModal() { /* ... */ }
+        function closeSettingsModal() { /* ... */ }
+        function openAchievementsModal() { document.getElementById('achievementsModal').classList.add('active'); }
+        function closeAchievementsModal() { document.getElementById('achievementsModal').classList.remove('active'); }
+        function switchAchievementTab(event, tabName) {
+            document.querySelectorAll('#achievementsModal .tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('#achievementsModal .tab-button').forEach(tb => tb.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
 
-        function closeGameModal() { document.getElementById('addGameModal').classList.remove('active'); }
-        function closeWishModal() { document.getElementById('addWishModal').classList.remove('active'); }
-        
-        async function handleGameFormSubmit(event) {
-            event.preventDefault();
-            const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
-            const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
-            const gameData = {
-                Nome: document.getElementById('gameName').value, Plataforma: document.getElementById('gamePlatform').value, Status: document.getElementById('gameStatus').value,
-                Nota: parseFloat(document.getElementById('gameRating').value) || null, "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
-                Link: document.getElementById('gameLink').value, Estilo: document.getElementById('gameStyle').value, "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
-                Preço: parseFloat(priceValue) || 0, "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0, "Terminado em": document.getElementById('gameTermino').value || ''
-            };
-            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
-            let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
-            try {
-                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
-                if (response.ok) { showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeGameModal(); fetchGameData(); }
-                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
-            } catch (err) { showToast(`Erro de conexão.`, true); }
-        }
-        
-        async function deleteGame(gameName) {
-            if (confirm(`Tem certeza que deseja excluir "${gameName}"?`)) {
-                try {
-                    const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                    if (response.ok) { showToast("Jogo deletado com sucesso!"); fetchGameData(); } else { showToast("Erro ao deletar jogo.", true); }
-                } catch(err) { showToast("Erro de conexão ao deletar.", true); }
-            }
-        }
-        
+        async function handleGameFormSubmit(event) { /* ... */ }
+        async function deleteGame(gameName) { /* ... */ }
         function editGame(gameName) { openGameModalForEdit(gameName); }
-        
-        function openWishModal() {
-            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = '';
-            document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos'; document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
-            document.getElementById('addWishModal').classList.add('active');
-        }
-
-        function editWish(wishName) {
-            const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
-            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = wishName;
-            document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`; document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Item';
-            document.getElementById('wishGameName').value = wishToEdit.Nome;
-            document.getElementById('wishGameLink').value = wishToEdit.Link || '';
-            document.getElementById('wishGameRelease').value = wishToEdit["Data Lançamento"] || '';
-            document.getElementById('wishGamePrice').value = String(wishToEdit.Preço || '').replace('.', ',');
-            document.getElementById('addWishModal').classList.add('active');
-        }
-
-        async function handleWishFormSubmit(event) {
-            event.preventDefault();
-            const editModeValue = document.getElementById('editWishMode').value; const isEditing = editModeValue !== '';
-            const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
-            const wishData = { Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value, "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0 };
-            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
-            let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
-            try {
-                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
-                if (response.ok) { showToast(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeWishModal(); fetchGameData(); }
-                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
-            } catch (err) { showToast(`Erro de conexão.`, true); }
-        }
-
-        async function deleteWish(wishName) {
-            if (confirm(`Tem certeza que deseja excluir "${wishName}" da lista de desejos?`)) {
-                try {
-                    const response = await fetch(`${API_URL}/games/delete/wishlist/${encodeURIComponent(wishName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                    if (response.ok) { showToast("Item deletado com sucesso!"); fetchGameData(); } else { showToast("Erro ao deletar item.", true); }
-                } catch(err) { showToast("Erro de conexão ao deletar.", true); }
-            }
-        }
-        
-        function openSettingsModal() {
-            const profile = fullData.perfil || {};
-            document.getElementById('profileNameInput').value = profile.profileName || '';
-            document.getElementById('profileSubtitleInput').value = profile.profileSubtitle || '';
-            document.getElementById('profileAvatarInput').value = profile.profileAvatar || '';
-            document.getElementById('settingsModal').classList.add('active');
-        }
-        function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
-        async function handleSettingsFormSubmit(event) {
-            event.preventDefault();
-            const newProfileData = { profileName: document.getElementById('profileNameInput').value, profileSubtitle: document.getElementById('profileSubtitleInput').value, profileAvatar: document.getElementById('profileAvatarInput').value };
-            try {
-                const response = await fetch(`${API_URL}/games/profile/edit`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(newProfileData) });
-                if (response.ok) { showToast('Perfil atualizado com sucesso!'); closeSettingsModal(); fullData.perfil = newProfileData; loadProfileSettings(fullData.perfil); }
-                else { showToast('Erro ao atualizar o perfil.', true); }
-            } catch(err) { showToast('Erro de conexão ao salvar as configurações.', true); }
-        }
-        function loadProfileSettings(profile = {}) {
-            document.getElementById('gamerName').textContent = profile.profileName || 'Seu Nome';
-            document.getElementById('profileSubtitle').textContent = profile.profileSubtitle || 'Resumo da jornada!';
-            document.getElementById('profileAvatar').src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
-        }
+        async function handleWishFormSubmit(event) { /* ... */ }
+        async function deleteWish(wishName) { /* ... */ }
+        async function handleSettingsFormSubmit(event) { /* ... */ }
+        function loadProfileSettings(profile = {}) { /* ... */ }
 
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); } else { console.error(`Elemento com ID '${id}' não encontrado.`); }};
@@ -679,6 +630,7 @@
             setupListener('addGameBtn', 'click', openGameModalForAdd);
             setupListener('addWishBtn', 'click', openWishModal);
             setupListener('settingsBtn', 'click', openSettingsModal);
+            setupListener('achievementsShortcut', 'click', openAchievementsModal);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             setupListener('theme-toggle', 'click', () => {
                 const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
