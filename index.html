@@ -337,6 +337,29 @@
             color: var(--secondary-text);
             font-weight: 500;
         }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 48px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--secondary-text);
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--primary-text);
+        }
+
+        .section-header .material-symbols-outlined {
+            font-size: 24px;
+            color: var(--accent-purple);
+        }
         
     </style>
 </head>
@@ -381,7 +404,10 @@
                     </div>
                 </header>
                 <div id="summary" class="summary-grid"></div>
-                <h2 style="margin-top: 40px;">ÚLTIMOS JOGOS PLATINADOS</h2>
+                <div class="section-header">
+                    <span class="material-symbols-outlined">military_tech</span>
+                    <h2>Últimos Jogos Platinados</h2>
+                </div>
                 <div id="recent-platinums" class="recent-platinums-grid"></div>
             </section>
 
@@ -1123,6 +1149,7 @@
 </script>
 </body>
 </html>
+
 
 
 
