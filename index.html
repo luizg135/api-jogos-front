@@ -268,6 +268,75 @@
         }
         .search-result-info span { display: block; font-size: 14px; font-weight: 500; }
         .search-result-info small { font-size: 12px; color: var(--secondary-text); margin-top: 4px; }
+
+        .platinum-card {
+            position: relative; /* Essencial para o overlay */
+            aspect-ratio: 3 / 4; /* Proporção mais vertical */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .platinum-card:hover {
+            box-shadow: 0 8px 30px rgba(147, 112, 219, 0.4); /* Efeito de brilho roxo */
+        }
+
+        .platinum-card img {
+            width: 100%;
+            height: 100%; /* Ocupa todo o card */
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .platinum-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            border-radius: 0 0 12px 12px;
+            background: linear-gradient(to top, rgba(16, 17, 22, 0.9) 20%, transparent);
+            transition: all 0.3s ease;
+        }
+
+        .platinum-card:hover .platinum-overlay {
+            background: linear-gradient(to top, rgba(16, 17, 22, 1) 40%, transparent);
+        }
+
+        .platinum-info {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+        }
+
+        .platinum-trophy {
+            font-size: 36px !important;
+            color: var(--rank-platina);
+            filter: drop-shadow(0 0 8px var(--rank-platina));
+        }
+
+        .platinum-details {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .platinum-title {
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .platinum-date {
+            font-size: 12px;
+            color: var(--secondary-text);
+            font-weight: 500;
+        }
         
     </style>
 </head>
@@ -612,9 +681,37 @@
         }
 
         function renderRecentPlatinums(library = []) {
-            const container = document.getElementById('recent-platinums'); if (!container) return;
-            const platinados = library.filter(g => g['Platinado?'] === 'Sim' && g.Link).sort((a, b) => new Date(b['Terminado em']) - new Date(a['Terminado em'])).slice(0, 5);
-            container.innerHTML = platinados.length === 0 ? `<p style="color: var(--secondary-text);">Nenhum jogo platinado com imagem encontrada.</p>` : platinados.map(g => `<div class="platinum-card" title="${g.Nome}"><img src="${g.Link}" alt="${g.Nome}"><div class="game-title">${g.Nome}</div></div>`).join('');
+            const container = document.getElementById('recent-platinums');
+            if (!container) return;
+
+            const platinados = library.filter(g => g['Platinado?'] === 'Sim' && g.Link && g['Terminado em'])
+                                      .sort((a, b) => new Date(b['Terminado em']) - new Date(a['Terminado em']))
+                                      .slice(0, 5);
+
+            if (platinados.length === 0) {
+                container.innerHTML = `<p style="color: var(--secondary-text); grid-column: 1 / -1;">Nenhum jogo platinado com imagem e data encontrado.</p>`;
+                return;
+            }
+
+            container.innerHTML = platinados.map(game => {
+                const dataPlatina = new Date(game['Terminado em']).toLocaleDateString('pt-BR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric'
+                });
+
+                return `
+                    <div class="platinum-card" title="${game.Nome}">
+                        <img src="${game.Link}" alt="${game.Nome}">
+                        <div class="platinum-overlay"></div>
+                        <div class="platinum-info">
+                            <span class="material-symbols-outlined platinum-trophy">military_tech</span>
+                            <div class="platinum-details">
+                                <span class="platinum-title">${game.Nome}</span>
+                                <span class="platinum-date">${dataPlatina}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
         
         function renderGameTable(games = []) {
@@ -750,12 +847,34 @@
         }
         
         async function deleteGame(gameName) {
-            if (confirm(`Tem certeza que deseja excluir "${gameName}"?`)) {
-                try {
-                    const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                    if (response.ok) { showToast("Jogo deletado com sucesso!"); fetchGameData(); } else { showToast("Erro ao deletar jogo.", true); }
-                } catch(err) { showToast("Erro de conexão ao deletar.", true); }
-            }
+            Swal.fire({
+                title: 'Deseja Excluir?',
+                text: `O jogo "${gameName}" será removido permanentemente da sua biblioteca.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar',
+                background: 'var(--surface-color)',
+                color: 'var(--primary-text)',
+                confirmButtonColor: '#cb2d3e' // Vermelho para ação de perigo
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (response.ok) {
+                            showToast("Jogo deletado com sucesso!");
+                            fetchGameData();
+                        } else {
+                            showToast("Erro ao deletar jogo.", true);
+                        }
+                    } catch(err) {
+                        showToast("Erro de conexão ao deletar.", true);
+                    }
+                }
+            });
         }
         
         function editGame(gameName) { openGameModalForEdit(gameName); }
@@ -1004,6 +1123,7 @@
 </script>
 </body>
 </html>
+
 
 
 
