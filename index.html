@@ -14,6 +14,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --rank-bronze: #CD7F32; --rank-prata: #C0C0C0; --rank-ouro: #FFD700;
@@ -539,8 +541,17 @@
 
         function showToast(message, isError = false) {
             Toastify({
-                text: message, duration: 3000, gravity: "top", position: "right", stopOnFocus: true,
-                style: { background: isError ? "linear-gradient(to right, var(--accent-purple), #2a5298)" : "linear-gradient(to right, #00b09b, #96c93d)" },
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                style: {
+                    // Se for erro, usa um gradiente de vermelho. Se for sucesso, usa o novo gradiente roxo/azul.
+                    background: isError 
+                        ? "linear-gradient(to right, #cb2d3e, #ef473a)" 
+                        : "linear-gradient(to right, var(--accent-purple), #2a5298)"
+                },
             }).showToast();
         }
 
@@ -759,22 +770,34 @@
         }
         
         async function purchaseWish(wishName) {
-            if (confirm(`Tem certeza que deseja marcar "${wishName}" como comprado? Ele será removido da lista.`)) {
-                try {
-                    const response = await fetch(`${API_URL}/games/wishlist/purchase/${encodeURIComponent(wishName)}`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (response.ok) {
-                        showToast("Jogo marcado como comprado!");
-                        fetchGameData();
-                    } else {
-                        showToast("Erro ao marcar como comprado.", true);
+            Swal.fire({
+                title: 'Marcar como Comprado?',
+                text: `O jogo "${wishName}" será removido da sua lista de desejos.`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, comprei!',
+                cancelButtonText: 'Cancelar',
+                background: 'var(--surface-color)', // Cor de fundo do seu tema
+                color: 'var(--primary-text)',      // Cor do texto do seu tema
+                confirmButtonColor: 'var(--accent-purple)' // Cor do botão do seu tema
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`${API_URL}/games/wishlist/purchase/${encodeURIComponent(wishName)}`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (response.ok) {
+                            showToast("Jogo marcado como comprado!");
+                            fetchGameData(); // Atualiza a lista para remover o item
+                        } else {
+                            showToast("Erro ao marcar como comprado.", true);
+                        }
+                    } catch(err) {
+                        showToast("Erro de conexão.", true);
                     }
-                } catch(err) {
-                    showToast("Erro de conexão.", true);
                 }
-            }
+            });
         }
         
         function openSettingsModal() {
@@ -926,6 +949,7 @@
 </script>
 </body>
 </html>
+
 
 
 
