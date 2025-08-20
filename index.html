@@ -524,13 +524,20 @@
         </div>
     </div>
 
-    <script>
+// COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
+
+        // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
         const token = localStorage.getItem('jwt_token');
         if (!token) { window.location.href = 'login.html'; }
+
+        let searchTimeout;
+        let wishSearchTimeout;
+
+        // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
         function showToast(message, isError = false) {
             Toastify({
@@ -609,14 +616,7 @@
             tableContainer.style.display = 'block'; noResults.style.display = 'none';
             games.forEach(game => {
                 const isPlatinado = game['Platinado?'] === 'Sim';
-                tbody.innerHTML += `<tr class="${isPlatinado ? 'platinado-row' : ''}">
-                    <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
-                    <td>${game.Plataforma || '-'}</td><td>${game.Status || '-'}</td><td class="nota-cell">${game.Nota || '-'}</td>
-                    <td>${game['Tempo de Jogo'] || 0}h</td>
-                    <td><div class="action-buttons">
-                        <button class="action-button" onclick="editGame('${game.Nome}')"><span class="material-symbols-outlined">edit</span></button>
-                        <button class="action-button" onclick="deleteGame('${game.Nome}')"><span class="material-symbols-outlined">delete</span></button>
-                    </div></td></tr>`;
+                tbody.innerHTML += `<tr class="${isPlatinado ? 'platinado-row' : ''}"><td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td><td>${game.Plataforma || '-'}</td><td>${game.Status || '-'}</td><td class="nota-cell">${game.Nota || '-'}</td><td>${game['Tempo de Jogo'] || 0}h</td><td><div class="action-buttons"><button class="action-button" onclick="editGame('${game.Nome.replace(/'/g, "\\'")}')"><span class="material-symbols-outlined">edit</span></button><button class="action-button" onclick="deleteGame('${game.Nome.replace(/'/g, "\\'")}')"><span class="material-symbols-outlined">delete</span></button></div></td></tr>`;
             });
         }
         
@@ -624,17 +624,7 @@
             const container = document.getElementById('wishlist-container'); if (!container) return;
             if (wishlist.length === 0) { container.innerHTML = `<p style="color: var(--secondary-text);">Sua lista de desejos está vazia.</p>`; return; }
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            container.innerHTML = wishlist.map(game => `
-                <div class="wish-card">
-                    <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" class="wish-card-img" alt="${game.Nome}">
-                    <div class="wish-card-info">
-                        <h3 class="wish-card-title">${game.Nome}</h3>
-                        <div class="wish-card-details"><span>${game['Data Lançamento']}</span><span class="wish-card-price">${formatCurrency(game.Preço)}</span></div>
-                    </div>
-                    <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
-                        <button class="action-button" onclick="editWish('${game.Nome}')" title="Editar"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></button>
-                        <button class="action-button" onclick="deleteWish('${game.Nome}')" title="Excluir"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button>
-                    </div></div>`).join('');
+            container.innerHTML = wishlist.map(game => `<div class="wish-card"><img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" class="wish-card-img" alt="${game.Nome}"><div class="wish-card-info"><h3 class="wish-card-title">${game.Nome}</h3><div class="wish-card-details"><span>${game['Data Lançamento']}</span><span class="wish-card-price">${formatCurrency(game.Preço)}</span></div></div><div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;"><button class="action-button" onclick="editWish('${game.Nome.replace(/'/g, "\\'")}')" title="Editar"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></button><button class="action-button" onclick="deleteWish('${game.Nome.replace(/'/g, "\\'")}')" title="Excluir"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button></div></div>`).join('');
         }
 
         function renderAchievements(completed = [], pending = []) {
@@ -644,21 +634,7 @@
             if (!completedContainer || !pendingContainer || !mainContainer) return;
             const createAchievementHTML = (ach, isCompleted) => {
                 const progressPercent = ach.meta > 0 ? (ach.progresso_atual / ach.meta) * 100 : 100;
-                return `
-                <div class="achievement-card ${isCompleted ? 'completed' : ''}">
-                    <div class="achievement-icon tier-${ach.Tier || 'default'}">
-                        <span class="material-symbols-outlined">${ach.Icone || 'star'}</span>
-                    </div>
-                    <div class="achievement-details">
-                        <h3>${ach.Nome}</h3>
-                        <p>${ach.Descricao}</p>
-                        ${isCompleted 
-                            ? `<p class="exp-reward">+${ach.EXP} EXP</p>` 
-                            : `<div class="achievement-progress-bar-container"><div class="achievement-progress-bar" style="width: ${progressPercent}%;"></div></div>
-                               <p class="achievement-progress-text">${Math.floor(ach.progresso_atual)} / ${ach.meta}</p>`
-                        }
-                    </div>
-                </div>`;
+                return `<div class="achievement-card ${isCompleted ? 'completed' : ''}"><div class="achievement-icon tier-${ach.Tier || 'default'}"><span class="material-symbols-outlined">${ach.Icone || 'star'}</span></div><div class="achievement-details"><h3>${ach.Nome}</h3><p>${ach.Descricao}</p>${isCompleted ? `<p class="exp-reward">+${ach.EXP} EXP</p>` : `<div class="achievement-progress-bar-container"><div class="achievement-progress-bar" style="width: ${progressPercent}%;"></div></div><p class="achievement-progress-text">${Math.floor(ach.progresso_atual)} / ${ach.meta}</p>`}</div></div>`;
             };
             completedContainer.innerHTML = completed.length > 0 ? completed.map(ach => createAchievementHTML(ach, true)).join('') : `<p>Nenhuma conquista concluída.</p>`;
             pendingContainer.innerHTML = pending.length > 0 ? pending.map(ach => createAchievementHTML(ach, false)).join('') : `<p>Todas as conquistas foram concluídas!</p>`;
@@ -666,6 +642,7 @@
         }
 
         function destroyCharts() { Object.values(createdCharts).forEach(chart => chart.destroy()); createdCharts = {}; }
+        
         function renderAllCharts(games = []) {
             destroyCharts();
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
@@ -696,22 +673,12 @@
             const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) && (status !== 'all' ? g.Status === status : true) && (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true) && (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                const stats = {
-                    total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0),
-                    custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0),
-                    media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A',
-                    total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length,
-                    total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0)
-                };
+                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
                 renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
             } else if (suffix === '-biblioteca') { renderGameTable(filteredGames); }
         }
 
-        function openGameModalForAdd() {
-            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = '';
-            document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
-            document.getElementById('addGameModal').classList.add('active');
-        }
+        function openGameModalForAdd() { document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = ''; document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; document.getElementById('addGameModal').classList.add('active'); }
         
         function openGameModalForEdit(gameName) {
             const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { showToast("Jogo não encontrado.", true); return; }
@@ -732,12 +699,7 @@
             event.preventDefault();
             const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
             const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
-            const gameData = {
-                Nome: document.getElementById('gameName').value, Plataforma: document.getElementById('gamePlatform').value, Status: document.getElementById('gameStatus').value,
-                Nota: parseFloat(document.getElementById('gameRating').value) || null, "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
-                Link: document.getElementById('gameLink').value, Estilo: document.getElementById('gameStyle').value, "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
-                Preço: parseFloat(priceValue) || 0, "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0, "Terminado em": document.getElementById('gameTermino').value || ''
-            };
+            const gameData = { Nome: document.getElementById('gameName').value, Plataforma: document.getElementById('gamePlatform').value, Status: document.getElementById('gameStatus').value, Nota: parseFloat(document.getElementById('gameRating').value) || null, "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0, Link: document.getElementById('gameLink').value, Estilo: document.getElementById('gameStyle').value, "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não', Preço: parseFloat(priceValue) || 0, "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0, "Terminado em": document.getElementById('gameTermino').value || '' };
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
             try {
@@ -830,45 +792,19 @@
             event.currentTarget.classList.add('active');
         }
 
-        let searchTimeout; // Variável para controlar o tempo de digitação
-
+        // --- FUNÇÕES DA BUSCA API (BIBLIOTECA) ---
         async function handleSearch(query) {
             const resultsContainer = document.getElementById('searchResultsContainer');
-            if (query.length < 3) {
-                resultsContainer.innerHTML = '';
-                return;
-            }
-            const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
+            const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
             const games = await response.json();
-    
-            if (!games || games.length === 0) {
-                resultsContainer.innerHTML = '';
-                return;
-            }
-
+            if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
             const listHTML = games.map(game => {
                 const safeName = game.name.replace(/'/g, "\\'");
                 const safeStyles = game.styles.replace(/'/g, "\\'");
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-
-                return `
-                    <div class="search-result-item" 
-                         onclick="selectGame({
-                             name: '${safeName}', 
-                             background_image: '${game.background_image || ''}', 
-                             released_for_input: '${game.released_for_input || ''}',
-                             styles: '${safeStyles}'
-                         })">
-                        <img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.name}">
-                        <div class="search-result-info">
-                            <span>${game.name}</span>
-                            <small>Lançamento: ${year}</small>
-                        </div>
-                    </div>`;
+                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
-    
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
 
@@ -878,8 +814,39 @@
             document.getElementById('gameStyle').value = game.styles;
             document.getElementById('searchResultsContainer').innerHTML = '';
         }
+
+        // --- FUNÇÕES DA BUSCA API (WISHLIST) ---
+        async function handleWishSearch(query) {
+            const resultsContainer = document.getElementById('wishSearchResultsContainer');
+            if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
+            const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const games = await response.json();
+            if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
+            const listHTML = games.map(game => {
+                const safeName = game.name.replace(/'/g, "\\'");
+                const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
+                return `<div class="search-result-item" onclick="selectWishGame({ name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
+            }).join('');
+            resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
+        }
+
+        function selectWishGame(game) {
+            document.getElementById('wishGameName').value = game.name;
+            document.getElementById('wishGameLink').value = game.background_image;
+            if (game.released_for_input) {
+                const parts = game.released_for_input.split('-');
+                document.getElementById('wishGameRelease').value = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            } else {
+                document.getElementById('wishGameRelease').value = 'Data não informada';
+            }
+            document.getElementById('wishSearchResultsContainer').innerHTML = '';
+        }
+
+        // --- CÓDIGO PRINCIPAL QUE RODA QUANDO A PÁGINA CARREGA ---
         document.addEventListener('DOMContentLoaded', () => {
-            const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); } else { console.error(`Elemento com ID '${id}' não encontrado.`); }};
+            const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
+            
+            // Listeners de Forms e Botões
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
             setupListener('addWishForm', 'submit', handleWishFormSubmit);
             setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
@@ -893,6 +860,8 @@
                 const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
+            
+            // Listeners dos Filtros
             const setupFilterListeners = (suffix) => {
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => setupListener(id + suffix, 'input', () => applyFilters(suffix)));
                 const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
@@ -900,81 +869,43 @@
             };
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
-                const gameNameInput = document.getElementById('gameName');
-                if (gameNameInput) {
-                    gameNameInput.addEventListener('keyup', (event) => {
-                        clearTimeout(searchTimeout);
-                        searchTimeout = setTimeout(() => {
-                            handleSearch(event.target.value);
-                        }, 500); // Espera 0.5s após digitar para buscar
-                    });
-                }
-
-                document.addEventListener('click', function(event) {
-                    const searchContainer = document.getElementById('searchResultsContainer');
-                    const nameInput = document.getElementById('gameName');
-                    if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
-                        searchContainer.innerHTML = '';
-                    }
-                    const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
-                    const wishNameInput = document.getElementById('wishGameName');
-                    if (wishSearchContainer && !wishSearchContainer.contains(event.target) && event.target !== wishNameInput) {
-                        wishSearchContainer.innerHTML = '';
-                    }
-                });                    
-            let wishSearchTimeout;
-
-            async function handleWishSearch(query) {
-                const resultsContainer = document.getElementById('wishSearchResultsContainer');
-                if (query.length < 3) {
-                    resultsContainer.innerHTML = '';
-                    return;
-                }
-                const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-    });
-                const games = await response.json();
-    
-                if (!games || games.length === 0) {
-                    resultsContainer.innerHTML = '';
-                    return;
-    }
-
-                const listHTML = games.map(game => {
-                    const safeName = game.name.replace(/'/g, "\\'");
-                    const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-
-                    return `
-                        <div class="search-result-item" 
-                             onclick="selectWishGame({
-                                 name: '${safeName}', 
-                                 background_image: '${game.background_image || ''}', 
-                                 released_for_input: '${game.released_for_input || ''}'
-                             })">
-                            <img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.name}">
-                            <div class="search-result-info">
-                                <span>${game.name}</span>
-                                <small>Lançamento: ${year}</small>
-                            </div>
-                        </div>`;
-                }).join('');
-    
-                resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
+            
+            // ATIVAÇÃO DA BUSCA (BIBLIOTECA)
+            const gameNameInput = document.getElementById('gameName');
+            if (gameNameInput) {
+                gameNameInput.addEventListener('keyup', (event) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => { handleSearch(event.target.value); }, 500);
+                });
             }
 
-            function selectWishGame(game) {
-                document.getElementById('wishGameName').value = game.name;
-                document.getElementById('wishGameLink').value = game.background_image;
-                if (game.released_for_input) {
-                    const parts = game.released_for_input.split('-'); // [AAAA, MM, DD]
-                    document.getElementById('wishGameRelease').value = `${parts[2]}/${parts[1]}/${parts[0]}`;
-                } else {
-                    document.getElementById('wishGameRelease').value = 'Data não informada';
-                }
-                document.getElementById('wishSearchResultsContainer').innerHTML = ''; // Limpa os resultados
+            // ATIVAÇÃO DA BUSCA (WISHLIST)
+            const wishGameNameInput = document.getElementById('wishGameName');
+            if (wishGameNameInput) {
+                wishGameNameInput.addEventListener('keyup', (event) => {
+                    clearTimeout(wishSearchTimeout);
+                    wishSearchTimeout = setTimeout(() => { handleWishSearch(event.target.value); }, 500);
+                });
             }
+
+            // FECHA AS LISTAS DE BUSCA AO CLICAR FORA
+            document.addEventListener('click', function(event) {
+                const searchContainer = document.getElementById('searchResultsContainer');
+                const nameInput = document.getElementById('gameName');
+                if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
+                    searchContainer.innerHTML = '';
+                }
+
+                const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
+                const wishNameInput = document.getElementById('wishGameName');
+                if (wishSearchContainer && !wishSearchContainer.contains(event.target) && event.target !== wishNameInput) {
+                    wishSearchContainer.innerHTML = '';
+                }
+            });
+            
+            // Busca os dados iniciais do servidor
             fetchGameData();
         });
-    </script>
 </body>
 </html>
+
