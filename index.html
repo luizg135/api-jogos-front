@@ -624,7 +624,19 @@
             const container = document.getElementById('wishlist-container'); if (!container) return;
             if (wishlist.length === 0) { container.innerHTML = `<p style="color: var(--secondary-text);">Sua lista de desejos está vazia.</p>`; return; }
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            container.innerHTML = wishlist.map(game => `<div class="wish-card"><img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" class="wish-card-img" alt="${game.Nome}"><div class="wish-card-info"><h3 class="wish-card-title">${game.Nome}</h3><div class="wish-card-details"><span>${game['Data Lançamento']}</span><span class="wish-card-price">${formatCurrency(game.Preço)}</span></div></div><div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;"><button class="action-button" onclick="editWish('${game.Nome.replace(/'/g, "\\'")}')" title="Editar"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></button><button class="action-button" onclick="deleteWish('${game.Nome.replace(/'/g, "\\'")}')" title="Excluir"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button></div></div>`).join('');
+            container.innerHTML = wishlist.map(game => ` <div class="wish-card">
+        <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" class="wish-card-img" alt="${game.Nome}">
+        <div class="wish-card-info">
+            <h3 class="wish-card-title">${game.Nome}</h3>
+            <div class="wish-card-details"><span>${game['Data Lançamento']}</span><span class="wish-card-price">${formatCurrency(game.Preço)}</span></div>
+        </div>
+        <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
+            <button class="action-button" onclick="purchaseWish('${game.Nome.replace(/'/g, "\\'")}')" title="Marcar como Comprado"><span class="material-symbols-outlined" style="font-size: 18px;">shopping_cart_checkout</span></button>
+            <button class="action-button" onclick="editWish('${game.Nome.replace(/'/g, "\\'")}')" title="Editar"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></button>
+            <button class="action-button" onclick="deleteWish('${game.Nome.replace(/'/g, "\\'")}')" title="Excluir"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button>
+        </div>
+    </div>
+`).join('');
         }
 
         function renderAchievements(completed = [], pending = []) {
@@ -902,13 +914,31 @@
                     wishSearchContainer.innerHTML = '';
                 }
             });
+
+                async function purchaseWish(wishName) {
+                    if (confirm(`Tem certeza que deseja marcar "${wishName}" como comprado? Ele será removido da lista.`)) {
+                        try {
+                            const response = await fetch(`${API_URL}/games/wishlist/purchase/${encodeURIComponent(wishName)}`, {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            if (response.ok) {
+                                showToast("Jogo marcado como comprado!");
+                                fetchGameData(); // Atualiza a lista para remover o item
+                            } else {
+                                showToast("Erro ao marcar como comprado.", true);
+                            }
+                        } catch(err) {
+                            showToast("Erro de conexão.", true);
+                        }
+                    }            
             
-            // Busca os dados iniciais do servidor
             fetchGameData();
         });
 </script>
 </body>
 </html>
+
 
 
 
