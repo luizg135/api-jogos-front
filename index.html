@@ -791,37 +791,38 @@
             } catch (err) { showToast(`Erro de conexão.`, true); }
         }
 
-            async function deleteWish(wishName) {
-                Swal.fire({
-                    title: 'Deseja Remover?',
-                    text: `O item "${wishName}" será removido permanentemente da sua lista de desejos.`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sim, remover!',
-                    cancelButtonText: 'Cancelar',
-                    background: 'var(--surface-color)',
-                    color: 'var(--primary-text)',
-                    confirmButtonColor: '#cb2d3e' // Um tom de vermelho para indicar perigo
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        try {
-                            const response = await fetch(`${API_URL}/games/delete/wishlist/${encodeURIComponent(wishName)}`, {
-                                method: 'DELETE',
-                                headers: { 'Authorization': `Bearer ${token}` }
-                            });
+        async function deleteWish(wishName) {
+            Swal.fire({
+                title: 'Deseja Remover?',
+                text: `O item "${wishName}" será removido permanentemente.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, remover!',
+                cancelButtonText: 'Cancelar',
+                background: 'var(--surface-color)',
+                color: 'var(--primary-text)',
+                confirmButtonColor: '#cb2d3e' // Um tom de vermelho para perigo
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`${API_URL}/games/delete/wishlist/${encodeURIComponent(wishName)}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
 
-                            if (response.ok) {
-                                showToast("Item deletado com sucesso!");
-                                fetchGameData();
-                            } else {
-                                showToast("Erro ao deletar o item.", true);
-                            }
-                        } catch (err) {
-                            showToast("Erro de conexão.", true);
+                        if (response.ok) {
+                            showToast("Item deletado com sucesso!");
+                            fetchGameData();
+                        } else {
+                            const error = await response.json();
+                            showToast(error.message || "Erro ao deletar o item.", true);
                         }
+                    } catch (err) {
+                        showToast("Erro de conexão.", true);
                     }
-                });
-            }
+                }
+            });
+        }
         
         async function purchaseWish(wishName) {
             Swal.fire({
@@ -1003,6 +1004,7 @@
 </script>
 </body>
 </html>
+
 
 
 
