@@ -142,17 +142,81 @@
         .card-content { font-size: 24px; font-weight: 700; margin-top: 8px; }
         .recent-platinums-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 32px; }
         .platinum-card {
+            position: relative;
+            aspect-ratio: 3 / 4;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             background-color: var(--surface-color); border-radius: 12px;
             border: 1px solid var(--border-color); overflow: hidden; border-bottom: 3px solid transparent;
             transition: all 0.2s ease;
         }
-        .platinum-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .platinum-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
-        .platinum-card .game-title { padding: 12px; font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+
+        .platinum-card:hover {
+            box-shadow: 0 8px 30px rgba(147, 112, 219, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .platinum-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .platinum-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            border-radius: 0 0 12px 12px;
+            background: linear-gradient(to top, rgba(16, 17, 22, 0.9) 20%, transparent);
+            transition: all 0.3s ease;
+        }
+
+        .platinum-card:hover .platinum-overlay {
+            background: linear-gradient(to top, rgba(16, 17, 22, 1) 40%, transparent);
+        }
+
+        .platinum-info {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+        }
+
+        .platinum-trophy {
+            font-size: 36px !important;
+            color: var(--rank-platina);
+            filter: drop-shadow(0 0 8px var(--rank-platina));
+        }
+
+        .platinum-details {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .platinum-title {
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .platinum-date {
+            font-size: 12px;
+            color: var(--secondary-text);
+            font-weight: 500;
+        }
         .filter-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
         .filter-group { display: flex; flex-direction: column; }
         .filter-group label { font-size: 12px; font-weight: 500; color: var(--secondary-text); margin-bottom: 8px; }
-        .filter-group input, .filter-group select {
+        .filter-group input, .filter-group select, .filter-group button {
             width: 100%; background-color: var(--bg-color); color: var(--primary-text);
             border: 1px solid var(--border-color); padding: 10px 12px; border-radius: 8px; font-size: 14px;
         }
@@ -209,10 +273,14 @@
         .modal-overlay.active .modal-content { transform: scale(1); }
         .close-button { position: absolute; top: 16px; right: 24px; font-size: 28px; color: var(--secondary-text); cursor: pointer; }
         .form-group { margin-bottom: 16px; }
-        .modal-content form input, .modal-content form select {
+        .modal-content form input:not([type="hidden"]), .modal-content form select, .modal-content form textarea {
             width: 100%; padding: 10px 12px; border: 1px solid var(--border-color);
             background-color: var(--bg-color); color: var(--primary-text);
             border-radius: 8px; font-size: 14px;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
         .modal-content form button { 
             width: 100%; padding: 12px; background-color: var(--accent-purple); color: white; border: none; 
@@ -303,75 +371,6 @@
         }
         .search-result-info span { display: block; font-size: 14px; font-weight: 500; }
         .search-result-info small { font-size: 12px; color: var(--secondary-text); margin-top: 4px; }
-
-        .platinum-card {
-            position: relative;
-            aspect-ratio: 3 / 4;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .platinum-card:hover {
-            box-shadow: 0 8px 30px rgba(147, 112, 219, 0.4);
-        }
-
-        .platinum-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
-        }
-
-        .platinum-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50%;
-            border-radius: 0 0 12px 12px;
-            background: linear-gradient(to top, rgba(16, 17, 22, 0.9) 20%, transparent);
-            transition: all 0.3s ease;
-        }
-
-        .platinum-card:hover .platinum-overlay {
-            background: linear-gradient(to top, rgba(16, 17, 22, 1) 40%, transparent);
-        }
-
-        .platinum-info {
-            position: absolute;
-            bottom: 12px;
-            left: 12px;
-            right: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #fff;
-        }
-
-        .platinum-trophy {
-            font-size: 36px !important;
-            color: var(--rank-platina);
-            filter: drop-shadow(0 0 8px var(--rank-platina));
-        }
-
-        .platinum-details {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .platinum-title {
-            font-weight: 600;
-            font-size: 14px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        .platinum-date {
-            font-size: 12px;
-            color: var(--secondary-text);
-            font-weight: 500;
-        }
 
         .section-header {
             display: flex;
@@ -487,7 +486,6 @@
             filter: drop-shadow(0 0 5px var(--accent-purple));
         }
 
-        /* Estilos para o cabeçalho ordenável da tabela */
         .sortable-header {
             cursor: pointer;
             position: relative;
@@ -516,7 +514,6 @@
             font-size: 10px;
         }
         
-        /* Estilos para o novo modal de visualização de jogo */
         .game-details-modal-content {
             background-color: var(--surface-color);
             padding: 0;
@@ -618,7 +615,18 @@
         .metacritic-score.good { background-color: #6c3; }
         .metacritic-score.mixed { background-color: #fc3; }
         .metacritic-score.bad { background-color: #f33; }
-
+        .rating-score {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: black;
+            background-color: #7d8590;
+        }
+        .rating-score.good { background-color: #6c3; color: white; }
+        .rating-score.mixed { background-color: #fc3; }
+        .rating-score.bad { background-color: #f33; color: white; }
+        
         .game-details-description h3 {
             margin: 0 0 12px 0;
             font-size: 16px;
@@ -873,12 +881,12 @@
     <input type="number" id="gameConquistas" min="0">
 </div>
 
-<div class="form-group">
+<div class="form-group" style="display: none;">
     <label for="gameMetacritic">Metacritic</label>
     <input type="number" id="gameMetacritic" min="0" max="100">
 </div>
 
-<div class="form-group">
+<div class="form-group" style="display: none;">
     <label for="gameDescription">Descrição</label>
     <textarea id="gameDescription" rows="5" placeholder="Descrição do jogo..."></textarea>
 </div>
@@ -1011,8 +1019,8 @@
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
-        let currentSortKey = 'Nome'; // Coluna padrão para ordenação
-        let currentSortDirection = 'asc'; // Direção padrão
+        let currentSortKey = 'Nome';
+        let currentSortDirection = 'asc';
         const token = localStorage.getItem('jwt_token');
         if (!token) { window.location.href = 'login.html'; }
 
@@ -1121,7 +1129,6 @@
             }).join('');
         }
         
-        // --- FUNÇÃO CORRIGIDA ---
         function renderGameTable(games = []) {
             const tbody = document.getElementById('game-list-tbody');
             const noResults = document.getElementById('no-results-message');
@@ -1137,7 +1144,6 @@
                 return;
             }
 
-            // A linha que forçava a visibilidade foi removida daqui
             noResults.style.display = 'none';
             
             games.forEach(game => {
@@ -1496,7 +1502,23 @@
             document.getElementById('gameNameDetails').textContent = game.Nome;
             document.getElementById('gamePlatformDetails').textContent = game.Plataforma || 'Não informado';
             document.getElementById('gameStatusDetails').textContent = game.Status || 'Não informado';
-            document.getElementById('gameRatingDetails').textContent = game.Nota || 'N/A';
+            
+            const gameRatingDetails = document.getElementById('gameRatingDetails');
+            const gameRating = parseFloat(game.Nota);
+            gameRatingDetails.textContent = game.Nota || 'N/A';
+            gameRatingDetails.className = 'rating-score';
+            if (!isNaN(gameRating)) {
+                if (gameRating >= 8) {
+                    gameRatingDetails.classList.add('good');
+                } else if (gameRating >= 5) {
+                    gameRatingDetails.classList.add('mixed');
+                } else {
+                    gameRatingDetails.classList.add('bad');
+                }
+            } else {
+                gameRatingDetails.classList.add('mixed');
+            }
+            
             document.getElementById('gameHoursDetails').textContent = `${game['Tempo de Jogo'] || 0}h`;
             document.getElementById('gameStylesDetails').textContent = game.Estilo || 'Não informado';
             document.getElementById('gameAchievementsDetails').textContent = game['Conquistas Obtidas'] || 0;
@@ -1510,8 +1532,10 @@
                 gameMetacriticDetails.classList.add('good');
             } else if (metacriticScore >= 50) {
                 gameMetacriticDetails.classList.add('mixed');
-            } else {
+            } else if (metacriticScore > 0) {
                 gameMetacriticDetails.classList.add('bad');
+            } else {
+                gameMetacriticDetails.classList.add('mixed');
             }
             
             const coverArt = game.Link || 'https://i.imgur.com/Z0ebi8o.png';
@@ -1528,7 +1552,6 @@
             document.getElementById('gameDetailsModal').classList.remove('active');
         }
 
-        // --- FUNÇÕES DA BUSCA API (BIBLIOTECA) ---
         async function handleSearch(query) {
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
@@ -1551,7 +1574,6 @@
             document.getElementById('searchResultsContainer').innerHTML = '';
         }
 
-        // --- FUNÇÕES DA BUSCA API (WISHLIST) ---
         async function handleWishSearch(query) {
             const resultsContainer = document.getElementById('wishSearchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
@@ -1599,7 +1621,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
             
-            // Listeners de Forms e Botões
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
             setupListener('addWishForm', 'submit', handleWishFormSubmit);
             setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
@@ -1614,6 +1635,11 @@
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
+            setupListener('gameDetailsModal', 'click', (event) => {
+                if (event.target === event.currentTarget) {
+                    closeGameDetailsModal();
+                }
+            });
 
             document.querySelectorAll('.sortable-header').forEach(header => {
             header.addEventListener('click', () => {
