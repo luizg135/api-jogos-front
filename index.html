@@ -516,20 +516,7 @@
             content: '▼';
             font-size: 10px;
         }
-
-/* --- Game Detail Modal --- */
-#gameDetailModal .modal-content { max-width: 900px; }
-.game-detail { display:flex; gap:24px; align-items:flex-start; }
-.game-detail img { width:260px; height:360px; object-fit:cover; border-radius:12px; background:#010409; }
-.gd-header { display:flex; align-items:center; gap:12px; margin:0 0 8px; }
-.mc-badge { padding:4px 8px; border-radius:8px; font-weight:700; font-size:12px; }
-.mc-good { background:#2da44e; }
-.mc-mixed { background:#b88700; }
-.mc-bad  { background:#cb2d3e; }
-.gd-meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:8px; font-size:13px; color:var(--secondary-text); }
-.gd-actions { display:flex; gap:8px; margin-top:12px; }
-.gd-actions .action-button { border:1px solid var(--border-color); border-radius:8px; padding:8px 12px; }
-
+        
     </style>
 </head>
 
@@ -803,35 +790,6 @@
         </div>
     </div>
 
-<!-- Modal: Detalhes do Jogo -->
-<div id="gameDetailModal" class="modal-overlay">
-  <div class="modal-content">
-    <span class="close-button" onclick="closeGameDetailModal()">&times;</span>
-    <div class="game-detail">
-      <img id="gdCover" alt="Capa do jogo">
-      <div class="gd-right">
-        <div class="gd-header">
-          <h2 id="gdTitle" style="margin:0;"></h2>
-          <span id="gdMetacritic" class="mc-badge">N/A</span>
-        </div>
-
-        <div id="gdMeta" class="gd-meta"></div>
-
-        <p id="gdDesc" style="margin-top:12px;"></p>
-
-        <div class="gd-actions">
-          <button class="action-button" id="gdEditBtn">
-            <span class="material-symbols-outlined">edit</span> Editar
-          </button>
-          <button class="action-button" id="gdDeleteBtn">
-            <span class="material-symbols-outlined">delete</span> Excluir
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
 // COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
 
@@ -847,8 +805,6 @@
 
         let searchTimeout;
         let wishSearchTimeout;
-    
-        let currentGameKey = null;
 
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
@@ -976,7 +932,7 @@
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 tbody.innerHTML += `
                     <tr class="${isPlatinado ? 'platinado-row' : ''}">
-                        <td><div class="game-name-cell" onclick="openGameDetailModal('${safeName}')">
+                        <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
                         <td>${game.Plataforma || '-'}</td>
                         <td>${game.Status || '-'}</td>
                         <td class="nota-cell">${game.Nota || '-'}</td>
@@ -1008,7 +964,7 @@
                     : '';
 
                 return `
-                <div class="game-card-grid" onclick="openGameDetailModal('${safeName}')" title="${safeName}">
+                    <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
                         <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
                         ${trophyIconHTML}
                         <div class="game-card-content">
@@ -1472,63 +1428,9 @@
                         }
                     });
                 }
-
-function openGameDetailModal(gameName) {
-  const g = (fullData.biblioteca || []).find(x => x.Nome === gameName);
-  if (!g) { showToast('Jogo não encontrado.', true); return; }
-
-  currentGameKey = g.Nome;
-
-  const placeholder = 'https://i.imgur.com/Z0ebi8o.png';
-  const cover = document.getElementById('gdCover');
-  cover.src = g.Link || placeholder;
-  cover.alt = g.Nome;
-
-  document.getElementById('gdTitle').textContent = g.Nome;
-
-  // Metacritic badge (cores: >=75 bom, 50-74 misto, <50 ruim)
-  const metaRaw = parseInt(g.Metacritic);
-  const badge = document.getElementById('gdMetacritic');
-  if (isNaN(metaRaw)) {
-    badge.textContent = 'N/A';
-    badge.className = 'mc-badge';
-  } else {
-    badge.textContent = metaRaw;
-    badge.className = 'mc-badge ' + (metaRaw >= 75 ? 'mc-good' : metaRaw >= 50 ? 'mc-mixed' : 'mc-bad');
-  }
-
-  const money = (val) => (parseFloat(String(val).replace(',','.')) || 0)
-    .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-  const finished = g['Terminado em'] ? new Date(g['Terminado em']).toLocaleDateString('pt-BR') : '-';
-
-  document.getElementById('gdMeta').innerHTML = `
-    <div><strong>Plataforma:</strong> ${g.Plataforma || '-'}</div>
-    <div><strong>Status:</strong> ${g.Status || '-'}</div>
-    <div><strong>Tempo de Jogo:</strong> ${(g['Tempo de Jogo'] || 0)}h</div>
-    <div><strong>Nota:</strong> ${g.Nota ?? '-'}</div>
-    <div><strong>Estilo:</strong> ${g.Estilo || '-'}</div>
-    <div><strong>Preço:</strong> ${money(g.Preço)}</div>
-    <div><strong>Terminado em:</strong> ${finished}</div>
-    ${g.RAWG_ID ? `<div><strong>RAWG ID:</strong> ${g.RAWG_ID}</div>` : ''}
-  `;
-
-  document.getElementById('gdDesc').textContent = g.Descricao || 'Sem sinopse informada.';
-
-  // Botões Editar/Excluir reaproveitam suas funções já existentes
-  document.getElementById('gdEditBtn').onclick   = () => editGame(currentGameKey);
-  document.getElementById('gdDeleteBtn').onclick = () => deleteGame(currentGameKey);
-
-  document.getElementById('gameDetailModal').classList.add('active');
-}
-
-function closeGameDetailModal() {
-  document.getElementById('gameDetailModal').classList.remove('active');
-}
             
             fetchGameData();
         });
 </script>
 </body>
 </html>
-
