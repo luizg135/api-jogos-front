@@ -527,6 +527,92 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+/* Estilos para o Modal de Detalhes */
+.details-modal {
+    max-width: 800px; /* Um pouco mais largo para caber mais info */
+}
+
+#details-content {
+    display: flex;
+    gap: 32px;
+}
+
+.details-cover {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+.details-cover img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.details-info {
+    flex-grow: 1;
+}
+
+.details-info h2 {
+    margin-top: 0;
+    font-size: 28px;
+}
+
+.details-metacritic {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #6c3;
+    color: #6c3;
+    font-weight: bold;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    margin-left: 16px;
+}
+
+.details-description {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--secondary-text);
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 10px; /* Espaço para a barra de rolagem */
+    margin: 24px 0;
+}
+
+.details-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 24px;
+}
+
+.details-actions .action-btn-primary,
+.details-actions .action-btn-secondary {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+}
+
+.details-actions .action-btn-primary {
+    background-color: var(--accent-purple);
+    color: white;
+}
+
+.details-actions .action-btn-secondary {
+    background-color: transparent;
+    color: var(--secondary-text);
+    border: 1px solid var(--border-color);
+}
         
     </style>
 </head>
@@ -916,33 +1002,22 @@
         }
         
         function renderGameTable(games = []) {
-            const tbody = document.getElementById('game-list-tbody');
-            const noResults = document.getElementById('no-results-message');
-            const tableContainer = document.querySelector('#biblioteca .table-container');
+            const tbody = document.getElementById('game-list-tbody'), noResults = document.getElementById('no-results-message'), tableContainer = document.querySelector('#biblioteca .table-container');
             if (!tbody || !noResults || !tableContainer) return;
             tbody.innerHTML = '';
-            
-            if (games.length === 0) {
-                noResults.style.display = 'block';
-                return;
-            }
-            noResults.style.display = 'none';
-            
+            if (games.length === 0) { tableContainer.style.display = 'none'; noResults.style.display = 'block'; return; }
+            tableContainer.style.display = 'block'; noResults.style.display = 'none';
             games.forEach(game => {
                 const isPlatinado = game['Platinado?'] === 'Sim';
                 const safeName = game.Nome.replace(/'/g, "\\'");
-                tbody.innerHTML += `
-                    <tr class="${isPlatinado ? 'platinado-row' : ''}">
-                        <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
-                        <td>${game.Plataforma || '-'}</td>
-                        <td>${game.Status || '-'}</td>
-                        <td class="nota-cell">${game.Nota || '-'}</td>
-                        <td>${game['Tempo de Jogo'] || 0}h</td>
-                        <td><div class="action-buttons">
-                            <button class="action-button" onclick="editGame('${safeName}')"><span class="material-symbols-outlined">edit</span></button>
-                            <button class="action-button" onclick="deleteGame('${safeName}')"><span class="material-symbols-outlined">delete</span></button>
-                        </div></td>
-                    </tr>`;
+                tbody.innerHTML += `<tr class="${isPlatinado ? 'platinado-row' : ''}">
+                    <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
+                    <td>${game.Plataforma || '-'}</td><td>${game.Status || '-'}</td><td class="nota-cell">${game.Nota || '-'}</td>
+                    <td>${game['Tempo de Jogo'] || 0}h</td>
+                    <td><div class="action-buttons">
+                        <button class="action-button" onclick="openDetailsModal('${safeName}')"><span class="material-symbols-outlined">edit</span></button>
+                        <button class="action-button" onclick="deleteGame('${safeName}')"><span class="material-symbols-outlined">delete</span></button>
+                    </div></td></tr>`;
             });
         }
         
@@ -959,7 +1034,7 @@
                 const tempoDeJogo = game['Tempo de Jogo'] || 0;
                 const trophyIconHTML = game['Platinado?'] === 'Sim' ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>` : '';
                 return `
-                    <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
+                    <div class="game-card-grid" onclick="openDetailsModal('${safeName}')" title="${safeName}">
                         <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
                         ${trophyIconHTML}
                         <div class="game-card-content">
@@ -1521,9 +1596,59 @@
                     handleSort(header.dataset.sortKey);
                 });
             });
+
+            function closeDetailsModal() {
+    document.getElementById('gameDetailsModal').classList.remove('active');
+}
+
+function openDetailsModal(gameName) {
+    const game = fullData.biblioteca.find(g => g.Nome === gameName);
+    if (!game) {
+        showToast("Jogo não encontrado.", true);
+        return;
+    }
+
+    const detailsContainer = document.getElementById('details-content');
+    const safeName = game.Nome.replace(/'/g, "\\'");
+
+    detailsContainer.innerHTML = `
+        <div class="details-cover">
+            <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.Nome}">
+        </div>
+        <div class="details-info">
+            <h2>
+                ${game.Nome}
+                ${game.Metacritic ? `<span class="details-metacritic">${game.Metacritic}</span>` : ''}
+            </h2>
+            <p class="details-description">${game.Descricao || 'Nenhuma descrição disponível.'}</p>
+            <div class="details-actions">
+                <button class="action-btn-primary" onclick="openGameModalForEdit('${safeName}')">
+                    <span class="material-symbols-outlined">edit</span>
+                    Editar
+                </button>
+                <button class="action-btn-secondary" onclick="deleteGame('${safeName}')">
+                    <span class="material-symbols-outlined">delete</span>
+                    Excluir
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('gameDetailsModal').classList.add('active');
+}
             
             fetchGameData();
         });
     </script>
+
+        <div id="gameDetailsModal" class="modal-overlay">
+    <div class="modal-content details-modal">
+        <span class="close-button" onclick="closeDetailsModal()">&times;</span>
+        <div id="details-content">
+            </div>
+    </div>
+</div>
+        
 </body>
 </html>
+
