@@ -64,14 +64,29 @@
         .nav-button.active { background-color: var(--accent-purple); color: white; }
         .nav-button .material-symbols-outlined { font-size: 28px; }
         .sidebar-footer { margin-top: auto; display: flex; flex-direction: column; gap: 16px; }
-        .main-content { flex-grow: 1; padding: clamp(16px, 4vw, 48px); overflow-y: auto; height: 100%; }
+        .main-content { flex-grow: 1; padding: clamp(16px, 4vw, 48px); overflow-y: auto; height: 100%; position: relative; }
         .page { display: none; }
         .page.active { display: block; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+            transition: background-image 0.5s ease;
+        }
+        
         .profile-header {
             background-color: var(--surface-color); border: 1px solid var(--border-color); padding: 32px;
             border-radius: 16px; margin-bottom: 32px; position: relative; overflow: hidden;
             transition: background-color 0.3s ease, border-color 0.3s ease;
+            z-index: 1;
         }
         .profile-main { position: relative; z-index: 1; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
         .profile-avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--border-color); object-fit: cover; cursor: pointer; }
@@ -461,23 +476,19 @@
             font-size: 24px;
             color: var(--accent-purple);
         }
-        /* Estilos para a Visualização em Grade e Botões de Ação */
         .header-actions {
             display: flex;
             gap: 8px;
         }
-
         .header-actions {
             display: flex;
             gap: 8px;
         }
-
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 20px;
         }
-
         .game-card-grid {
             background-color: var(--surface-color);
             border-radius: 12px;
@@ -490,26 +501,22 @@
             position: relative;
             border-bottom: 3px solid transparent;
         }
-
-            .game-card-grid:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        .game-card-grid:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
-
         .game-card-grid img {
             width: 100%;
             height: 215px;
             object-fit: cover;
             display: block;
         }
-
         .game-card-content {
             padding: 12px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
-
         .game-card-top-details {
             display: flex;
             justify-content: space-between;
@@ -519,17 +526,14 @@
             padding-bottom: 8px;
             border-bottom: 1px solid var(--border-color);
         }
-
         .game-card-top-details .detail-item {
             display: flex;
             align-items: center;
             gap: 4px;
         }
-
         .game-card-top-details .material-symbols-outlined {
             font-size: 14px;
         }
-
         .game-card-grid .game-title {
             padding: 0;
             text-align: left;
@@ -540,7 +544,6 @@
             text-overflow: ellipsis;
             margin-top: auto;
         }
-
         .game-card-trophy {
             position: absolute;
             top: 8px;
@@ -552,17 +555,14 @@
             padding: 4px;
             filter: drop-shadow(0 0 5px var(--accent-purple));
         }
-
         .sortable-header {
             cursor: pointer;
             position: relative;
             user-select: none;
         }
-
         .sortable-header:hover {
             color: var(--primary-text);
         }
-
         .sort-icon {
             position: absolute;
             right: 16px;
@@ -570,12 +570,10 @@
             transform: translateY(-50%);
             opacity: 0.6;
         }
-
         .sortable-header.sort-asc .sort-icon::after {
             content: '▲';
             font-size: 10px;
         }
-
         .sortable-header.sort-desc .sort-icon::after {
             content: '▼';
             font-size: 10px;
@@ -631,9 +629,9 @@
             flex-grow: 1;
         }
         .game-details-info-text h2 {
-            margin: 0;
-            font-size: 28px;
+            font-size: clamp(24px, 4vw, 28px);
             font-weight: 700;
+            margin: 0;
             color: var(--primary-text);
         }
         .game-details-info-text p {
@@ -700,6 +698,22 @@
             white-space: pre-wrap;
             max-height: 200px;
             overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--surface-color);
+        }
+        .game-details-description p::-webkit-scrollbar {
+            width: 8px; 
+        }
+        .game-details-description p::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        .game-details-description p::-webkit-scrollbar-thumb {
+            background-color: var(--border-color); 
+            border-radius: 10px; 
+            border: 2px solid var(--bg-color); 
+        }
+        .game-details-description p::-webkit-scrollbar-thumb:hover {
+            background-color: var(--secondary-text);
         }
         .game-details-actions {
             grid-column: 1 / -1;
@@ -733,7 +747,36 @@
             background-color: #cb2d3e;
             color: white;
         }
+        .profile-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
     
+        /* Estilos para a nova seção de background */
+        .header-bg-section {
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 24px;
+        }
+        .header-bg-section h3 {
+            margin: 0 0 16px 0;
+            color: var(--primary-text);
+        }
+        .header-bg-search {
+            position: relative;
+        }
+        .header-bg-preview {
+            width: 100%;
+            height: 150px;
+            margin-top: 16px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            display: block;
+        }
+        
     </style>
 </head>
 
@@ -748,17 +791,13 @@
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
         </div>
         <div class="sidebar-footer">
-<!--             <button class="nav-button" id="theme-toggle" title="Mudar Tema"><span class="material-symbols-outlined">light_mode</span></button> -->
-            <div class="profile-actions">
-                <button class="nav-button" id="shareProfileBtn" title="Compartilhar Perfil">
-                     <span class="material-symbols-outlined">share</span>
-                     </button>
-            </div>
+            <button class="nav-button" id="theme-toggle" title="Mudar Tema"><span class="material-symbols-outlined">light_mode</span></button>
             <button class="nav-button" id="logoutBtn" title="Sair"><span class="material-symbols-outlined">logout</span></button>
         </div>
     </nav>
 
     <main class="main-content" id="main-content">
+        <div id="header-bg" class="header-bg"></div>
         <div id="content">
             <section id="perfil" class="page active">
                 <header class="profile-header">
@@ -766,7 +805,7 @@
                         <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar" onclick="openSettingsModal()">
                         <div class="profile-info">
                             <h1 id="gamerName">Carregando...</h1>
-                            <p id="profileSubtitle">Carregando...</p>
+                            <p id="profileSubtitle">Resumo da jornada!</p>
                         </div>
                         <div class="profile-level">
                             <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
@@ -777,6 +816,11 @@
                                 <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
                                 <div id="expText" class="exp-text">0 / 1000 EXP</div>
                             </div>
+                        </div>
+                        <div class="profile-actions">
+                            <button class="nav-button" id="shareProfileBtn" title="Compartilhar Perfil">
+                                <span class="material-symbols-outlined">share</span>
+                            </button>
                         </div>
                     </div>
                 </header>
@@ -984,7 +1028,7 @@
 
 <div class="form-group">
     <label for="gameRating">Nota</label>
-    <input type="number" id="gameRating" step="0.1" min="0" max="10">
+    <input type="text" inputmode="decimal" id="gameRating" step="0.1" min="0" max="10">
 </div>
 
 <div class="form-group">
@@ -1077,8 +1121,8 @@
                     <p id="gameDescriptionDetails"></p>
                 </div>
                 <div class="game-details-actions">
-                    <button class="action-button" id="editGameDetailsBtn"><span class="material-symbols-outlined">edit</span></button>
-                    <button class="action-button delete-btn" id="deleteGameDetailsBtn"><span class="material-symbols-outlined">delete</span></button>
+                    <button class="action-button" id="editGameDetailsBtn" title="Editar Jogo"><span class="material-symbols-outlined">edit</span></button>
+                    <button class="action-button delete-btn" id="deleteGameDetailsBtn" title="Excluir Jogo"><span class="material-symbols-outlined">delete</span></button>
                 </div>
             </div>
         </div>
@@ -1125,6 +1169,16 @@
                 <div class="form-group"><label for="profileNameInput">Nome do Perfil</label><input type="text" id="profileNameInput" required></div>
                 <div class="form-group"><label for="profileSubtitleInput">Subtítulo do Perfil</label><input type="text" id="profileSubtitleInput"></div>
                 <div class="form-group"><label for="profileAvatarInput">URL da Foto de Perfil</label><input type="url" id="profileAvatarInput"></div>
+                <div class="header-bg-section">
+                    <h3>Background do Cabeçalho</h3>
+                    <div class="form-group header-bg-search">
+                        <label for="headerBgGameName">Buscar Jogo (opcional)</label>
+                        <input type="text" id="headerBgGameName" autocomplete="off" placeholder="Ex: Cyberpunk 2077">
+                        <div id="headerBgSearchResultsContainer"></div>
+                        <input type="hidden" id="headerBgGameLink">
+                    </div>
+                    <img id="headerBgPreview" class="header-bg-preview" src="" style="display: none;">
+                </div>
                 <button type="submit">Salvar Alterações</button>
             </form>
         </div>
@@ -1162,6 +1216,7 @@
 
         let searchTimeout;
         let wishSearchTimeout;
+        let headerBgSearchTimeout;
 
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
@@ -1476,7 +1531,6 @@
         async function handleGameFormSubmit(event) {
             event.preventDefault();
             const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
-            const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
             const gameData = {
                 Nome: document.getElementById('gameName').value,
                 Plataforma: document.getElementById('gamePlatform').value,
@@ -1486,12 +1540,21 @@
                 Link: document.getElementById('gameLink').value,
                 Estilo: document.getElementById('gameStyle').value,
                 "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
-                Preço: parseFloat(priceValue) || 0,
+                Preço: parseFloat(document.getElementById('gamePrice').value.replace(',', '.')) || 0,
                 "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
                 "Terminado em": document.getElementById('gameTermino').value || '',
-                Metacritic: document.getElementById('gameMetacritic').value || '',
-                Descricao: document.getElementById('gameDescription').value || ''
             };
+            
+            // Corrige o bug de envio de campos vazios da busca externa
+            const metacritic = document.getElementById('gameMetacritic').value;
+            if (metacritic !== null && metacritic !== '') {
+                gameData['Metacritic'] = parseInt(metacritic);
+            }
+            const descricao = document.getElementById('gameDescription').value;
+            if (descricao !== null && descricao !== '') {
+                gameData['Descricao'] = descricao;
+            }
+
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
             try {
@@ -1631,15 +1694,33 @@
             document.getElementById('profileNameInput').value = profile.profileName || '';
             document.getElementById('profileSubtitleInput').value = profile.profileSubtitle || '';
             document.getElementById('profileAvatarInput').value = profile.profileAvatar || '';
+            document.getElementById('headerBgGameName').value = profile.headerBackgroundName || '';
+            document.getElementById('headerBgGameLink').value = profile.headerBackgroundUrl || '';
+            
+            const preview = document.getElementById('headerBgPreview');
+            if (profile.headerBackgroundUrl) {
+                preview.src = profile.headerBackgroundUrl;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+            
             document.getElementById('settingsModal').classList.add('active');
         }
+
         function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
         async function handleSettingsFormSubmit(event) {
             event.preventDefault();
-            const newProfileData = { profileName: document.getElementById('profileNameInput').value, profileSubtitle: document.getElementById('profileSubtitleInput').value, profileAvatar: document.getElementById('profileAvatarInput').value };
+            const newProfileData = {
+                profileName: document.getElementById('profileNameInput').value,
+                profileSubtitle: document.getElementById('profileSubtitleInput').value,
+                profileAvatar: document.getElementById('profileAvatarInput').value,
+                headerBackgroundUrl: document.getElementById('headerBgGameLink').value,
+                headerBackgroundName: document.getElementById('headerBgGameName').value
+            };
             try {
                 const response = await fetch(`${API_URL}/games/profile/edit`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(newProfileData) });
-                if (response.ok) { showToast('Perfil atualizado com sucesso!'); closeSettingsModal(); fullData.perfil = newProfileData; loadProfileSettings(fullData.perfil); }
+                if (response.ok) { showToast('Perfil atualizado com sucesso!'); closeSettingsModal(); fetchGameData(); }
                 else { showToast('Erro ao atualizar o perfil.', true); }
             } catch(err) { showToast('Erro de conexão ao salvar as configurações.', true); }
         }
@@ -1647,6 +1728,13 @@
             document.getElementById('gamerName').textContent = profile.profileName || 'Seu Nome';
             document.getElementById('profileSubtitle').textContent = profile.profileSubtitle || 'Resumo da jornada!';
             document.getElementById('profileAvatar').src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
+            
+            const headerBg = document.getElementById('header-bg');
+            if(profile.headerBackgroundUrl) {
+                headerBg.style.backgroundImage = `url('${profile.headerBackgroundUrl}')`;
+            } else {
+                headerBg.style.backgroundImage = 'none';
+            }
         }
 
         function openAchievementsModal() { document.getElementById('achievementsModal').classList.add('active'); }
@@ -1670,7 +1758,7 @@
             document.getElementById('gameStatusDetails').textContent = game.Status || 'Não informado';
             
             const gameRatingDetails = document.getElementById('gameRatingDetails');
-            const gameRating = parseFloat(game.Nota);
+            const gameRating = parseFloat(String(game.Nota).replace(',', '.'));
             gameRatingDetails.textContent = game.Nota || 'N/A';
             gameRatingDetails.className = 'rating-score';
             if (!isNaN(gameRating)) {
@@ -1731,6 +1819,34 @@
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
+        
+        async function handleHeaderBgSearch(query) {
+            const resultsContainer = document.getElementById('headerBgSearchResultsContainer');
+            if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
+            const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const games = await response.json();
+            if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
+            const listHTML = games.map(game => {
+                const safeName = game.name.replace(/'/g, "\\'");
+                const safeLink = game.background_image || '';
+                return `<div class="search-result-item" onclick="selectHeaderBgGame('${safeName}', '${safeLink}')"><img src="${safeLink || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span></div></div>`;
+            }).join('');
+            resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
+        }
+
+        function selectHeaderBgGame(gameName, gameLink) {
+            document.getElementById('headerBgGameName').value = gameName;
+            document.getElementById('headerBgGameLink').value = gameLink;
+            
+            const preview = document.getElementById('headerBgPreview');
+            if (gameLink) {
+                preview.src = gameLink;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+            document.getElementById('headerBgSearchResultsContainer').innerHTML = '';
+        }
 
         function selectGame(game) {
             document.getElementById('gameName').value = game.name;
@@ -1780,6 +1896,21 @@
                 gridContainer.style.display = 'grid';
                 tableContainer.style.display = 'none';
                 toggleBtnIcon.textContent = 'view_list';
+            }
+        }
+        
+        function setupShareButton() {
+            const shareBtn = document.getElementById('shareProfileBtn');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', () => {
+                    const publicUrl = `${window.location.origin}/shareable.html`;
+                    navigator.clipboard.writeText(publicUrl).then(() => {
+                        showToast("Link do perfil copiado para a área de transferência!");
+                    }).catch(err => {
+                        console.error('Falha ao copiar o link:', err);
+                        showToast("Falha ao copiar o link. Por favor, tente novamente.", true);
+                    });
+                });
             }
         }
 
@@ -1843,6 +1974,15 @@
                     searchTimeout = setTimeout(() => { handleSearch(event.target.value); }, 500);
                 });
             }
+            
+            const headerBgGameNameInput = document.getElementById('headerBgGameName');
+            if (headerBgGameNameInput) {
+                headerBgGameNameInput.addEventListener('keyup', (event) => {
+                    clearTimeout(headerBgSearchTimeout);
+                    headerBgSearchTimeout = setTimeout(() => { handleHeaderBgSearch(event.target.value); }, 500);
+                });
+            }
+
 
             const wishGameNameInput = document.getElementById('wishGameName');
             if (wishGameNameInput) {
@@ -1857,6 +1997,11 @@
                 const nameInput = document.getElementById('gameName');
                 if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
                     searchContainer.innerHTML = '';
+                }
+                const headerBgSearchContainer = document.getElementById('headerBgSearchResultsContainer');
+                const headerBgNameInput = document.getElementById('headerBgGameName');
+                if (headerBgSearchContainer && !headerBgSearchContainer.contains(event.target) && event.target !== headerBgNameInput) {
+                    headerBgSearchContainer.innerHTML = '';
                 }
 
                 const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
@@ -1907,21 +2052,7 @@
                         }
                     });
                 }
-
-                function setupShareButton() {
-                    const shareBtn = document.getElementById('shareProfileBtn');
-                    if (shareBtn) {
-                        shareBtn.addEventListener('click', () => {
-                            const publicUrl = `${window.location.origin}/shareable.html`;
-                            navigator.clipboard.writeText(publicUrl).then(() => {
-                                showToast("Link do perfil copiado para a área de transferência!");
-                            }).catch(err => {
-                                console.error('Falha ao copiar o link:', err);
-                                showToast("Falha ao copiar o link. Por favor, tente novamente.", true);
-                            });
-                        });
-                    }
-                }
+            
             setupShareButton();
             fetchGameData();
         });
