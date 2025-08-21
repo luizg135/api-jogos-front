@@ -1313,19 +1313,16 @@
             const isGridVisible = gridContainer.style.display !== 'none';
 
             if (isGridVisible) {
-                // Muda para a visão de tabela
                 gridContainer.style.display = 'none';
                 tableContainer.style.display = 'block';
                 toggleBtnIcon.textContent = 'grid_view';
             } else {
-                // Muda para a visão de grade
                 gridContainer.style.display = 'grid';
                 tableContainer.style.display = 'none';
                 toggleBtnIcon.textContent = 'view_list';
             }
         }
 
-        // --- CÓDIGO PRINCIPAL QUE RODA QUANDO A PÁGINA CARREGA ---
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
             
@@ -1352,7 +1349,6 @@
         });
         updateSortIcons();
             
-            // Listeners dos Filtros
             const setupFilterListeners = (suffix) => {
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => setupListener(id + suffix, 'input', () => applyFilters(suffix)));
                 const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
@@ -1361,7 +1357,6 @@
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
             
-            // ATIVAÇÃO DA BUSCA (BIBLIOTECA)
             const gameNameInput = document.getElementById('gameName');
             if (gameNameInput) {
                 gameNameInput.addEventListener('keyup', (event) => {
@@ -1370,7 +1365,6 @@
                 });
             }
 
-            // ATIVAÇÃO DA BUSCA (WISHLIST)
             const wishGameNameInput = document.getElementById('wishGameName');
             if (wishGameNameInput) {
                 wishGameNameInput.addEventListener('keyup', (event) => {
@@ -1379,7 +1373,6 @@
                 });
             }
 
-            // FECHA AS LISTAS DE BUSCA AO CLICAR FORA
             document.addEventListener('click', function(event) {
                 const searchContainer = document.getElementById('searchResultsContainer');
                 const nameInput = document.getElementById('gameName');
@@ -1394,29 +1387,23 @@
                 }
             });
 
-            // Adicione esta nova função ao seu script
                 function handleSort(key) {
                     if (currentSortKey === key) {
-        // Se clicar na mesma coluna, inverte a direção
                         currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
                     } else {
-        // Se clicar em uma nova coluna, reseta para ascendente
                         currentSortKey = key;
                         currentSortDirection = 'asc';
     }
 
-    // Lógica de ordenação
                     fullData.biblioteca.sort((a, b) => {
                         let valA = a[currentSortKey] || '';
                         let valB = b[currentSortKey] || '';
 
-        // Converte para número se for 'Nota' ou 'Tempo de Jogo'
                         if (key === 'Nota' || key === 'Tempo de Jogo') {
                             valA = parseFloat(valA) || 0;
                             valB = parseFloat(valB) || 0;
                         }
 
-        // Converte para string para comparação
                         if (typeof valA === 'string') valA = valA.toLowerCase();
                         if (typeof valB === 'string') valB = valB.toLowerCase();
 
@@ -1429,12 +1416,10 @@
                         return 0;
                     });
 
-    // Atualiza a interface
                     updateSortIcons();
                     applyFilters('-biblioteca');
                 }
 
-// Adicione também esta função auxiliar para atualizar os ícones
                 function updateSortIcons() {
                     document.querySelectorAll('.sortable-header').forEach(header => {
                         header.classList.remove('sort-asc', 'sort-desc');
@@ -1444,9 +1429,9 @@
                     });
                 }
             
-            // Busca os dados iniciais do servidor
             fetchGameData();
         });
 </script>
 </body>
 </html>
+
