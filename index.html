@@ -1025,7 +1025,7 @@
                 const tempoDeJogo = game['Tempo de Jogo'] || 0;
                 const trophyIconHTML = game['Platinado?'] === 'Sim' ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>` : '';
                 return `
-                    <div class="game-card-grid" data-game-name="${safeName}" title="${safeName}">
+                        <div class="game-card-grid" data-game-name="${safeName}" title="${safeName}">
                         <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
                         ${trophyIconHTML}
                         <div class="game-card-content">
@@ -1501,148 +1501,155 @@
             document.getElementById('gameDetailsModal').classList.remove('active');
         }
 
-        function openDetailsModal(gameName) {
-            const game = fullData.biblioteca.find(g => g.Nome === gameName);
-            if (!game) {
-                showToast("Jogo não encontrado.", true);
-                return;
-            }
-
-            const detailsContainer = document.getElementById('details-content');
-            const safeName = game.Nome.replace(/'/g, "\\'");
-
-            detailsContainer.innerHTML = `
-                <div class="details-cover">
-                    <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.Nome}">
-                </div>
-                <div class="details-info">
-                    <h2>
-                        ${game.Nome}
-                        ${game.Metacritic ? `<span class="details-metacritic">${game.Metacritic}</span>` : ''}
-                    </h2>
-                    <p class="details-description">${game.Descricao || 'Nenhuma descrição disponível.'}</p>
-                    <div class="details-actions">
-                        <button class="action-btn-primary" onclick="openGameModalForEdit('${safeName}')">
-                            <span class="material-symbols-outlined">edit</span>
-                            Editar
-                        </button>
-                        <button class="action-btn-secondary" onclick="deleteGame('${safeName}')">
-                            <span class="material-symbols-outlined">delete</span>
-                            Excluir
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('gameDetailsModal').classList.add('active');
+function openDetailsModal(gameName) {
+    const game = fullData.biblioteca.find(g => g.Nome === gameName);
+    if (!game) {
+        showToast("Jogo não encontrado.", true);
+        return;
+    }
+    const detailsContainer = document.getElementById('details-content');
+    const safeName = game.Nome.replace(/'/g, "\\'");
+    const gameDescription = game.Descricao || 'Nenhuma descrição disponível.';
+    const metacriticScore = game.Metacritic ? `<span class="details-metacritic">${game.Metacritic}</span>` : '';
+    detailsContainer.innerHTML = `
+        <div class="details-cover">
+            <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.Nome}">
+        </div>
+        <div class="details-info">
+            <h2>
+                ${game.Nome}
+                ${metacriticScore}
+            </h2>
+            <p class="details-description">${gameDescription}</p>
+            <div class="details-actions">
+                <button class="action-btn-primary" data-action="edit-game" data-game-name="${safeName}">
+                    <span class="material-symbols-outlined">edit</span>
+                    Editar
+                </button>
+                <button class="action-btn-secondary" data-action="delete-game" data-game-name="${safeName}">
+                    <span class="material-symbols-outlined">delete</span>
+                    Excluir
+                </button>
+            </div>
+        </div>
+    `;
+    document.getElementById('gameDetailsModal').classList.add('active');
+}
+        
+document.addEventListener('DOMContentLoaded', () => {
+    const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
+    
+    setupListener('addGameForm', 'submit', handleGameFormSubmit);
+    setupListener('addWishForm', 'submit', handleWishFormSubmit);
+    setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
+    setupListener('addGameBtn', 'click', openGameModalForAdd);
+    setupListener('addWishBtn', 'click', openWishModal);
+    setupListener('settingsBtn', 'click', openSettingsModal);
+    setupListener('achievementsShortcut', 'click', openAchievementsModal);
+    setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
+    setupListener('theme-toggle', 'click', () => {
+        const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
+        const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
+        icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
+    });
+    setupListener('toggleViewBtn', 'click', toggleLibraryView);
+    
+    const setupFilterListeners = (suffix) => {
+        ['nameFilter', 'platformFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
+            const el = document.getElementById(id + suffix);
+            if(el) el.addEventListener('input', () => applyFilters(suffix));
+        });
+        const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
+        if (clearBtn) { 
+            clearBtn.addEventListener('click', () => { 
+                ['nameFilter', 'platformFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { 
+                    const el = document.getElementById(id + suffix); 
+                    if(el) el.value = el.tagName === 'SELECT' ? 'all' : ''; 
+                });
+                if (suffix === '-biblioteca') {
+                    ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if(el) el.value = '';
+                    });
+                }
+                applyFilters(suffix); 
+            }); 
         }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
-            
-            setupListener('addGameForm', 'submit', handleGameFormSubmit);
-            setupListener('addWishForm', 'submit', handleWishFormSubmit);
-            setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
-            setupListener('addGameBtn', 'click', openGameModalForAdd);
-            setupListener('addWishBtn', 'click', openWishModal);
-            setupListener('settingsBtn', 'click', openSettingsModal);
-            setupListener('achievementsShortcut', 'click', openAchievementsModal);
-            setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
-            setupListener('theme-toggle', 'click', () => {
-                const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
-                const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
-                icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
-            });
-            setupListener('toggleViewBtn', 'click', toggleLibraryView);
-            
-            const setupFilterListeners = (suffix) => {
-                ['nameFilter', 'platformFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
-                    const el = document.getElementById(id + suffix);
-                    if(el) el.addEventListener('input', () => applyFilters(suffix));
-                });
-                const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
-                if (clearBtn) { 
-                    clearBtn.addEventListener('click', () => { 
-                        ['nameFilter', 'platformFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { 
-                            const el = document.getElementById(id + suffix); 
-                            if(el) el.value = el.tagName === 'SELECT' ? 'all' : ''; 
-                        });
-                        if (suffix === '-biblioteca') {
-                            ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
-                                const el = document.getElementById(id);
-                                if(el) el.value = '';
-                            });
-                        }
-                        applyFilters(suffix); 
-                    }); 
-                }
-            };
-            setupFilterListeners('-graficos');
-            setupFilterListeners('-biblioteca');
-            
-            const toggleAdvancedBtn = document.getElementById('toggleAdvancedFiltersBtn');
-            if (toggleAdvancedBtn) {
-                toggleAdvancedBtn.addEventListener('click', () => {
-                    const advancedContainer = document.getElementById('advanced-filters-container');
-                    const isVisible = advancedContainer.style.display !== 'none';
-                    advancedContainer.style.display = isVisible ? 'none' : 'grid';
-                });
-            }
-            ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', () => applyFilters('-biblioteca'));
-                }
-            });
-
-            const gameNameInput = document.getElementById('gameName');
-            if (gameNameInput) {
-                gameNameInput.addEventListener('keyup', (event) => {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => { handleSearch(event.target.value); }, 500);
-                });
-            }
-
-            const wishGameNameInput = document.getElementById('wishGameName');
-            if (wishGameNameInput) {
-                wishGameNameInput.addEventListener('keyup', (event) => {
-                    clearTimeout(wishSearchTimeout);
-                    wishSearchTimeout = setTimeout(() => { handleWishSearch(event.target.value); }, 500);
-                });
-            }
-
-            document.addEventListener('click', function(event) {
-                const searchContainer = document.getElementById('searchResultsContainer');
-                const nameInput = document.getElementById('gameName');
-                if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
-                    searchContainer.innerHTML = '';
-                }
-                const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
-                const wishNameInput = document.getElementById('wishGameName');
-                if (wishSearchContainer && !wishSearchContainer.contains(event.target) && event.target !== wishNameInput) {
-                    wishSearchContainer.innerHTML = '';
-                }
-            });
-
-            document.querySelectorAll('.sortable-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    handleSort(header.dataset.sortKey);
-                });
-            });
-            
-    document.querySelector('body').addEventListener('click', (event) => {
-        const row = event.target.closest('tr[data-game-name]');
-        const card = event.target.closest('div[data-game-name]');
-        
-        if (row) {
-            const gameName = row.dataset.gameName;
-            openDetailsModal(gameName);
-        } else if (card) {
-            const gameName = card.dataset.gameName;
-            openDetailsModal(gameName);
+    };
+    setupFilterListeners('-graficos');
+    setupFilterListeners('-biblioteca');
+    
+    const toggleAdvancedBtn = document.getElementById('toggleAdvancedFiltersBtn');
+    if (toggleAdvancedBtn) {
+        toggleAdvancedBtn.addEventListener('click', () => {
+            const advancedContainer = document.getElementById('advanced-filters-container');
+            const isVisible = advancedContainer.style.display !== 'none';
+            advancedContainer.style.display = isVisible ? 'none' : 'grid';
+        });
+    }
+    ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => applyFilters('-biblioteca'));
         }
     });
 
+    const gameNameInput = document.getElementById('gameName');
+    if (gameNameInput) {
+        gameNameInput.addEventListener('keyup', (event) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => { handleSearch(event.target.value); }, 500);
+        });
+    }
+
+    const wishGameNameInput = document.getElementById('wishGameName');
+    if (wishGameNameInput) {
+        wishGameNameInput.addEventListener('keyup', (event) => {
+            clearTimeout(wishSearchTimeout);
+            wishSearchTimeout = setTimeout(() => { handleWishSearch(event.target.value); }, 500);
+        });
+    }
+
+    document.addEventListener('click', function(event) {
+        const searchContainer = document.getElementById('searchResultsContainer');
+        const nameInput = document.getElementById('gameName');
+        if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
+            searchContainer.innerHTML = '';
+        }
+        const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
+        const wishNameInput = document.getElementById('wishGameName');
+        if (wishSearchContainer && !wishSearchContainer.contains(event.target) && event.target !== wishNameInput) {
+            wishSearchContainer.innerHTML = '';
+        }
+    });
+
+    // Novo ouvinte de eventos para todas as ações dinâmicas
+    document.body.addEventListener('click', (event) => {
+        const actionButton = event.target.closest('[data-action]');
+        if (actionButton) {
+            const action = actionButton.dataset.action;
+            const gameName = actionButton.dataset.gameName;
+
+            switch (action) {
+                case 'open-details':
+                    openDetailsModal(gameName);
+                    break;
+                case 'edit-game':
+                    openGameModalForEdit(gameName);
+                    break;
+                case 'delete-game':
+                    deleteGame(gameName);
+                    break;
+            }
+        }
+    });
+
+    document.querySelectorAll('.sortable-header').forEach(header => {
+        header.addEventListener('click', () => {
+            handleSort(header.dataset.sortKey);
+        });
+    });
+    
     fetchGameData();
 });
             
@@ -1650,4 +1657,5 @@
 
 </body>
 </html>
+
 
