@@ -670,6 +670,9 @@
     </div>
 
 <script>
+// COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
+
+        // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
@@ -684,13 +687,8 @@
 
         function showToast(message, isError = false) {
             Toastify({
-                text: message,
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                stopOnFocus: true,
+                text: message, duration: 3000, gravity: "top", position: "right", stopOnFocus: true,
                 style: {
-                    // Se for erro, usa um gradiente de vermelho. Se for sucesso, usa o novo gradiente roxo/azul.
                     background: isError 
                         ? "linear-gradient(to right, #cb2d3e, #ef473a)" 
                         : "linear-gradient(to right, var(--accent-purple), #2a5298)"
@@ -757,21 +755,20 @@
         function renderRecentPlatinums(library = []) {
             const container = document.getElementById('recent-platinums');
             if (!container) return;
-
-            const platinados = library.filter(g => g['Platinado?'] === 'Sim' && g.Link && g['Terminado em'])
+            const platinados = library.filter(g => g['Platinado?'] === 'Sim' && g.Link)
                                       .sort((a, b) => new Date(b['Terminado em']) - new Date(a['Terminado em']))
                                       .slice(0, 5);
-
             if (platinados.length === 0) {
-                container.innerHTML = `<p style="color: var(--secondary-text); grid-column: 1 / -1;">Nenhum jogo platinado com imagem e data encontrado.</p>`;
+                container.innerHTML = `<p style="color: var(--secondary-text); grid-column: 1 / -1;">Nenhum jogo platinado com imagem encontrada.</p>`;
                 return;
             }
-
             container.innerHTML = platinados.map(game => {
-                const dataPlatina = new Date(game['Terminado em']).toLocaleDateString('pt-BR', {
-                    day: '2-digit', month: '2-digit', year: 'numeric'
-                });
-
+                let dataPlatina = 'Data não informada';
+                if (game['Terminado em']) {
+                    dataPlatina = new Date(game['Terminado em']).toLocaleDateString('pt-BR', {
+                        day: '2-digit', month: '2-digit', year: 'numeric'
+                    });
+                }
                 return `
                     <div class="platinum-card" title="${game.Nome}">
                         <img src="${game.Link}" alt="${game.Nome}">
@@ -792,7 +789,12 @@
             const tbody = document.getElementById('game-list-tbody'), noResults = document.getElementById('no-results-message'), tableContainer = document.querySelector('#biblioteca .table-container');
             if (!tbody || !noResults || !tableContainer) return;
             tbody.innerHTML = '';
-            if (games.length === 0) { tableContainer.style.display = 'none'; noResults.style.display = 'block'; return; }
+            if (games.length === 0) {
+                tableContainer.style.display = 'none';
+                document.getElementById('game-grid-container').innerHTML = ''; // Limpa a grade também
+                noResults.style.display = 'block'; 
+                return; 
+            }
             tableContainer.style.display = 'block'; noResults.style.display = 'none';
             games.forEach(game => {
                 const isPlatinado = game['Platinado?'] === 'Sim';
@@ -800,17 +802,32 @@
             });
         }
         
+        function renderGameGrid(games = []) {
+            const gridContainer = document.getElementById('game-grid-container');
+            if (!gridContainer) return;
+            if (games.length === 0) {
+                gridContainer.innerHTML = ''; // Limpa se não houver jogos
+                return;
+            }
+            gridContainer.innerHTML = games.map(game => {
+                const safeName = game.Nome.replace(/'/g, "\\'");
+                return `
+                    <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
+                        <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
+                        <div class="game-title">${game.Nome}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function renderWishlist(wishlist = []) {
             const container = document.getElementById('wishlist-container'); 
             if (!container) return;
-
             if (wishlist.length === 0) { 
                 container.innerHTML = `<p style="color: var(--secondary-text);">Sua lista de desejos está vazia.</p>`; 
                 return; 
             }
-
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
             container.innerHTML = wishlist.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 return `
@@ -824,15 +841,9 @@
                         </div>
                     </div>
                     <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
-                        <button class="action-button" onclick="purchaseWish('${safeName}')" title="Marcar como Comprado">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">shopping_cart_checkout</span>
-                        </button>
-                        <button class="action-button" onclick="editWish('${safeName}')" title="Editar">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
-                        </button>
-                        <button class="action-button" onclick="deleteWish('${safeName}')" title="Excluir">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
-                        </button>
+                        <button class="action-button" onclick="purchaseWish('${safeName}')" title="Marcar como Comprado"><span class="material-symbols-outlined" style="font-size: 18px;">shopping_cart_checkout</span></button>
+                        <button class="action-button" onclick="editWish('${safeName}')" title="Editar"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></button>
+                        <button class="action-button" onclick="deleteWish('${safeName}')" title="Excluir"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button>
                     </div>
                 </div>`;
             }).join('');
@@ -886,7 +897,10 @@
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
                 const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
                 renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
-            } else if (suffix === '-biblioteca') { renderGameTable(filteredGames); renderGameGrid(filteredGames); }
+            } else if (suffix === '-biblioteca') {
+                renderGameTable(filteredGames);
+                renderGameGrid(filteredGames);
+            }
         }
 
         function openGameModalForAdd() { document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = ''; document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; document.getElementById('addGameModal').classList.add('active'); }
@@ -930,14 +944,11 @@
                 cancelButtonText: 'Cancelar',
                 background: 'var(--surface-color)',
                 color: 'var(--primary-text)',
-                confirmButtonColor: '#cb2d3e' // Vermelho para ação de perigo
+                confirmButtonColor: '#cb2d3e'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, {
-                            method: 'DELETE',
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
+                        const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
                         if (response.ok) {
                             showToast("Jogo deletado com sucesso!");
                             fetchGameData();
@@ -994,7 +1005,7 @@
                 cancelButtonText: 'Cancelar',
                 background: 'var(--surface-color)',
                 color: 'var(--primary-text)',
-                confirmButtonColor: '#cb2d3e' // Um tom de vermelho para perigo
+                confirmButtonColor: '#cb2d3e'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
@@ -1002,7 +1013,6 @@
                             method: 'DELETE',
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
-
                         if (response.ok) {
                             showToast("Item deletado com sucesso!");
                             fetchGameData();
@@ -1025,9 +1035,9 @@
                 showCancelButton: true,
                 confirmButtonText: 'Sim, comprei!',
                 cancelButtonText: 'Cancelar',
-                background: 'var(--surface-color)', // Cor de fundo do seu tema
-                color: 'var(--primary-text)',      // Cor do texto do seu tema
-                confirmButtonColor: 'var(--accent-purple)' // Cor do botão do seu tema
+                background: 'var(--surface-color)',
+                color: 'var(--primary-text)',
+                confirmButtonColor: 'var(--accent-purple)'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
@@ -1037,7 +1047,7 @@
                         });
                         if (response.ok) {
                             showToast("Jogo marcado como comprado!");
-                            fetchGameData(); // Atualiza a lista para remover o item
+                            fetchGameData();
                         } else {
                             showToast("Erro ao marcar como comprado.", true);
                         }
@@ -1129,29 +1139,10 @@
             }
             document.getElementById('wishSearchResultsContainer').innerHTML = '';
         }
-
+        
         // --- CÓDIGO PRINCIPAL QUE RODA QUANDO A PÁGINA CARREGA ---
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
-
-            function toggleLibraryView() {
-            const tableContainer = document.querySelector('#biblioteca .table-container');
-            const gridContainer = document.getElementById('game-grid-container');
-            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
-
-            const isGridVisible = gridContainer.style.display !== 'none';
-
-            if (isGridVisible) {
-                gridContainer.style.display = 'none';
-                tableContainer.style.display = 'block';
-                toggleBtnIcon.textContent = 'grid_view';
-            } else {
-
-                gridContainer.style.display = 'grid'; // Usa 'grid' em vez de 'block'
-                tableContainer.style.display = 'none';
-                toggleBtnIcon.textContent = 'view_list';
-            }
-        }
             
             // Listeners de Forms e Botões
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
@@ -1161,14 +1152,14 @@
             setupListener('addWishBtn', 'click', openWishModal);
             setupListener('settingsBtn', 'click', openSettingsModal);
             setupListener('achievementsShortcut', 'click', openAchievementsModal);
-            setupListener('toggleViewBtn', 'click', toggleLibraryView);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             setupListener('theme-toggle', 'click', () => {
                 const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
                 const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
-            
+            setupListener('toggleViewBtn', 'click', toggleLibraryView);
+
             // Listeners dos Filtros
             const setupFilterListeners = (suffix) => {
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => setupListener(id + suffix, 'input', () => applyFilters(suffix)));
@@ -1210,35 +1201,31 @@
                     wishSearchContainer.innerHTML = '';
                 }
             });
-
-                function renderGameGrid(games = []) {
-                    const gridContainer = document.getElementById('game-grid-container');
-                    if (!gridContainer) return;
-
-                    gridContainer.innerHTML = games.map(game => {
-                        const safeName = game.Nome.replace(/'/g, "\\'");
-                        return `
-                            <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
-                                <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
-                                <div class="game-title">${game.Nome}</div>
-                            </div>
-                        `;
-                    }).join('');
-                }
             
             // Busca os dados iniciais do servidor
             fetchGameData();
         });
+
+        // Adicionada a função que faltava
+        function toggleLibraryView() {
+            const tableContainer = document.querySelector('#biblioteca .table-container');
+            const gridContainer = document.getElementById('game-grid-container');
+            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
+
+            const isGridVisible = gridContainer.style.display !== 'none';
+
+            if (isGridVisible) {
+                // Muda para a visão de tabela
+                gridContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                toggleBtnIcon.textContent = 'grid_view';
+            } else {
+                // Muda para a visão de grade
+                gridContainer.style.display = 'grid';
+                tableContainer.style.display = 'none';
+                toggleBtnIcon.textContent = 'view_list';
+            }
+        }
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
