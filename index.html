@@ -360,6 +360,50 @@
             font-size: 24px;
             color: var(--accent-purple);
         }
+        /* Estilos para a Visualização em Grade e Botões de Ação */
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card-grid {
+            background-color: var(--surface-color);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .game-card-grid:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border-bottom-color: var(--accent-purple);
+        }
+
+        .game-card-grid img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .game-card-grid .game-title {
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
         
     </style>
 </head>
@@ -449,15 +493,18 @@
             </section>
 
             <section id="biblioteca" class="page">
-                <header class="profile-header">
-                    <div class="profile-main" style="justify-content: space-between;">
-                        <div class="profile-info">
-                            <h1 style="color: var(--accent-purple);">Biblioteca de Jogos</h1>
-                            <p>Explore toda a sua coleção.</p>
-                        </div>
+            <header class="profile-header">
+                <div class="profile-main" style="justify-content: space-between;">
+                    <div class="profile-info">
+                        <h1 style="color: var(--accent-purple);">Biblioteca de Jogos</h1>
+                        <p>Explore toda a sua coleção.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">grid_view</span></button>
                         <button class="nav-button" id="addGameBtn" title="Adicionar Novo Jogo"><span class="material-symbols-outlined">add</span></button>
                     </div>
-                </header>
+                </div>
+            </header>
                 <section class="filter-bar">
                     <div class="filter-group"><label for="nameFilter-biblioteca">Buscar por Nome</label><input type="search" id="nameFilter-biblioteca" placeholder="Ex: Elden Ring"></div>
                     <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
@@ -472,6 +519,7 @@
                     </table>
                 </div>
                 <div id="no-results-message" class="no-results" style="display: none;"><p>Nenhum jogo encontrado.</p></div>
+                <div id="game-grid-container" class="games-grid" style="display: none;"></div>
             </section>
             
             <section id="desejos" class="page">
@@ -838,7 +886,7 @@
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
                 const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
                 renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
-            } else if (suffix === '-biblioteca') { renderGameTable(filteredGames); }
+            } else if (suffix === '-biblioteca') { renderGameTable(filteredGames); renderGameGrid(filteredGames); }
         }
 
         function openGameModalForAdd() { document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = ''; document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; document.getElementById('addGameModal').classList.add('active'); }
@@ -1085,6 +1133,25 @@
         // --- CÓDIGO PRINCIPAL QUE RODA QUANDO A PÁGINA CARREGA ---
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
+
+            function toggleLibraryView() {
+            const tableContainer = document.querySelector('#biblioteca .table-container');
+            const gridContainer = document.getElementById('game-grid-container');
+            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
+
+            const isGridVisible = gridContainer.style.display !== 'none';
+
+            if (isGridVisible) {
+                gridContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                toggleBtnIcon.textContent = 'grid_view';
+            } else {
+
+                gridContainer.style.display = 'grid'; // Usa 'grid' em vez de 'block'
+                tableContainer.style.display = 'none';
+                toggleBtnIcon.textContent = 'view_list';
+            }
+        }
             
             // Listeners de Forms e Botões
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
@@ -1094,6 +1161,7 @@
             setupListener('addWishBtn', 'click', openWishModal);
             setupListener('settingsBtn', 'click', openSettingsModal);
             setupListener('achievementsShortcut', 'click', openAchievementsModal);
+            setupListener('toggleViewBtn', 'click', toggleLibraryView);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             setupListener('theme-toggle', 'click', () => {
                 const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
@@ -1142,6 +1210,21 @@
                     wishSearchContainer.innerHTML = '';
                 }
             });
+
+                function renderGameGrid(games = []) {
+                    const gridContainer = document.getElementById('game-grid-container');
+                    if (!gridContainer) return;
+
+                    gridContainer.innerHTML = games.map(game => {
+                        const safeName = game.Nome.replace(/'/g, "\\'");
+                        return `
+                            <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
+                                <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
+                                <div class="game-title">${game.Nome}</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
             
             // Busca os dados iniciais do servidor
             fetchGameData();
@@ -1149,6 +1232,7 @@
 </script>
 </body>
 </html>
+
 
 
 
