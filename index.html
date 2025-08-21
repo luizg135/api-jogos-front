@@ -1907,7 +1907,22 @@
                         }
                     });
                 }
-            
+
+                function setupShareButton() {
+                    const shareBtn = document.getElementById('shareProfileBtn');
+                    if (shareBtn) {
+                        shareBtn.addEventListener('click', () => {
+                            const publicUrl = `${window.location.origin}/shareable.html`;
+                            navigator.clipboard.writeText(publicUrl).then(() => {
+                                showToast("Link do perfil copiado para a área de transferência!");
+                            }).catch(err => {
+                                console.error('Falha ao copiar o link:', err);
+                                showToast("Falha ao copiar o link. Por favor, tente novamente.", true);
+                            });
+                        });
+                    }
+                }
+
             fetchGameData();
         });
 </script>
