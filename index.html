@@ -528,60 +528,35 @@
             text-overflow: ellipsis;
         }
 
-/* Estilos para o Modal de Detalhes */
 .details-modal {
-    max-width: 800px; /* Um pouco mais largo para caber mais info */
+    max-width: 800px;
 }
-
 #details-content {
     display: flex;
     gap: 32px;
 }
-
 .details-cover {
     width: 250px;
     flex-shrink: 0;
 }
-
 .details-cover img {
     width: 100%;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
-
-.details-info {
-    flex-grow: 1;
-}
-
 .details-info h2 {
     margin-top: 0;
     font-size: 28px;
 }
-
-.details-metacritic {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #6c3;
-    color: #6c3;
-    font-weight: bold;
-    border-radius: 8px;
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    margin-left: 16px;
-}
-
 .details-description {
     font-size: 14px;
     line-height: 1.6;
     color: var(--secondary-text);
     max-height: 200px;
     overflow-y: auto;
-    padding-right: 10px; /* Espaço para a barra de rolagem */
+    padding-right: 10px;
     margin: 24px 0;
 }
-
 .details-actions {
     display: flex;
     gap: 16px;
@@ -589,7 +564,6 @@
     border-top: 1px solid var(--border-color);
     padding-top: 24px;
 }
-
 .details-actions .action-btn-primary,
 .details-actions .action-btn-secondary {
     padding: 12px 24px;
@@ -602,12 +576,10 @@
     gap: 8px;
     border: none;
 }
-
 .details-actions .action-btn-primary {
     background-color: var(--accent-purple);
     color: white;
 }
-
 .details-actions .action-btn-secondary {
     background-color: transparent;
     color: var(--secondary-text);
@@ -1001,39 +973,39 @@
             }).join('');
         }
         
-        function renderGameTable(games = []) {
-            const tbody = document.getElementById('game-list-tbody'), 
-                  noResults = document.getElementById('no-results-message'), 
-                  tableContainer = document.querySelector('#biblioteca .table-container');
-        
-            if (!tbody || !noResults || !tableContainer) return;
-        
-            tbody.innerHTML = '';
-            if (games.length === 0) { 
-                tableContainer.style.display = 'none'; 
-                noResults.style.display = 'block'; 
-                return; 
-            }
-        
-            tableContainer.style.display = 'block'; 
-            noResults.style.display = 'none';
-        
-            games.forEach(game => {
-                const isPlatinado = game['Platinado?'] === 'Sim';
-        
-                // CORREÇÃO: Adicionamos .replace(/'/g, "\\'") para escapar apóstrofos
-                const safeName = game.Nome.replace(/'/g, "\\'");
-        
-                tbody.innerHTML += `<tr class="${isPlatinado ? 'platinado-row' : ''}">
-                    <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
-                    <td>${game.Plataforma || '-'}</td><td>${game.Status || '-'}</td><td class="nota-cell">${game.Nota || '-'}</td>
-                    <td>${game['Tempo de Jogo'] || 0}h</td>
-                    <td><div class="action-buttons">
-                        <button class="action-button" onclick="editGame('${safeName}')"><span class="material-symbols-outlined">edit</span></button>
-                        <button class="action-button" onclick="deleteGame('${safeName}')"><span class="material-symbols-outlined">delete</span></button>
-                    </div></td></tr>`;
-            });
-        }
+function renderGameTable(games = []) {
+    const tbody = document.getElementById('game-list-tbody'), 
+          noResults = document.getElementById('no-results-message'), 
+          tableContainer = document.querySelector('#biblioteca .table-container');
+
+    if (!tbody || !noResults || !tableContainer) return;
+
+    tbody.innerHTML = '';
+    if (games.length === 0) { 
+        tableContainer.style.display = 'none'; 
+        noResults.style.display = 'block'; 
+        return; 
+    }
+
+    tableContainer.style.display = 'block'; 
+    noResults.style.display = 'none';
+
+    games.forEach(game => {
+        const isPlatinado = game['Platinado?'] === 'Sim';
+        const safeName = game.Nome.replace(/'/g, "\\'");
+
+        // A linha da tabela agora chama openDetailsModal
+        tbody.innerHTML += `
+            <tr class="${isPlatinado ? 'platinado-row' : ''}" onclick="openDetailsModal('${safeName}')" style="cursor: pointer;">
+                <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
+                <td>${game.Plataforma || '-'}</td>
+                <td>${game.Status || '-'}</td>
+                <td class="nota-cell">${game.Nota || '-'}</td>
+                <td>${game['Tempo de Jogo'] || 0}h</td>
+                <td></td>
+            </tr>`;
+    });
+}
         
         function renderGameGrid(games = []) {
             const gridContainer = document.getElementById('game-grid-container');
@@ -1662,8 +1634,17 @@ function openDetailsModal(gameName) {
             </div>
     </div>
 </div>
-        
+
+        <div id="gameDetailsModal" class="modal-overlay">
+    <div class="modal-content details-modal">
+        <span class="close-button" onclick="closeDetailsModal()">&times;</span>
+        <div id="details-content">
+            </div>
+    </div>
+</div>
+
 </body>
 </html>
+
 
 
