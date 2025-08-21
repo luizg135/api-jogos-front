@@ -1000,14 +1000,18 @@
             games.forEach(game => {
                 const isPlatinado = game['Platinado?'] === 'Sim';
                 const safeName = game.Nome.replace(/'/g, "\\'");
-
                 tbody.innerHTML += `
-                        <tr class="${isPlatinado ? 'platinado-row' : ''}" data-action="open-details" data-game-name="${safeName}" style="cursor: pointer;">
+                    <tr class="${isPlatinado ? 'platinado-row' : ''}">
                         <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
                         <td>${game.Plataforma || '-'}</td>
                         <td>${game.Status || '-'}</td>
                         <td class="nota-cell">${game.Nota || '-'}</td>
                         <td>${game['Tempo de Jogo'] || 0}h</td>
+                        <td style="text-align: right;">
+                            <button class="action-button" data-action="open-details" data-game-name="${safeName}" title="Ver Detalhes">
+                                <span class="material-symbols-outlined">info</span>
+                            </button>
+                        </td>
                     </tr>`;
             });
         }
@@ -1019,25 +1023,28 @@
                 gridContainer.innerHTML = '';
                 return;
             }
-            gridContainer.innerHTML = games.map(game => {
-                const safeName = game.Nome.replace(/'/g, "\\'");
-                const plataforma = game.Plataforma || '-';
-                const tempoDeJogo = game['Tempo de Jogo'] || 0;
-                const trophyIconHTML = game['Platinado?'] === 'Sim' ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>` : '';
-                return `
-                        <div class="game-card-grid" data-action="open-details" data-game-name="${safeName}" title="${safeName}">
-                        <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
-                        ${trophyIconHTML}
-                        <div class="game-card-content">
-                            <div class="game-card-top-details">
-                                <span class="detail-item"><span class="material-symbols-outlined">stadia_controller</span> ${plataforma}</span>
-                                <span class="detail-item"><span class="material-symbols-outlined">timer</span> ${tempoDeJogo}h</span>
-                            </div>
-                            <div class="game-title">${game.Nome}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+gridContainer.innerHTML = games.map(game => {
+    const safeName = game.Nome.replace(/'/g, "\\'");
+    const plataforma = game.Plataforma || '-';
+    const tempoDeJogo = game['Tempo de Jogo'] || 0;
+    const trophyIconHTML = game['Platinado?'] === 'Sim' ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>` : '';
+    return `
+        <div class="game-card-grid" title="${safeName}">
+            <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
+            ${trophyIconHTML}
+            <div class="game-card-content">
+                <div class="game-card-top-details">
+                    <span class="detail-item"><span class="material-symbols-outlined">stadia_controller</span> ${plataforma}</span>
+                    <span class="detail-item"><span class="material-symbols-outlined">timer</span> ${tempoDeJogo}h</span>
+                </div>
+                <div class="game-title">${game.Nome}</div>
+            </div>
+            <button class="action-button" style="position: absolute; top: 8px; right: 8px; z-index: 10;" data-action="open-details" data-game-name="${safeName}" title="Ver Detalhes">
+                <span class="material-symbols-outlined">info</span>
+            </button>
+        </div>
+    `;
+}).join('');
         }
 
         function renderWishlist(wishlist = []) {
@@ -1662,6 +1669,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
