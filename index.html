@@ -517,6 +517,160 @@
             font-size: 10px;
         }
         
+        /* Estilos para o novo modal de visualização de jogo */
+        .game-details-modal-content {
+            background-color: var(--surface-color);
+            padding: 0;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
+            transition: transform 0.3s ease-out;
+        }
+        .modal-overlay.active .game-details-modal-content {
+            transform: scale(1);
+        }
+        .game-details-header {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+            border-radius: 16px 16px 0 0;
+        }
+        .game-details-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
+        .game-details-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(16, 17, 22, 0.9) 20%, transparent);
+            padding: 24px;
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+        }
+        .game-details-info .game-cover-art {
+            width: 120px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transform: translateY(32px);
+        }
+        .game-details-info-text {
+            flex-grow: 1;
+        }
+        .game-details-info-text h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-text);
+        }
+        .game-details-info-text p {
+            margin: 4px 0 0 0;
+            font-size: 16px;
+            color: var(--secondary-text);
+        }
+        .game-details-body {
+            padding: 56px 24px 24px 24px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+            color: var(--primary-text);
+        }
+        .game-details-stats, .game-details-description {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .game-details-stats-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        .game-details-stats-item:last-child {
+            border-bottom: none;
+        }
+        .game-details-stats-item span:first-child {
+            color: var(--secondary-text);
+            font-weight: 500;
+        }
+        .game-details-stats-item span:last-child {
+            font-weight: 600;
+        }
+        .metacritic-score {
+            font-size: 18px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+        }
+        .metacritic-score.good { background-color: #6c3; }
+        .metacritic-score.mixed { background-color: #fc3; }
+        .metacritic-score.bad { background-color: #f33; }
+
+        .game-details-description h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: var(--secondary-text);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .game-details-description p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--primary-text);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .game-details-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            padding-top: 16px;
+        }
+        .game-details-actions button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .game-details-actions .edit-btn {
+            background-color: var(--accent-purple);
+            color: white;
+            border: none;
+        }
+        .game-details-actions .edit-btn:hover {
+            background-color: #a884e9;
+        }
+        .game-details-actions .delete-btn {
+            background-color: transparent;
+            color: #cb2d3e;
+            border: 1px solid #cb2d3e;
+        }
+        .game-details-actions .delete-btn:hover {
+            background-color: #cb2d3e;
+            color: white;
+        }
+    
     </style>
 </head>
 
@@ -722,11 +876,73 @@
     <input type="number" id="gameConquistas" min="0">
 </div>
 
+<div class="form-group">
+    <label for="gameMetacritic">Metacritic</label>
+    <input type="number" id="gameMetacritic" min="0" max="100">
+</div>
+
+<div class="form-group">
+    <label for="gameDescription">Descrição</label>
+    <textarea id="gameDescription" rows="5" placeholder="Descrição do jogo..."></textarea>
+</div>
+
 <button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
             </form>
         </div>
     </div>
     
+    <div id="gameDetailsModal" class="modal-overlay">
+        <div class="game-details-modal-content">
+            <span class="close-button" onclick="closeGameDetailsModal()">&times;</span>
+            <div class="game-details-header">
+                <img id="gameCoverBackground" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo">
+                <div class="game-details-info">
+                    <img id="gameCoverArt" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo" class="game-cover-art">
+                    <div class="game-details-info-text">
+                        <h2 id="gameNameDetails">Nome do Jogo</h2>
+                        <p id="gamePlatformDetails">Plataforma</p>
+                    </div>
+                </div>
+            </div>
+            <div class="game-details-body">
+                <div class="game-details-stats">
+                    <div class="game-details-stats-item">
+                        <span>Status:</span>
+                        <span id="gameStatusDetails"></span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Nota:</span>
+                        <span id="gameRatingDetails"></span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Horas de Jogo:</span>
+                        <span id="gameHoursDetails"></span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Estilo:</span>
+                        <span id="gameStylesDetails"></span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Metacritic:</span>
+                        <span id="gameMetacriticDetails"></span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Conquistas:</span>
+                        <span id="gameAchievementsDetails"></span>
+                    </div>
+                </div>
+                <div class="game-details-description">
+                    <h3>Descrição</h3>
+                    <p id="gameDescriptionDetails"></p>
+                </div>
+                <div class="game-details-actions">
+                    <button class="edit-btn" id="editGameDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar Jogo</button>
+                    <button class="delete-btn" id="deleteGameDetailsBtn"><span class="material-symbols-outlined">delete</span> Excluir Jogo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="addWishModal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-button" onclick="closeWishModal()">&times;</span>
@@ -931,15 +1147,15 @@
                 const isPlatinado = game['Platinado?'] === 'Sim';
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 tbody.innerHTML += `
-                    <tr class="${isPlatinado ? 'platinado-row' : ''}">
+                    <tr class="${isPlatinado ? 'platinado-row' : ''}" onclick="openGameDetailsModal('${safeName}')" style="cursor: pointer;">
                         <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
                         <td>${game.Plataforma || '-'}</td>
                         <td>${game.Status || '-'}</td>
                         <td class="nota-cell">${game.Nota || '-'}</td>
                         <td>${game['Tempo de Jogo'] || 0}h</td>
                         <td><div class="action-buttons">
-                            <button class="action-button" onclick="editGame('${safeName}')"><span class="material-symbols-outlined">edit</span></button>
-                            <button class="action-button" onclick="deleteGame('${safeName}')"><span class="material-symbols-outlined">delete</span></button>
+                            <button class="action-button" onclick="event.stopPropagation(); editGame('${safeName}')"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="action-button" onclick="event.stopPropagation(); deleteGame('${safeName}')"><span class="material-symbols-outlined">delete</span></button>
                         </div></td>
                     </tr>`;
             });
@@ -964,7 +1180,7 @@
                     : '';
 
                 return `
-                    <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
+                    <div class="game-card-grid" onclick="openGameDetailsModal('${safeName}')" title="${safeName}">
                         <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
                         ${trophyIconHTML}
                         <div class="game-card-content">
@@ -1079,7 +1295,10 @@
             document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
             document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
             document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
+            document.getElementById('gameMetacritic').value = gameToEdit['Metacritic'] || '';
+            document.getElementById('gameDescription').value = gameToEdit['Descricao'] || '';
             document.getElementById('addGameModal').classList.add('active');
+            closeGameDetailsModal();
         }
 
         function closeGameModal() { document.getElementById('addGameModal').classList.remove('active'); }
@@ -1089,7 +1308,21 @@
             event.preventDefault();
             const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
             const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
-            const gameData = { Nome: document.getElementById('gameName').value, Plataforma: document.getElementById('gamePlatform').value, Status: document.getElementById('gameStatus').value, Nota: parseFloat(document.getElementById('gameRating').value) || null, "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0, Link: document.getElementById('gameLink').value, Estilo: document.getElementById('gameStyle').value, "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não', Preço: parseFloat(priceValue) || 0, "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0, "Terminado em": document.getElementById('gameTermino').value || '' };
+            const gameData = {
+                Nome: document.getElementById('gameName').value,
+                Plataforma: document.getElementById('gamePlatform').value,
+                Status: document.getElementById('gameStatus').value,
+                Nota: parseFloat(document.getElementById('gameRating').value) || null,
+                "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
+                Link: document.getElementById('gameLink').value,
+                Estilo: document.getElementById('gameStyle').value,
+                "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
+                Preço: parseFloat(priceValue) || 0,
+                "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
+                "Terminado em": document.getElementById('gameTermino').value || '',
+                Metacritic: document.getElementById('gameMetacritic').value || '',
+                Descricao: document.getElementById('gameDescription').value || ''
+            };
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
             try {
@@ -1125,6 +1358,7 @@
                     }
                 }
             });
+            closeGameDetailsModal();
         }
         
         function editGame(gameName) { openGameModalForEdit(gameName); }
@@ -1253,6 +1487,48 @@
             document.querySelectorAll('#achievementsModal .tab-button').forEach(tb => tb.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             event.currentTarget.classList.add('active');
+        }
+        
+        function openGameDetailsModal(gameName) {
+            const game = fullData.biblioteca.find(g => g.Nome === gameName);
+            if (!game) {
+                showToast("Jogo não encontrado.", true);
+                return;
+            }
+
+            document.getElementById('gameNameDetails').textContent = game.Nome;
+            document.getElementById('gamePlatformDetails').textContent = game.Plataforma || 'Não informado';
+            document.getElementById('gameStatusDetails').textContent = game.Status || 'Não informado';
+            document.getElementById('gameRatingDetails').textContent = game.Nota || 'N/A';
+            document.getElementById('gameHoursDetails').textContent = `${game['Tempo de Jogo'] || 0}h`;
+            document.getElementById('gameStylesDetails').textContent = game.Estilo || 'Não informado';
+            document.getElementById('gameAchievementsDetails').textContent = game['Conquistas Obtidas'] || 0;
+            document.getElementById('gameDescriptionDetails').textContent = game.Descricao || 'Nenhuma descrição disponível.';
+            
+            const gameMetacriticDetails = document.getElementById('gameMetacriticDetails');
+            const metacriticScore = parseInt(game.Metacritic);
+            gameMetacriticDetails.textContent = game.Metacritic || 'N/A';
+            gameMetacriticDetails.className = 'metacritic-score';
+            if (metacriticScore >= 75) {
+                gameMetacriticDetails.classList.add('good');
+            } else if (metacriticScore >= 50) {
+                gameMetacriticDetails.classList.add('mixed');
+            } else {
+                gameMetacriticDetails.classList.add('bad');
+            }
+            
+            const coverArt = game.Link || 'https://i.imgur.com/Z0ebi8o.png';
+            document.getElementById('gameCoverArt').src = coverArt;
+            document.getElementById('gameCoverBackground').src = coverArt;
+
+            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(game.Nome);
+            document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(game.Nome);
+
+            document.getElementById('gameDetailsModal').classList.add('active');
+        }
+
+        function closeGameDetailsModal() {
+            document.getElementById('gameDetailsModal').classList.remove('active');
         }
 
         // --- FUNÇÕES DA BUSCA API (BIBLIOTECA) ---
