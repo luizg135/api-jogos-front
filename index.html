@@ -806,20 +806,17 @@
 <script>
 // COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
 
-        // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
-        let currentSortKey = 'Nome'; // Coluna padrão para ordenação
-        let currentSortDirection = 'asc'; // Direção padrão
+        let currentSortKey = 'Nome';
+        let currentSortDirection = 'asc';
         const token = localStorage.getItem('jwt_token');
         if (!token) { window.location.href = 'login.html'; }
 
         let searchTimeout;
         let wishSearchTimeout;
-
-        // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
         function showToast(message, isError = false) {
             Toastify({
@@ -853,8 +850,7 @@
             renderWishlist(fullData.desejos);
             renderAchievements(fullData.conquistas_concluidas, fullData.conquistas_pendentes);
             populateFilters();
-            applyFilters('-graficos');
-            applyFilters('-biblioteca');
+            handleSort(currentSortKey, true);
         }
 
         function openPage(evt, pageName) {
@@ -921,23 +917,17 @@
             }).join('');
         }
         
-        // --- FUNÇÃO CORRIGIDA ---
         function renderGameTable(games = []) {
             const tbody = document.getElementById('game-list-tbody');
             const noResults = document.getElementById('no-results-message');
             const tableContainer = document.querySelector('#biblioteca .table-container');
-
             if (!tbody || !noResults || !tableContainer) return;
-
             tbody.innerHTML = '';
             
             if (games.length === 0) {
-                tableContainer.style.display = 'none';
                 noResults.style.display = 'block';
                 return;
             }
-
-            // A linha que forçava a visibilidade foi removida daqui
             noResults.style.display = 'none';
             
             games.forEach(game => {
@@ -961,35 +951,23 @@
         function renderGameGrid(games = []) {
             const gridContainer = document.getElementById('game-grid-container');
             if (!gridContainer) return;
-
             if (games.length === 0) {
                 gridContainer.innerHTML = '';
                 return;
             }
-
             gridContainer.innerHTML = games.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 const plataforma = game.Plataforma || '-';
                 const tempoDeJogo = game['Tempo de Jogo'] || 0;
-                
-                const trophyIconHTML = game['Platinado?'] === 'Sim' 
-                    ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>`
-                    : '';
-
+                const trophyIconHTML = game['Platinado?'] === 'Sim' ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>` : '';
                 return `
                     <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
                         <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
                         ${trophyIconHTML}
                         <div class="game-card-content">
                             <div class="game-card-top-details">
-                                <span class="detail-item">
-                                    <span class="material-symbols-outlined">stadia_controller</span>
-                                    ${plataforma}
-                                </span>
-                                <span class="detail-item">
-                                    <span class="material-symbols-outlined">timer</span>
-                                    ${tempoDeJogo}h
-                                </span>
+                                <span class="detail-item"><span class="material-symbols-outlined">stadia_controller</span> ${plataforma}</span>
+                                <span class="detail-item"><span class="material-symbols-outlined">timer</span> ${tempoDeJogo}h</span>
                             </div>
                             <div class="game-title">${game.Nome}</div>
                         </div>
@@ -1058,54 +1036,73 @@
         
         function populateFilters() {
             const library = fullData.biblioteca || [];
+            const platforms = [...new Set(library.map(g => g.Plataforma).filter(Boolean))].sort();
             const statuses = [...new Set(library.map(g => g.Status).filter(Boolean))].sort();
             const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort();
             const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))].sort((a,b) => b-a);
             const populate = (elId, items) => { const select = document.getElementById(elId); if (!select) return; select.innerHTML = '<option value="all">Todos</option>'; items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); }
-            ['', '-biblioteca', '-graficos'].forEach(suffix => {
-                populate('statusFilter' + suffix, statuses); populate('styleFilter' + suffix, styles); populate('yearFilter' + suffix, years);
+            ['-biblioteca', '-graficos'].forEach(suffix => {
+                populate('platformFilter' + suffix, platforms);
+                populate('statusFilter' + suffix, statuses);
+                populate('styleFilter' + suffix, styles);
+                const yearFilter = document.getElementById('yearFilter' + suffix);
+                if(yearFilter) populate('yearFilter' + suffix, years);
             });
         }
         
         function applyFilters(suffix) {
-            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || ''; const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
-            const style = document.getElementById('styleFilter' + suffix)?.value || 'all'; const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
-            const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) && (status !== 'all' ? g.Status === status : true) && (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true) && (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
+            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || '';
+            const platform = document.getElementById('platformFilter' + suffix)?.value || 'all';
+            const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
+            const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
+            const yearInput = document.getElementById('yearFilter' + suffix);
+            const year = yearInput ? yearInput.value : 'all';
+            const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) &&
+                                   (platform !== 'all' ? g.Plataforma === platform : true) &&
+                                   (status !== 'all' ? g.Status === status : true) &&
+                                   (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s => s.trim()).includes(style)) : true) &&
+                                   (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
-                renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
+                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',', '.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a, b) => parseFloat(String(a).replace(',', '.')) + parseFloat(String(b).replace(',', '.')), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
+                renderSummaryCards(stats, 'summary-graficos');
+                renderAllCharts(filteredGames);
             } else if (suffix === '-biblioteca') {
                 renderGameTable(filteredGames);
                 renderGameGrid(filteredGames);
             }
         }
 
-         function openGameModalForAdd() {
+        function openGameModalForAdd() {
             document.getElementById('addGameForm').reset();
             document.getElementById('editMode').value = '';
-         const rawgIdInput = document.getElementById('gameRawgId');
-         if (rawgIdInput) {
-                rawgIdInput.value = '';
-            }
+            const rawgIdInput = document.getElementById('gameRawgId');
+            if (rawgIdInput) rawgIdInput.value = '';
             document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo';
             document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
             document.getElementById('addGameModal').classList.add('active');
-         const searchResultsContainer = document.getElementById('searchResultsContainer');
-         if (searchResultsContainer) {
-                searchResultsContainer.innerHTML = '';
-            }
+            const searchResultsContainer = document.getElementById('searchResultsContainer');
+            if (searchResultsContainer) searchResultsContainer.innerHTML = '';
         }
         
         function openGameModalForEdit(gameName) {
             const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { showToast("Jogo não encontrado.", true); return; }
-            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = gameName;
-            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`; document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
-            document.getElementById('gameName').value = gameToEdit.Nome; document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
-            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = gameToEdit.Nota || '';
-            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
-            document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
-            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
+            document.getElementById('addGameForm').reset();
+            document.getElementById('editMode').value = gameName;
+            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`;
+            document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
+            document.getElementById('gameName').value = gameToEdit.Nome || '';
+            document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
+            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila';
+            document.getElementById('gameRating').value = gameToEdit.Nota || '';
+            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || '';
+            document.getElementById('gameLink').value = gameToEdit.Link || '';
+            document.getElementById('gameStyle').value = gameToEdit.Estilo || '';
+            document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
+            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || '';
+            document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
+            const rawgIdInput = document.getElementById('gameRawgId');
+            if (rawgIdInput) rawgIdInput.value = '';
             document.getElementById('addGameModal').classList.add('active');
         }
 
@@ -1113,54 +1110,33 @@
         function closeWishModal() { document.getElementById('addWishModal').classList.remove('active'); }
         
         async function handleGameFormSubmit(event) {
-    event.preventDefault();
-    const editModeValue = document.getElementById('editMode').value;
-    const isEditing = editModeValue !== '';
-
-    const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
-    const gameData = {
-        Nome: document.getElementById('gameName').value,
-        Plataforma: document.getElementById('gamePlatform').value,
-        Status: document.getElementById('gameStatus').value,
-        Nota: parseFloat(document.getElementById('gameRating').value) || null,
-        "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
-        Link: document.getElementById('gameLink').value,
-        Estilo: document.getElementById('gameStyle').value,
-        "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
-        Preço: parseFloat(priceValue) || 0,
-        "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
-        "Terminado em": document.getElementById('gameTermino').value || ''
-    };
-
-    // Lógica para diferenciar Adicionar de Editar
-    let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`;
-    let method = isEditing ? 'PUT' : 'POST';
-    let body = isEditing 
-        ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } 
-        : { list_type: 'games', item_data: gameData };
-
-    try {
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(body)
-        });
-
-        if (response.ok) {
-            showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`);
-            closeGameModal();
-            fetchGameData();
-        } else {
-            const error = await response.json();
-            showToast(`Erro: ${error.message || 'Falha na operação.'}`, true);
+            event.preventDefault();
+            const editModeValue = document.getElementById('editMode').value;
+            const isEditing = editModeValue !== '';
+            const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
+            const gameData = {
+                Nome: document.getElementById('gameName').value,
+                Plataforma: document.getElementById('gamePlatform').value,
+                Status: document.getElementById('gameStatus').value,
+                Nota: parseFloat(document.getElementById('gameRating').value) || null,
+                "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
+                Link: document.getElementById('gameLink').value,
+                Estilo: document.getElementById('gameStyle').value,
+                "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
+                Preço: parseFloat(priceValue) || 0,
+                "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
+                "Terminado em": document.getElementById('gameTermino').value || '',
+                RAWG_ID: document.getElementById('gameRawgId').value
+            };
+            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`;
+            let method = isEditing ? 'PUT' : 'POST';
+            let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
+            try {
+                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
+                if (response.ok) { showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeGameModal(); fetchGameData(); }
+                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
+            } catch (err) { showToast(`Erro de conexão.`, true); }
         }
-    } catch (err) {
-        showToast(`Erro de conexão.`, true);
-    }
-}
         
         async function deleteGame(gameName) {
             Swal.fire({
@@ -1318,8 +1294,64 @@
             event.currentTarget.classList.add('active');
         }
 
-        // --- FUNÇÕES DA BUSCA API (BIBLIOTECA) ---
+        function toggleLibraryView() {
+            const tableContainer = document.querySelector('#biblioteca .table-container');
+            const gridContainer = document.getElementById('game-grid-container');
+            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
+            const isGridVisible = gridContainer.style.display !== 'none';
+            if (isGridVisible) {
+                gridContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                toggleBtnIcon.textContent = 'grid_view';
+            } else {
+                gridContainer.style.display = 'grid';
+                tableContainer.style.display = 'none';
+                toggleBtnIcon.textContent = 'view_list';
+            }
+        }
+
+        function handleSort(key, preserveDirection = false) {
+            if (currentSortKey === key && !preserveDirection) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortKey = key;
+                if (!preserveDirection) {
+                    currentSortDirection = 'asc';
+                }
+            }
+            fullData.biblioteca.sort((a, b) => {
+                let valA = a[currentSortKey] || '';
+                let valB = b[currentSortKey] || '';
+                if (key === 'Nota' || key === 'Tempo de Jogo') {
+                    valA = parseFloat(String(valA).replace(',', '.')) || 0;
+                    valB = parseFloat(String(valB).replace(',', '.')) || 0;
+                }
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+                if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+            updateSortIcons();
+            applyFilters('-biblioteca');
+            applyFilters('-graficos');
+        }
+
+        function updateSortIcons() {
+            document.querySelectorAll('.sortable-header').forEach(header => {
+                header.classList.remove('sort-asc', 'sort-desc');
+                if (header.dataset.sortKey === currentSortKey) {
+                    header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+
         async function handleSearch(query) {
+            const isEditing = document.getElementById('editMode').value !== '';
+            if (isEditing) {
+                document.getElementById('searchResultsContainer').innerHTML = '';
+                return; 
+            }
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -1329,21 +1361,25 @@
                 const safeName = game.name.replace(/'/g, "\\'");
                 const safeStyles = game.styles.replace(/'/g, "\\'");
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', styles: '${safeStyles}', id: '${game.id}' })">...</div>`;
+                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', id: '${game.id}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
 
-                function selectGame(game) {
-                    document.getElementById('gameName').value = game.name;
-                    document.getElementById('gameLink').value = game.background_image;
-                    document.getElementById('gameStyle').value = game.styles;
-                    document.getElementById('gameRawgId').value = game.id; // ADICIONE ESTA LINHA
-                    document.getElementById('searchResultsContainer').innerHTML = '';
-                }
+        function selectGame(game) {
+            document.getElementById('gameName').value = game.name;
+            document.getElementById('gameLink').value = game.background_image;
+            document.getElementById('gameStyle').value = game.styles;
+            document.getElementById('gameRawgId').value = game.id;
+            document.getElementById('searchResultsContainer').innerHTML = '';
+        }
 
-        // --- FUNÇÕES DA BUSCA API (WISHLIST) ---
         async function handleWishSearch(query) {
+            const isEditing = document.getElementById('editWishMode').value !== '';
+            if (isEditing) {
+                document.getElementById('wishSearchResultsContainer').innerHTML = '';
+                return;
+            }
             const resultsContainer = document.getElementById('wishSearchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -1369,28 +1405,9 @@
             document.getElementById('wishSearchResultsContainer').innerHTML = '';
         }
         
-        function toggleLibraryView() {
-            const tableContainer = document.querySelector('#biblioteca .table-container');
-            const gridContainer = document.getElementById('game-grid-container');
-            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
-
-            const isGridVisible = gridContainer.style.display !== 'none';
-
-            if (isGridVisible) {
-                gridContainer.style.display = 'none';
-                tableContainer.style.display = 'block';
-                toggleBtnIcon.textContent = 'grid_view';
-            } else {
-                gridContainer.style.display = 'grid';
-                tableContainer.style.display = 'none';
-                toggleBtnIcon.textContent = 'view_list';
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
             
-            // Listeners de Forms e Botões
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
             setupListener('addWishForm', 'submit', handleWishFormSubmit);
             setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
@@ -1405,22 +1422,47 @@
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
-
-            document.querySelectorAll('.sortable-header').forEach(header => {
-            header.addEventListener('click', () => {
-                handleSort(header.dataset.sortKey);
-            });
-        });
-        updateSortIcons();
             
             const setupFilterListeners = (suffix) => {
-                ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => setupListener(id + suffix, 'input', () => applyFilters(suffix)));
+                ['nameFilter', 'platformFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
+                    const el = document.getElementById(id + suffix);
+                    if(el) el.addEventListener('input', () => applyFilters(suffix));
+                });
                 const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
-                if (clearBtn) { clearBtn.addEventListener('click', () => { ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { const el = document.getElementById(id + suffix); if(el) el.value = el.tagName === 'SELECT' ? 'all' : ''; }); applyFilters(suffix); }); }
+                if (clearBtn) { 
+                    clearBtn.addEventListener('click', () => { 
+                        ['nameFilter', 'platformFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { 
+                            const el = document.getElementById(id + suffix); 
+                            if(el) el.value = el.tagName === 'SELECT' ? 'all' : ''; 
+                        });
+                        if (suffix === '-biblioteca') {
+                            ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
+                                const el = document.getElementById(id);
+                                if(el) el.value = '';
+                            });
+                        }
+                        applyFilters(suffix); 
+                    }); 
+                }
             };
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
             
+            const toggleAdvancedBtn = document.getElementById('toggleAdvancedFiltersBtn');
+            if (toggleAdvancedBtn) {
+                toggleAdvancedBtn.addEventListener('click', () => {
+                    const advancedContainer = document.getElementById('advanced-filters-container');
+                    const isVisible = advancedContainer.style.display !== 'none';
+                    advancedContainer.style.display = isVisible ? 'none' : 'grid';
+                });
+            }
+            ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => applyFilters('-biblioteca'));
+                }
+            });
+
             const gameNameInput = document.getElementById('gameName');
             if (gameNameInput) {
                 gameNameInput.addEventListener('keyup', (event) => {
@@ -1443,7 +1485,6 @@
                 if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
                     searchContainer.innerHTML = '';
                 }
-
                 const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
                 const wishNameInput = document.getElementById('wishGameName');
                 if (wishSearchContainer && !wishSearchContainer.contains(event.target) && event.target !== wishNameInput) {
@@ -1451,53 +1492,14 @@
                 }
             });
 
-                function handleSort(key) {
-                    if (currentSortKey === key) {
-                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-                    } else {
-                        currentSortKey = key;
-                        currentSortDirection = 'asc';
-    }
-
-                    fullData.biblioteca.sort((a, b) => {
-                        let valA = a[currentSortKey] || '';
-                        let valB = b[currentSortKey] || '';
-
-                        if (key === 'Nota' || key === 'Tempo de Jogo') {
-                            valA = parseFloat(valA) || 0;
-                            valB = parseFloat(valB) || 0;
-                        }
-
-                        if (typeof valA === 'string') valA = valA.toLowerCase();
-                        if (typeof valB === 'string') valB = valB.toLowerCase();
-
-                        if (valA < valB) {
-                            return currentSortDirection === 'asc' ? -1 : 1;
-        }
-                        if (valA > valB) {
-                            return currentSortDirection === 'asc' ? 1 : -1;
-        }
-                        return 0;
-                    });
-
-                    updateSortIcons();
-                    applyFilters('-biblioteca');
-                }
-
-                function updateSortIcons() {
-                    document.querySelectorAll('.sortable-header').forEach(header => {
-                        header.classList.remove('sort-asc', 'sort-desc');
-                        if (header.dataset.sortKey === currentSortKey) {
-                            header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
-                        }
-                    });
-                }
+            document.querySelectorAll('.sortable-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    handleSort(header.dataset.sortKey);
+                });
+            });
             
             fetchGameData();
         });
-</script>
+    </script>
 </body>
 </html>
-
-
-
