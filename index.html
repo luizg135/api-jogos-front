@@ -516,7 +516,46 @@
             content: '▼';
             font-size: 10px;
         }
+
+        .advanced-filters {
+            grid-column: 1 / -1; /* Ocupa a linha inteira */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
         
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        
+        .filter-actions button {
+            flex-grow: 1;
+            margin-top: 0; /* Remove a margem padrão */
+        }
+        
+        .action-btn-secondary {
+            background: transparent;
+            color: var(--secondary-text);
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn-secondary:hover {
+            color: var(--primary-text);
+            border-color: var(--primary-text);
+        }
+                
     </style>
 </head>
 
@@ -589,20 +628,51 @@
                     </div>
                 </header>
                 <section class="filter-bar">
-                    <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
-                    <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
-                    <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
-                    <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
-                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-graficos" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span>Limpar</button></div>
+                    <div class="filter-group">
+                        <label for="nameFilter-biblioteca">Buscar por Nome</label>
+                        <input type="search" id="nameFilter-biblioteca" placeholder="Ex: Elden Ring">
+                    </div>
+                    <div class="filter-group">
+                        <label for="statusFilter-biblioteca">Status</label>
+                        <select id="statusFilter-biblioteca"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="styleFilter-biblioteca">Categoria</label>
+                        <select id="styleFilter-biblioteca"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="yearFilter-biblioteca">Ano de Conclusão</label>
+                        <select id="yearFilter-biblioteca"></select>
+                    </div>
+                
+                    <div class="filter-group filter-actions">
+                        <button id="toggleAdvancedFiltersBtn" class="action-btn-secondary">
+                            <span class="material-symbols-outlined">tune</span> Avançados
+                        </button>
+                        <button id="clearFiltersBtn-biblioteca" class="clear-filters-btn">
+                            <span class="material-symbols-outlined">delete_sweep</span>Limpar
+                        </button>
+                    </div>
+                
+                    <div class="advanced-filters" id="advanced-filters-container" style="display: none;">
+                        <div class="filter-group">
+                            <label for="ratingFilterMin">Nota Mínima</label>
+                            <input type="number" id="ratingFilterMin" min="0" max="10" step="0.1" placeholder="Ex: 8.5">
+                        </div>
+                        <div class="filter-group">
+                            <label for="ratingFilterMax">Nota Máxima</label>
+                            <input type="number" id="ratingFilterMax" min="0" max="10" step="0.1" placeholder="Ex: 10">
+                        </div>
+                        <div class="filter-group">
+                            <label for="hoursFilterMin">Horas Mínimas</label>
+                            <input type="number" id="hoursFilterMin" min="0" placeholder="Ex: 50">
+                        </div>
+                        <div class="filter-group">
+                            <label for="hoursFilterMax">Horas Máximas</label>
+                            <input type="number" id="hoursFilterMax" min="0" placeholder="Ex: 100">
+                        </div>
+                    </div>
                 </section>
-                <div id="summary-graficos" class="summary-grid"></div>
-                <div id="charts-container" class="charts-grid">
-                    <div class="chart-card"><h3>Jogos Platinados</h3><div class="chart-wrapper"><canvas id="platinadosChart"></canvas></div></div>
-                    <div class="chart-card"><h3>Jogos por Plataforma</h3><div class="chart-wrapper"><canvas id="platformChart"></canvas></div></div>
-                    <div class="chart-card"><h3>Jogos por Status</h3><div class="chart-wrapper"><canvas id="statusChart"></canvas></div></div>
-                    <div class="chart-card"><h3>Top 5 Estilos</h3><div class="chart-wrapper"><canvas id="styleChart"></canvas></div></div>
-                </div>
-            </section>
 
             <section id="biblioteca" class="page">
             <header class="profile-header">
@@ -1055,13 +1125,43 @@
         }
         
         function applyFilters(suffix) {
-            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || ''; const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
-            const style = document.getElementById('styleFilter' + suffix)?.value || 'all'; const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
-            const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) && (status !== 'all' ? g.Status === status : true) && (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true) && (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
+            // Filtros básicos
+            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || '';
+            const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
+            const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
+            const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
+        
+            // Filtros avançados (só aplicamos na biblioteca)
+            const ratingMin = suffix === '-biblioteca' ? parseFloat(document.getElementById('ratingFilterMin').value) || 0 : 0;
+            const ratingMax = suffix === '-biblioteca' ? parseFloat(document.getElementById('ratingFilterMax').value) || 10 : 10;
+            const hoursMin = suffix === '-biblioteca' ? parseInt(document.getElementById('hoursFilterMin').value) || 0 : 0;
+            const hoursMax = suffix === '-biblioteca' ? parseInt(document.getElementById('hoursFilterMax').value) || Infinity : Infinity;
+        
+            const filteredGames = (fullData.biblioteca || []).filter(g => {
+                const gameRating = parseFloat(String(g.Nota).replace(',', '.')) || 0;
+                const gameHours = parseInt(g['Tempo de Jogo']) || 0;
+        
+                const baseFilter = (name ? g.Nome.toLowerCase().includes(name) : true) &&
+                                   (status !== 'all' ? g.Status === status : true) &&
+                                   (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s => s.trim()).includes(style)) : true) &&
+                                   (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true);
+        
+                // Se não for a página da biblioteca, só usamos o filtro base
+                if (suffix !== '-biblioteca') {
+                    return baseFilter;
+                }
+        
+                // Se for a página da biblioteca, adicionamos os filtros avançados
+                return baseFilter &&
+                       (gameRating >= ratingMin && gameRating <= ratingMax) &&
+                       (gameHours >= hoursMin && gameHours <= hoursMax);
+            });
+        
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
-                renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
+                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',', '.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a, b) => parseFloat(String(a).replace(',', '.')) + parseFloat(String(b).replace(',', '.')), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
+                renderSummaryCards(stats, 'summary-graficos');
+                renderAllCharts(filteredGames);
             } else if (suffix === '-biblioteca') {
                 renderGameTable(filteredGames);
                 renderGameGrid(filteredGames);
@@ -1325,7 +1425,40 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
+
+            const toggleAdvancedBtn = document.getElementById('toggleAdvancedFiltersBtn');
+            if (toggleAdvancedBtn) {
+                toggleAdvancedBtn.addEventListener('click', () => {
+                    const advancedContainer = document.getElementById('advanced-filters-container');
+                    const isVisible = advancedContainer.style.display !== 'none';
+                    advancedContainer.style.display = isVisible ? 'none' : 'grid';
+                });
+            }
             
+            // Adiciona listeners para os novos campos de filtro
+            ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => applyFilters('-biblioteca'));
+                }
+            });
+            
+            // ATUALIZE A LÓGICA DO BOTÃO DE LIMPAR FILTROS
+            const clearFiltersBtnBiblioteca = document.getElementById('clearFiltersBtn-biblioteca');
+            if (clearFiltersBtnBiblioteca) {
+                clearFiltersBtnBiblioteca.addEventListener('click', () => {
+                    ['nameFilter-biblioteca', 'statusFilter-biblioteca', 'styleFilter-biblioteca', 'yearFilter-biblioteca'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = el.tagName === 'SELECT' ? 'all' : '';
+                    });
+                    // Limpa também os filtros avançados
+                    ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = '';
+                    });
+                    applyFilters('-biblioteca');
+                });
+            }
             // Listeners de Forms e Botões
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
             setupListener('addWishForm', 'submit', handleWishFormSubmit);
@@ -1434,4 +1567,5 @@
 </script>
 </body>
 </html>
+
 
