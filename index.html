@@ -305,18 +305,18 @@
         .search-result-info small { font-size: 12px; color: var(--secondary-text); margin-top: 4px; }
 
         .platinum-card {
-            position: relative; /* Essencial para o overlay */
-            aspect-ratio: 3 / 4; /* Proporção mais vertical */
+            position: relative;
+            aspect-ratio: 3 / 4;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .platinum-card:hover {
-            box-shadow: 0 8px 30px rgba(147, 112, 219, 0.4); /* Efeito de brilho roxo */
+            box-shadow: 0 8px 30px rgba(147, 112, 219, 0.4);
         }
 
         .platinum-card img {
             width: 100%;
-            height: 100%; /* Ocupa todo o card */
+            height: 100%;
             object-fit: cover;
             border-radius: 12px;
         }
@@ -408,7 +408,7 @@
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Aumentei um pouco o tamanho mínimo */
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 20px;
         }
 
@@ -419,9 +419,9 @@
             overflow: hidden;
             transition: all 0.2s ease;
             cursor: pointer;
-            display: flex; /* Novo: para organizar a imagem e o conteúdo */
-            flex-direction: column; /* Novo: imagem em cima, conteúdo embaixo */
-            position: relative; /* Novo: para o troféu */
+            display: flex;
+            flex-direction: column;
+            position: relative;
             border-bottom: 3px solid transparent;
         }
 
@@ -432,14 +432,14 @@
 
         .game-card-grid img {
             width: 100%;
-            height: 215px; /* Altura fixa para a imagem */
+            height: 215px;
             object-fit: cover;
             display: block;
         }
 
         .game-card-content {
             padding: 12px;
-            flex-grow: 1; /* Faz o conteúdo preencher o espaço restante */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
@@ -472,7 +472,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-top: auto; /* Empurra o título para a parte de baixo do card */
+            margin-top: auto;
         }
 
         .game-card-trophy {
@@ -491,7 +491,7 @@
         .sortable-header {
             cursor: pointer;
             position: relative;
-            user-select: none; /* Impede a seleção de texto ao clicar */
+            user-select: none;
         }
 
         .sortable-header:hover {
@@ -506,7 +506,6 @@
             opacity: 0.6;
         }
 
-/* Mostra uma seta para cima ou para baixo dependendo da classe */
         .sortable-header.sort-asc .sort-icon::after {
             content: '▲';
             font-size: 10px;
@@ -524,8 +523,6 @@
             border-radius: 16px;
             max-width: 800px;
             width: 90%;
-            display: flex;
-            flex-direction: column;
             position: relative;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             transform: scale(0.95);
