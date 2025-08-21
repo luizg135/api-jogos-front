@@ -27,9 +27,19 @@
             --accent-green: #238636;
         }
         body.light-mode {
-            --bg-color: #f6f8fa; --surface-color: #ffffff; --primary-text: #24292f;
-            --secondary-text: #57606a; --border-color: #d0d7de; --accent-purple: #8957e5;
-            --accent-green: #2da44e;
+            --bg-color: #F8F9FA;
+            --surface-color: #FFFFFF;
+            --primary-text: #212529;
+            --secondary-text: #6C757D;
+            --border-color: #DEE2E6;
+            --accent-purple: #6F42C1;
+            --accent-green: #28A745;
+            --rank-bronze: #A0522D;
+            --rank-prata: #B0C4DE;
+            --rank-ouro: #FFD700;
+            --rank-platina: #B0E0E6;
+            --rank-diamante: #40E0D0;
+            --rank-mestre: #8A2BE2;
         }
         *, *::before, *::after { box-sizing: border-box; }
         body {
@@ -64,7 +74,7 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .profile-main { position: relative; z-index: 1; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-        .profile-avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--border-color); object-fit: cover; }
+        .profile-avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--border-color); object-fit: cover; cursor: pointer; }
         .profile-info { flex-grow: 1; }
         .profile-info h1 { font-size: 28px; font-weight: 700; margin: 0; }
         .profile-info h1.rank-Mestre { color: var(--rank-mestre); text-shadow: 0 0 12px var(--rank-mestre); }
@@ -221,10 +231,11 @@
             border: 1px solid var(--border-color); padding: 10px 12px; border-radius: 8px; font-size: 14px;
         }
         .clear-filters-btn {
-            background: transparent; color: var(--secondary-text); border: 1px solid var(--border-color);
-            padding: 10px 12px; border-radius: 8px; font-size: 14px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: transparent; border: 1px solid var(--border-color);
+            padding: 10px 12px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
             transition: all 0.2s ease; margin-top: auto;
+            width: 52px; height: 52px;
         }
         .clear-filters-btn:hover { color: var(--primary-text); border-color: var(--primary-text); }
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-top: 32px; }
@@ -340,10 +351,6 @@
             background-color: var(--border-color); 
             border-radius: 10px; 
             border: 2px solid var(--surface-color); 
-        }
-
-        .achievements-list::-webkit-scrollbar-thumb:hover {
-            background-color: var(--secondary-text); 
         }
 
         .achievements-list {
@@ -605,27 +612,18 @@
         .game-details-stats-item span:last-child {
             font-weight: 600;
         }
-        .metacritic-score {
-            font-size: 18px;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 4px;
-            color: white;
-        }
-        .metacritic-score.good { background-color: #6c3; }
-        .metacritic-score.mixed { background-color: #fc3; }
-        .metacritic-score.bad { background-color: #f33; }
-        .rating-score {
+        .metacritic-score, .rating-score {
             font-size: 14px;
             font-weight: 600;
             padding: 4px 8px;
             border-radius: 4px;
-            color: black;
-            background-color: #7d8590;
+            color: white;
+            min-width: 45px;
+            text-align: center;
         }
-        .rating-score.good { background-color: #6c3; color: white; }
-        .rating-score.mixed { background-color: #fc3; }
-        .rating-score.bad { background-color: #f33; color: white; }
+        .metacritic-score.good, .rating-score.good { background-color: #6c3; }
+        .metacritic-score.mixed, .rating-score.mixed { background-color: #fc3; }
+        .metacritic-score.bad, .rating-score.bad { background-color: #f33; }
         
         .game-details-description h3 {
             margin: 0 0 12px 0;
@@ -647,29 +645,32 @@
             grid-column: 1 / -1;
             display: flex;
             justify-content: flex-end;
-            gap: 16px;
+            gap: 8px;
             padding-top: 16px;
         }
-        .game-details-actions button {
-            padding: 12px 24px;
+        .game-details-actions .action-button {
+            padding: 8px;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--secondary-text);
+            border: 1px solid var(--border-color);
         }
-        .game-details-actions .edit-btn {
-            background-color: var(--accent-purple);
-            color: white;
-            border: none;
+        .game-details-actions .action-button:hover {
+            color: var(--primary-text);
+            background-color: var(--bg-color);
         }
-        .game-details-actions .edit-btn:hover {
-            background-color: #a884e9;
+        .game-details-actions .action-button .material-symbols-outlined {
+            font-size: 20px;
         }
         .game-details-actions .delete-btn {
-            background-color: transparent;
             color: #cb2d3e;
-            border: 1px solid #cb2d3e;
+            border-color: #cb2d3e;
         }
         .game-details-actions .delete-btn:hover {
             background-color: #cb2d3e;
@@ -690,7 +691,6 @@
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
         </div>
         <div class="sidebar-footer">
-            <button class="nav-button" id="settingsBtn" title="Configurações"><span class="material-symbols-outlined">settings</span></button>
             <button class="nav-button" id="theme-toggle" title="Mudar Tema"><span class="material-symbols-outlined">light_mode</span></button>
             <button class="nav-button" id="logoutBtn" title="Sair"><span class="material-symbols-outlined">logout</span></button>
         </div>
@@ -701,7 +701,7 @@
             <section id="perfil" class="page active">
                 <header class="profile-header">
                     <div class="profile-main">
-                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
+                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar" onclick="openSettingsModal()">
                         <div class="profile-info">
                             <h1 id="gamerName">Carregando...</h1>
                             <p id="profileSubtitle">Resumo da jornada!</p>
@@ -752,7 +752,7 @@
                     <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
                     <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
                     <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
-                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-graficos" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span>Limpar</button></div>
+                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-graficos" class="clear-filters-btn" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button></div>
                 </section>
                 <div id="summary-graficos" class="summary-grid"></div>
                 <div id="charts-container" class="charts-grid">
@@ -781,7 +781,7 @@
                     <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
                     <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
                     <div class="filter-group"><label for="yearFilter-biblioteca">Ano de Conclusão</label><select id="yearFilter-biblioteca"></select></div>
-                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-biblioteca" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span>Limpar</button></div>
+                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-biblioteca" class="clear-filters-btn" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button></div>
                 </section>
                 <div class="table-container">
                     <table class="games-table">
@@ -896,7 +896,7 @@
         </div>
     </div>
     
-    <div id="gameDetailsModal" class="modal-overlay">
+    <div id="gameDetailsModal" class="modal-overlay" onclick="if (event.target === this) closeGameDetailsModal()">
         <div class="game-details-modal-content">
             <span class="close-button" onclick="closeGameDetailsModal()">&times;</span>
             <div class="game-details-header">
@@ -941,8 +941,8 @@
                     <p id="gameDescriptionDetails"></p>
                 </div>
                 <div class="game-details-actions">
-                    <button class="edit-btn" id="editGameDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar Jogo</button>
-                    <button class="delete-btn" id="deleteGameDetailsBtn"><span class="material-symbols-outlined">delete</span> Excluir Jogo</button>
+                    <button class="action-button" id="editGameDetailsBtn"><span class="material-symbols-outlined">edit</span></button>
+                    <button class="action-button delete-btn" id="deleteGameDetailsBtn"><span class="material-symbols-outlined">delete</span></button>
                 </div>
             </div>
         </div>
@@ -1298,8 +1298,6 @@
             document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
             document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
             document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
-            document.getElementById('gameMetacritic').value = gameToEdit['Metacritic'] || '';
-            document.getElementById('gameDescription').value = gameToEdit['Descricao'] || '';
             document.getElementById('addGameModal').classList.add('active');
             closeGameDetailsModal();
         }
@@ -1315,7 +1313,7 @@
                 Nome: document.getElementById('gameName').value,
                 Plataforma: document.getElementById('gamePlatform').value,
                 Status: document.getElementById('gameStatus').value,
-                Nota: parseFloat(document.getElementById('gameRating').value) || null,
+                Nota: parseFloat(document.getElementById('gameRating').value.replace(',', '.')) || null,
                 "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
                 Link: document.getElementById('gameLink').value,
                 Estilo: document.getElementById('gameStyle').value,
@@ -1512,11 +1510,9 @@
                     gameRatingDetails.classList.add('good');
                 } else if (gameRating >= 5) {
                     gameRatingDetails.classList.add('mixed');
-                } else {
+                } else if (gameRating >= 0) {
                     gameRatingDetails.classList.add('bad');
                 }
-            } else {
-                gameRatingDetails.classList.add('mixed');
             }
             
             document.getElementById('gameHoursDetails').textContent = `${game['Tempo de Jogo'] || 0}h`;
@@ -1542,8 +1538,9 @@
             document.getElementById('gameCoverArt').src = coverArt;
             document.getElementById('gameCoverBackground').src = coverArt;
 
-            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(game.Nome);
-            document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(game.Nome);
+            const safeName = game.Nome.replace(/'/g, "\\'");
+            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName);
+            document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(safeName);
 
             document.getElementById('gameDetailsModal').classList.add('active');
         }
@@ -1626,8 +1623,6 @@
             setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
             setupListener('addGameBtn', 'click', openGameModalForAdd);
             setupListener('addWishBtn', 'click', openWishModal);
-            setupListener('settingsBtn', 'click', openSettingsModal);
-            setupListener('achievementsShortcut', 'click', openAchievementsModal);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             setupListener('theme-toggle', 'click', () => {
                 const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
@@ -1635,6 +1630,7 @@
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
+            setupListener('achievementsShortcut', 'click', openAchievementsModal);
             setupListener('gameDetailsModal', 'click', (event) => {
                 if (event.target === event.currentTarget) {
                     closeGameDetailsModal();
