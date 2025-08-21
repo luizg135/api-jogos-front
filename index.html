@@ -1485,7 +1485,7 @@
                 const styleMatch = style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true;
                 const yearMatch = year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true;
 
-                const gameRating = parseFloat(g.Nota) || 0;
+                const gameRating = parseFloat(String(g.Nota).replace(',', '.')) || 0;
                 const ratingMatch = gameRating >= minRating && gameRating <= maxRating;
                 
                 const gameHours = parseInt(g['Tempo de Jogo']) || 0;
@@ -1720,7 +1720,7 @@
             try {
                 const response = await fetch(`${API_URL}/games/profile/edit`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(newProfileData) });
                 if (response.ok) { showToast('Perfil atualizado com sucesso!'); closeSettingsModal(); fetchGameData(); }
-                else { showToast('Erro ao atualizar o perfil.', true); }
+                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
             } catch(err) { showToast('Erro de conexão ao salvar as configurações.', true); }
         }
         function loadProfileSettings(profile = {}) {
