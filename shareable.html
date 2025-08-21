@@ -176,7 +176,11 @@
                 const stats = data.estatisticas || {};
                 const recentPlatinums = data.ultimos_platinados || [];
 
-                document.getElementById('publicProfileAvatar').src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
+                const avatar = document.getElementById('publicProfileAvatar');
+                if (avatar) {
+                    avatar.src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
+                }
+
                 document.getElementById('publicGamerName').textContent = profile.profileName || 'Perfil do Jogador';
                 document.getElementById('publicProfileSubtitle').textContent = profile.profileSubtitle || 'Resumo da jornada!';
 
@@ -190,15 +194,18 @@
                 if (recentPlatinums.length > 0) {
                     platinumsContainer.innerHTML = recentPlatinums.map(game => `
                         <div class="platinum-item">
-                            <img src="${game.Link}" alt="${game.Nome}">
+                            <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${game.Nome}">
                             <div class="platinum-overlay">${game.Nome}</div>
                         </div>
                     `).join('');
+                } else {
+                    platinumsContainer.innerHTML = '<p style="color: #7d8590; font-size: 14px;">Nenhum jogo platinado com imagem encontrada.</p>';
                 }
 
             } catch (error) {
                 console.error('Erro ao carregar perfil público:', error);
-                document.querySelector('.profile-card').innerHTML = '<p style="text-align: center; color: #cb2d3e;">Não foi possível carregar o perfil.</p>';
+                const profileCard = document.querySelector('.profile-card');
+                profileCard.innerHTML = '<p style="text-align: center; color: #cb2d3e;">Não foi possível carregar o perfil.</p>';
             }
         });
     </script>
