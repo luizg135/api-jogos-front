@@ -516,75 +516,6 @@
             content: '▼';
             font-size: 10px;
         }
-
-        .search-result-info {
-            flex-grow: 1;
-            min-width: 0;
-        }
-        
-        .search-result-info span {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-.details-modal {
-    max-width: 800px;
-}
-#details-content {
-    display: flex;
-    gap: 32px;
-}
-.details-cover {
-    width: 250px;
-    flex-shrink: 0;
-}
-.details-cover img {
-    width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-.details-info h2 {
-    margin-top: 0;
-    font-size: 28px;
-}
-.details-description {
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--secondary-text);
-    max-height: 200px;
-    overflow-y: auto;
-    padding-right: 10px;
-    margin: 24px 0;
-}
-.details-actions {
-    display: flex;
-    gap: 16px;
-    margin-top: 24px;
-    border-top: 1px solid var(--border-color);
-    padding-top: 24px;
-}
-.details-actions .action-btn-primary,
-.details-actions .action-btn-secondary {
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border: none;
-}
-.details-actions .action-btn-primary {
-    background-color: var(--accent-purple);
-    color: white;
-}
-.details-actions .action-btn-secondary {
-    background-color: transparent;
-    color: var(--secondary-text);
-    border: 1px solid var(--border-color);
-}
         
     </style>
 </head>
@@ -662,7 +593,7 @@
                     <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
                     <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
                     <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
-                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-graficos" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span></button></div>
+                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-graficos" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span>Limpar</button></div>
                 </section>
                 <div id="summary-graficos" class="summary-grid"></div>
                 <div id="charts-container" class="charts-grid">
@@ -691,7 +622,7 @@
                     <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
                     <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
                     <div class="filter-group"><label for="yearFilter-biblioteca">Ano de Conclusão</label><select id="yearFilter-biblioteca"></select></div>
-                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-biblioteca" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span></button></div>
+                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-biblioteca" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span>Limpar</button></div>
                 </section>
                 <div class="table-container">
                     <table class="games-table">
@@ -702,6 +633,7 @@
                     <th class="sortable-header" data-sort-key="Status">Status <span class="sort-icon"></span></th>
                     <th class="sortable-header" data-sort-key="Nota">Nota <span class="sort-icon"></span></th>
                     <th class="sortable-header" data-sort-key="Tempo de Jogo">Horas <span class="sort-icon"></span></th>
+                    <th>Ações</th>
                 </tr>
             </thead>
                         <tbody id="game-list-tbody"></tbody>
@@ -727,73 +659,73 @@
     </main>
     
     <div id="addGameModal" class="modal-overlay">
-<div class="modal-content">
-    <span class="close-button" onclick="closeGameModal()">&times;</span>
-    <h2 id="gameModalTitle">Adicionar Novo Jogo</h2>
-    <form id="addGameForm">
-        <input type="hidden" id="editMode" value="">
-        <input type="hidden" id="gameRawgId" value="">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeGameModal()">&times;</span>
+            <h2 id="gameModalTitle">Adicionar Novo Jogo</h2>
+            <form id="addGameForm">
+<input type="hidden" id="editMode" value="">
 
-        <div class="form-group">
-            <label for="gameName">Nome do Jogo</label>
-            <input type="text" id="gameName" required autocomplete="off">
-            <div id="searchResultsContainer"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="gamePlatform">Plataforma</label>
-            <input type="text" id="gamePlatform" placeholder="Ex: PC, PS5">
-        </div>
-
-        <div class="form-group">
-            <label for="gameStatus">Status</label>
-            <select id="gameStatus">
-                <option value="Na Fila">Na Fila</option>
-                <option value="Jogando">Jogando</option>
-                <option value="Finalizado">Finalizado</option>
-                <option value="Platinado">Platinado</option>
-                <option value="Abandonado">Abandonado</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="gameRating">Nota</label>
-            <input type="number" id="gameRating" step="0.1" min="0" max="10">
-        </div>
-
-        <div class="form-group">
-            <label for="gameHours">Horas de Jogo</label>
-            <input type="number" id="gameHours" min="0">
-        </div>
-
-        <div class="form-group">
-            <label for="gameTermino">Data de Conclusão</label>
-            <input type="date" id="gameTermino">
-        </div>
-
-        <div class="form-group" style="display: none;">
-            <label for="gameLink">Link da Capa (URL)</label>
-            <input type="url" id="gameLink" placeholder="URL da imagem">
-        </div>
-
-        <div class="form-group">
-            <label for="gameStyle">Estilo (separado por vírgula)</label>
-            <input type="text" id="gameStyle" placeholder="Ex: RPG, Aventura">
-        </div>
-
-        <div class="form-group">
-            <label for="gamePrice">Preço (R$)</label>
-            <input type="text" inputmode="decimal" id="gamePrice" placeholder="Ex: 149,90">
-        </div>
-
-        <div class="form-group">
-            <label for="gameConquistas">Conquistas Obtidas</label>
-            <input type="number" id="gameConquistas" min="0">
-        </div>
-
-        <button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
-    </form>
+<div class="form-group">
+    <label for="gameName">Nome do Jogo</label>
+    <input type="text" id="gameName" required autocomplete="off">
+    <div id="searchResultsContainer"></div>
 </div>
+
+<div class="form-group">
+    <label for="gamePlatform">Plataforma</label>
+    <input type="text" id="gamePlatform" placeholder="Ex: PC, PS5">
+</div>
+
+<div class="form-group">
+    <label for="gameStatus">Status</label>
+    <select id="gameStatus">
+        <option value="Na Fila">Na Fila</option>
+        <option value="Jogando">Jogando</option>
+        <option value="Finalizado">Finalizado</option>
+        <option value="Platinado">Platinado</option>
+        <option value="Abandonado">Abandonado</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="gameRating">Nota</label>
+    <input type="number" id="gameRating" step="0.1" min="0" max="10">
+</div>
+
+<div class="form-group">
+    <label for="gameHours">Horas de Jogo</label>
+    <input type="number" id="gameHours" min="0">
+</div>
+
+<div class="form-group">
+    <label for="gameTermino">Data de Conclusão</label>
+    <input type="date" id="gameTermino">
+</div>
+
+<div class="form-group" style="display: none;">
+    <label for="gameLink">Link da Capa (URL)</label>
+    <input type="url" id="gameLink" placeholder="URL da imagem">
+</div>
+
+<div class="form-group">
+    <label for="gameStyle">Estilo (separado por vírgula)</label>
+    <input type="text" id="gameStyle" placeholder="Ex: RPG, Aventura">
+</div>
+
+<div class="form-group">
+    <label for="gamePrice">Preço (R$)</label>
+    <input type="text" inputmode="decimal" id="gamePrice" placeholder="Ex: 149,90">
+</div>
+
+<div class="form-group">
+    <label for="gameConquistas">Conquistas Obtidas</label>
+    <input type="number" id="gameConquistas" min="0">
+</div>
+
+<button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
+            </form>
+        </div>
+    </div>
     
     <div id="addWishModal" class="modal-overlay">
         <div class="modal-content">
@@ -858,28 +790,23 @@
         </div>
     </div>
 
-    <div id="gameDetailsModal" class="modal-overlay">
-        <div class="modal-content details-modal">
-            <span class="close-button" onclick="closeDetailsModal()">&times;</span>
-            <div id="details-content">
-                </div>
-        </div>
-    </div>
-
 <script>
 // COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
 
+        // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
-        let currentSortKey = 'Nome';
-        let currentSortDirection = 'asc';
+        let currentSortKey = 'Nome'; // Coluna padrão para ordenação
+        let currentSortDirection = 'asc'; // Direção padrão
         const token = localStorage.getItem('jwt_token');
         if (!token) { window.location.href = 'login.html'; }
 
         let searchTimeout;
         let wishSearchTimeout;
+
+        // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
         function showToast(message, isError = false) {
             Toastify({
@@ -913,7 +840,8 @@
             renderWishlist(fullData.desejos);
             renderAchievements(fullData.conquistas_concluidas, fullData.conquistas_pendentes);
             populateFilters();
-            handleSort(currentSortKey, true);
+            applyFilters('-graficos');
+            applyFilters('-biblioteca');
         }
 
         function openPage(evt, pageName) {
@@ -980,23 +908,25 @@
             }).join('');
         }
         
+        // --- FUNÇÃO CORRIGIDA ---
         function renderGameTable(games = []) {
-            const tbody = document.getElementById('game-list-tbody'), 
-                noResults = document.getElementById('no-results-message'), 
-                tableContainer = document.querySelector('#biblioteca .table-container');
+            const tbody = document.getElementById('game-list-tbody');
+            const noResults = document.getElementById('no-results-message');
+            const tableContainer = document.querySelector('#biblioteca .table-container');
 
             if (!tbody || !noResults || !tableContainer) return;
 
             tbody.innerHTML = '';
-            if (games.length === 0) { 
-                tableContainer.style.display = 'none'; 
-                noResults.style.display = 'block'; 
-                return; 
+            
+            if (games.length === 0) {
+                tableContainer.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
             }
 
-            tableContainer.style.display = 'block'; 
+            // A linha que forçava a visibilidade foi removida daqui
             noResults.style.display = 'none';
-
+            
             games.forEach(game => {
                 const isPlatinado = game['Platinado?'] === 'Sim';
                 const safeName = game.Nome.replace(/'/g, "\\'");
@@ -1007,11 +937,10 @@
                         <td>${game.Status || '-'}</td>
                         <td class="nota-cell">${game.Nota || '-'}</td>
                         <td>${game['Tempo de Jogo'] || 0}h</td>
-                        <td style="text-align: right;">
-                            <button class="action-button" data-action="open-details" data-game-name="${safeName}" title="Ver Detalhes">
-                                <span class="material-symbols-outlined">info</span>
-                            </button>
-                        </td>
+                        <td><div class="action-buttons">
+                            <button class="action-button" onclick="editGame('${safeName}')"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="action-button" onclick="deleteGame('${safeName}')"><span class="material-symbols-outlined">delete</span></button>
+                        </div></td>
                     </tr>`;
             });
         }
@@ -1019,32 +948,41 @@
         function renderGameGrid(games = []) {
             const gridContainer = document.getElementById('game-grid-container');
             if (!gridContainer) return;
+
             if (games.length === 0) {
                 gridContainer.innerHTML = '';
                 return;
             }
-gridContainer.innerHTML = games.map(game => {
-    const safeName = game.Nome.replace(/'/g, "\\'");
-    const plataforma = game.Plataforma || '-';
-    const tempoDeJogo = game['Tempo de Jogo'] || 0;
-    const trophyIconHTML = game['Platinado?'] === 'Sim' ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>` : '';
-    return `
-        <div class="game-card-grid" title="${safeName}">
-            <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
-            ${trophyIconHTML}
-            <div class="game-card-content">
-                <div class="game-card-top-details">
-                    <span class="detail-item"><span class="material-symbols-outlined">stadia_controller</span> ${plataforma}</span>
-                    <span class="detail-item"><span class="material-symbols-outlined">timer</span> ${tempoDeJogo}h</span>
-                </div>
-                <div class="game-title">${game.Nome}</div>
-            </div>
-            <button class="action-button" style="position: absolute; top: 8px; right: 8px; z-index: 10;" data-action="open-details" data-game-name="${safeName}" title="Ver Detalhes">
-                <span class="material-symbols-outlined">info</span>
-            </button>
-        </div>
-    `;
-}).join('');
+
+            gridContainer.innerHTML = games.map(game => {
+                const safeName = game.Nome.replace(/'/g, "\\'");
+                const plataforma = game.Plataforma || '-';
+                const tempoDeJogo = game['Tempo de Jogo'] || 0;
+                
+                const trophyIconHTML = game['Platinado?'] === 'Sim' 
+                    ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>`
+                    : '';
+
+                return `
+                    <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
+                        <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
+                        ${trophyIconHTML}
+                        <div class="game-card-content">
+                            <div class="game-card-top-details">
+                                <span class="detail-item">
+                                    <span class="material-symbols-outlined">stadia_controller</span>
+                                    ${plataforma}
+                                </span>
+                                <span class="detail-item">
+                                    <span class="material-symbols-outlined">timer</span>
+                                    ${tempoDeJogo}h
+                                </span>
+                            </div>
+                            <div class="game-title">${game.Nome}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function renderWishlist(wishlist = []) {
@@ -1107,77 +1045,40 @@ gridContainer.innerHTML = games.map(game => {
         
         function populateFilters() {
             const library = fullData.biblioteca || [];
-            const platforms = [...new Set(library.map(g => g.Plataforma).filter(Boolean))].sort();
             const statuses = [...new Set(library.map(g => g.Status).filter(Boolean))].sort();
             const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort();
             const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))].sort((a,b) => b-a);
             const populate = (elId, items) => { const select = document.getElementById(elId); if (!select) return; select.innerHTML = '<option value="all">Todos</option>'; items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); }
-            ['-biblioteca', '-graficos'].forEach(suffix => {
-                populate('platformFilter' + suffix, platforms);
-                populate('statusFilter' + suffix, statuses);
-                populate('styleFilter' + suffix, styles);
-                const yearFilter = document.getElementById('yearFilter' + suffix);
-                if(yearFilter) populate('yearFilter' + suffix, years);
+            ['', '-biblioteca', '-graficos'].forEach(suffix => {
+                populate('statusFilter' + suffix, statuses); populate('styleFilter' + suffix, styles); populate('yearFilter' + suffix, years);
             });
         }
         
         function applyFilters(suffix) {
-            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || '';
-            const platform = document.getElementById('platformFilter' + suffix)?.value || 'all';
-            const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
-            const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
-            const yearInput = document.getElementById('yearFilter' + suffix);
-            const year = yearInput ? yearInput.value : 'all';
-            const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) &&
-                                   (platform !== 'all' ? g.Plataforma === platform : true) &&
-                                   (status !== 'all' ? g.Status === status : true) &&
-                                   (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s => s.trim()).includes(style)) : true) &&
-                                   (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
+            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || ''; const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
+            const style = document.getElementById('styleFilter' + suffix)?.value || 'all'; const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
+            const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) && (status !== 'all' ? g.Status === status : true) && (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true) && (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',', '.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a, b) => parseFloat(String(a).replace(',', '.')) + parseFloat(String(b).replace(',', '.')), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
-                renderSummaryCards(stats, 'summary-graficos');
-                renderAllCharts(filteredGames);
+                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
+                renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
             } else if (suffix === '-biblioteca') {
                 renderGameTable(filteredGames);
                 renderGameGrid(filteredGames);
             }
         }
 
-            function openGameModalForAdd() {
-                document.getElementById('addGameForm').reset();
-                document.getElementById('editMode').value = '';
-                const rawgIdInput = document.getElementById('gameRawgId');
-                if (rawgIdInput) {
-                    rawgIdInput.value = '';
-                }
-                document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo';
-                document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
-                document.getElementById('addGameModal').classList.add('active');
-                const searchResultsContainer = document.getElementById('searchResultsContainer');
-                if (searchResultsContainer) {
-                    searchResultsContainer.innerHTML = '';
-                }
-            }
+        function openGameModalForAdd() { document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = ''; document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; document.getElementById('addGameModal').classList.add('active'); }
         
         function openGameModalForEdit(gameName) {
             const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { showToast("Jogo não encontrado.", true); return; }
-            document.getElementById('addGameForm').reset();
-            document.getElementById('editMode').value = gameName;
-            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`;
-            document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
-            document.getElementById('gameName').value = gameToEdit.Nome || '';
-            document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
-            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila';
-            document.getElementById('gameRating').value = gameToEdit.Nota || '';
-            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || '';
-            document.getElementById('gameLink').value = gameToEdit.Link || '';
-            document.getElementById('gameStyle').value = gameToEdit.Estilo || '';
-            document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
-            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || '';
-            document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
-            const rawgIdInput = document.getElementById('gameRawgId');
-            if (rawgIdInput) rawgIdInput.value = '';
+            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = gameName;
+            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`; document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
+            document.getElementById('gameName').value = gameToEdit.Nome; document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
+            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = gameToEdit.Nota || '';
+            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
+            document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
+            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
             document.getElementById('addGameModal').classList.add('active');
         }
 
@@ -1186,53 +1087,16 @@ gridContainer.innerHTML = games.map(game => {
         
         async function handleGameFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editMode').value;
-            const isEditing = editModeValue !== '';
-        
+            const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
             const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
-            const gameData = {
-                Nome: document.getElementById('gameName').value,
-                Plataforma: document.getElementById('gamePlatform').value,
-                Status: document.getElementById('gameStatus').value,
-                Nota: parseFloat(document.getElementById('gameRating').value) || null,
-                "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
-                Link: document.getElementById('gameLink').value,
-                Estilo: document.getElementById('gameStyle').value,
-                "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
-                Preço: parseFloat(priceValue) || 0,
-                "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
-                "Terminado em": document.getElementById('gameTermino').value || '',
-                RAWG_ID: document.getElementById('gameRawgId')?.value || ''
-            };
-        
-            // Lógica crucial para diferenciar Adicionar de Editar
-            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`;
-            let method = isEditing ? 'PUT' : 'POST';
-            let body = isEditing 
-                ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } 
-                : { list_type: 'games', item_data: gameData };
-        
+            const gameData = { Nome: document.getElementById('gameName').value, Plataforma: document.getElementById('gamePlatform').value, Status: document.getElementById('gameStatus').value, Nota: parseFloat(document.getElementById('gameRating').value) || null, "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0, Link: document.getElementById('gameLink').value, Estilo: document.getElementById('gameStyle').value, "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não', Preço: parseFloat(priceValue) || 0, "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0, "Terminado em": document.getElementById('gameTermino').value || '' };
+            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
+            let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
             try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(body)
-                });
-        
-                if (response.ok) {
-                    showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`);
-                    closeGameModal();
-                    fetchGameData();
-                } else {
-                    const error = await response.json();
-                    showToast(`Erro: ${error.message || 'Falha na operação.'}`, true);
-                }
-            } catch (err) {
-                showToast(`Erro de conexão.`, true);
-            }
+                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
+                if (response.ok) { showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeGameModal(); fetchGameData(); }
+                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
+            } catch (err) { showToast(`Erro de conexão.`, true); }
         }
         
         async function deleteGame(gameName) {
@@ -1391,67 +1255,10 @@ gridContainer.innerHTML = games.map(game => {
             event.currentTarget.classList.add('active');
         }
 
-        function toggleLibraryView() {
-            const tableContainer = document.querySelector('#biblioteca .table-container');
-            const gridContainer = document.getElementById('game-grid-container');
-            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
-            const isGridVisible = gridContainer.style.display !== 'none';
-            if (isGridVisible) {
-                gridContainer.style.display = 'none';
-                tableContainer.style.display = 'block';
-                toggleBtnIcon.textContent = 'grid_view';
-            } else {
-                gridContainer.style.display = 'grid';
-                tableContainer.style.display = 'none';
-                toggleBtnIcon.textContent = 'view_list';
-            }
-        }
-
-        function handleSort(key, preserveDirection = false) {
-            if (currentSortKey === key && !preserveDirection) {
-                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSortKey = key;
-                if (!preserveDirection) {
-                    currentSortDirection = 'asc';
-                }
-            }
-            fullData.biblioteca.sort((a, b) => {
-                let valA = a[currentSortKey] || '';
-                let valB = b[currentSortKey] || '';
-                if (key === 'Nota' || key === 'Tempo de Jogo') {
-                    valA = parseFloat(String(valA).replace(',', '.')) || 0;
-                    valB = parseFloat(String(valB).replace(',', '.')) || 0;
-                }
-                if (typeof valA === 'string') valA = valA.toLowerCase();
-                if (typeof valB === 'string') valB = valB.toLowerCase();
-                if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
-                if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
-                return 0;
-            });
-            updateSortIcons();
-            applyFilters('-biblioteca');
-            applyFilters('-graficos');
-        }
-
-        function updateSortIcons() {
-            document.querySelectorAll('.sortable-header').forEach(header => {
-                header.classList.remove('sort-asc', 'sort-desc');
-                if (header.dataset.sortKey === currentSortKey) {
-                    header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
-                }
-            });
-        }
-
+        // --- FUNÇÕES DA BUSCA API (BIBLIOTECA) ---
         async function handleSearch(query) {
-            const isEditing = document.getElementById('editMode').value !== '';
-            if (isEditing) {
-                document.getElementById('searchResultsContainer').innerHTML = '';
-                return; 
-            }
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
-            resultsContainer.innerHTML = `<div class="search-result-item">Buscando...</div>`;
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
             const games = await response.json();
             if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
@@ -1459,7 +1266,7 @@ gridContainer.innerHTML = games.map(game => {
                 const safeName = game.name.replace(/'/g, "\\'");
                 const safeStyles = game.styles.replace(/'/g, "\\'");
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', id: '${game.id}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
+                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
@@ -1468,19 +1275,13 @@ gridContainer.innerHTML = games.map(game => {
             document.getElementById('gameName').value = game.name;
             document.getElementById('gameLink').value = game.background_image;
             document.getElementById('gameStyle').value = game.styles;
-            document.getElementById('gameRawgId').value = game.id;
             document.getElementById('searchResultsContainer').innerHTML = '';
         }
 
+        // --- FUNÇÕES DA BUSCA API (WISHLIST) ---
         async function handleWishSearch(query) {
-            const isEditing = document.getElementById('editWishMode').value !== '';
-            if (isEditing) {
-                document.getElementById('wishSearchResultsContainer').innerHTML = '';
-                return;
-            }
             const resultsContainer = document.getElementById('wishSearchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
-            resultsContainer.innerHTML = `<div class="search-result-item">Buscando...</div>`;
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
             const games = await response.json();
             if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
@@ -1503,174 +1304,133 @@ gridContainer.innerHTML = games.map(game => {
             }
             document.getElementById('wishSearchResultsContainer').innerHTML = '';
         }
+        
+        function toggleLibraryView() {
+            const tableContainer = document.querySelector('#biblioteca .table-container');
+            const gridContainer = document.getElementById('game-grid-container');
+            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
 
-        function closeDetailsModal() {
-            document.getElementById('gameDetailsModal').classList.remove('active');
+            const isGridVisible = gridContainer.style.display !== 'none';
+
+            if (isGridVisible) {
+                gridContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                toggleBtnIcon.textContent = 'grid_view';
+            } else {
+                gridContainer.style.display = 'grid';
+                tableContainer.style.display = 'none';
+                toggleBtnIcon.textContent = 'view_list';
+            }
         }
 
-function openDetailsModal(gameName) {
-            const game = fullData.biblioteca.find(g => g.Nome === gameName);
-            if (!game) {
-                showToast("Jogo não encontrado.", true);
-                return;
+        document.addEventListener('DOMContentLoaded', () => {
+            const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
+            
+            // Listeners de Forms e Botões
+            setupListener('addGameForm', 'submit', handleGameFormSubmit);
+            setupListener('addWishForm', 'submit', handleWishFormSubmit);
+            setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
+            setupListener('addGameBtn', 'click', openGameModalForAdd);
+            setupListener('addWishBtn', 'click', openWishModal);
+            setupListener('settingsBtn', 'click', openSettingsModal);
+            setupListener('achievementsShortcut', 'click', openAchievementsModal);
+            setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
+            setupListener('theme-toggle', 'click', () => {
+                const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
+                const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
+                icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
+            });
+            setupListener('toggleViewBtn', 'click', toggleLibraryView);
+
+            document.querySelectorAll('.sortable-header').forEach(header => {
+            header.addEventListener('click', () => {
+                handleSort(header.dataset.sortKey);
+            });
+        });
+        updateSortIcons();
+            
+            const setupFilterListeners = (suffix) => {
+                ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => setupListener(id + suffix, 'input', () => applyFilters(suffix)));
+                const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
+                if (clearBtn) { clearBtn.addEventListener('click', () => { ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { const el = document.getElementById(id + suffix); if(el) el.value = el.tagName === 'SELECT' ? 'all' : ''; }); applyFilters(suffix); }); }
+            };
+            setupFilterListeners('-graficos');
+            setupFilterListeners('-biblioteca');
+            
+            const gameNameInput = document.getElementById('gameName');
+            if (gameNameInput) {
+                gameNameInput.addEventListener('keyup', (event) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => { handleSearch(event.target.value); }, 500);
+                });
             }
 
-            const detailsContainer = document.getElementById('details-content');
-            const safeName = game.Nome.replace(/'/g, "\\'");
-            
-            // Verifica a existência das propriedades antes de usá-las
-            const gameDescription = game.Descricao || 'Nenhuma descrição disponível.';
-            const metacriticScore = (game.Metacritic && game.Metacritic !== 'N/A') ? `<span class="details-metacritic">${game.Metacritic}</span>` : '';
-
-            detailsContainer.innerHTML = `
-                <div class="details-cover">
-                    <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.Nome}">
-                </div>
-                <div class="details-info">
-                    <h2>
-                        ${game.Nome}
-                        ${metacriticScore}
-                    </h2>
-                    <p class="details-description">${gameDescription}</p>
-                    <div class="details-actions">
-                        <button class="action-btn-primary" data-action="edit-game" data-game-name="${safeName}">
-                            <span class="material-symbols-outlined">edit</span>
-                            Editar
-                        </button>
-                        <button class="action-btn-secondary" data-action="delete-game" data-game-name="${safeName}">
-                            <span class="material-symbols-outlined">delete</span>
-                            Excluir
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('gameDetailsModal').classList.add('active');
-        }
-        
-document.addEventListener('DOMContentLoaded', () => {
-    const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
-    
-    setupListener('addGameForm', 'submit', handleGameFormSubmit);
-    setupListener('addWishForm', 'submit', handleWishFormSubmit);
-    setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
-    setupListener('addGameBtn', 'click', openGameModalForAdd);
-    setupListener('addWishBtn', 'click', openWishModal);
-    setupListener('settingsBtn', 'click', openSettingsModal);
-    setupListener('achievementsShortcut', 'click', openAchievementsModal);
-    setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
-    setupListener('theme-toggle', 'click', () => {
-        const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
-        const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
-        icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
-    });
-    setupListener('toggleViewBtn', 'click', toggleLibraryView);
-    
-    const setupFilterListeners = (suffix) => {
-        ['nameFilter', 'platformFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
-            const el = document.getElementById(id + suffix);
-            if(el) el.addEventListener('input', () => applyFilters(suffix));
-        });
-        const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
-        if (clearBtn) { 
-            clearBtn.addEventListener('click', () => { 
-                ['nameFilter', 'platformFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { 
-                    const el = document.getElementById(id + suffix); 
-                    if(el) el.value = el.tagName === 'SELECT' ? 'all' : ''; 
+            const wishGameNameInput = document.getElementById('wishGameName');
+            if (wishGameNameInput) {
+                wishGameNameInput.addEventListener('keyup', (event) => {
+                    clearTimeout(wishSearchTimeout);
+                    wishSearchTimeout = setTimeout(() => { handleWishSearch(event.target.value); }, 500);
                 });
-                if (suffix === '-biblioteca') {
-                    ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
-                        const el = document.getElementById(id);
-                        if(el) el.value = '';
+            }
+
+            document.addEventListener('click', function(event) {
+                const searchContainer = document.getElementById('searchResultsContainer');
+                const nameInput = document.getElementById('gameName');
+                if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
+                    searchContainer.innerHTML = '';
+                }
+
+                const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
+                const wishNameInput = document.getElementById('wishGameName');
+                if (wishSearchContainer && !wishSearchContainer.contains(event.target) && event.target !== wishNameInput) {
+                    wishSearchContainer.innerHTML = '';
+                }
+            });
+
+                function handleSort(key) {
+                    if (currentSortKey === key) {
+                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortKey = key;
+                        currentSortDirection = 'asc';
+    }
+
+                    fullData.biblioteca.sort((a, b) => {
+                        let valA = a[currentSortKey] || '';
+                        let valB = b[currentSortKey] || '';
+
+                        if (key === 'Nota' || key === 'Tempo de Jogo') {
+                            valA = parseFloat(valA) || 0;
+                            valB = parseFloat(valB) || 0;
+                        }
+
+                        if (typeof valA === 'string') valA = valA.toLowerCase();
+                        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                        if (valA < valB) {
+                            return currentSortDirection === 'asc' ? -1 : 1;
+        }
+                        if (valA > valB) {
+                            return currentSortDirection === 'asc' ? 1 : -1;
+        }
+                        return 0;
+                    });
+
+                    updateSortIcons();
+                    applyFilters('-biblioteca');
+                }
+
+                function updateSortIcons() {
+                    document.querySelectorAll('.sortable-header').forEach(header => {
+                        header.classList.remove('sort-asc', 'sort-desc');
+                        if (header.dataset.sortKey === currentSortKey) {
+                            header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                        }
                     });
                 }
-                applyFilters(suffix); 
-            }); 
-        }
-    };
-    setupFilterListeners('-graficos');
-    setupFilterListeners('-biblioteca');
-    
-    const toggleAdvancedBtn = document.getElementById('toggleAdvancedFiltersBtn');
-    if (toggleAdvancedBtn) {
-        toggleAdvancedBtn.addEventListener('click', () => {
-            const advancedContainer = document.getElementById('advanced-filters-container');
-            const isVisible = advancedContainer.style.display !== 'none';
-            advancedContainer.style.display = isVisible ? 'none' : 'grid';
-        });
-    }
-    ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', () => applyFilters('-biblioteca'));
-        }
-    });
-
-    const gameNameInput = document.getElementById('gameName');
-    if (gameNameInput) {
-        gameNameInput.addEventListener('keyup', (event) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => { handleSearch(event.target.value); }, 500);
-        });
-    }
-
-    const wishGameNameInput = document.getElementById('wishGameName');
-    if (wishGameNameInput) {
-        wishGameNameInput.addEventListener('keyup', (event) => {
-            clearTimeout(wishSearchTimeout);
-            wishSearchTimeout = setTimeout(() => { handleWishSearch(event.target.value); }, 500);
-        });
-    }
-
-    document.addEventListener('click', function(event) {
-        const searchContainer = document.getElementById('searchResultsContainer');
-        const nameInput = document.getElementById('gameName');
-        if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
-            searchContainer.innerHTML = '';
-        }
-        const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
-        const wishNameInput = document.getElementById('wishGameName');
-        if (wishSearchContainer && !wishSearchContainer.contains(event.target) && event.target !== wishNameInput) {
-            wishSearchContainer.innerHTML = '';
-        }
-    });
-
-    // Novo ouvinte de eventos para todas as ações dinâmicas
-    document.body.addEventListener('click', (event) => {
-        const actionButton = event.target.closest('[data-action]');
-        if (actionButton) {
-            const action = actionButton.dataset.action;
-            const gameName = actionButton.dataset.gameName;
-
-            switch (action) {
-                case 'open-details':
-                    openDetailsModal(gameName);
-                    break;
-                case 'edit-game':
-                    openGameModalForEdit(gameName);
-                    break;
-                case 'delete-game':
-                    deleteGame(gameName);
-                    break;
-            }
-        }
-    });
-
-    document.querySelectorAll('.sortable-header').forEach(header => {
-        header.addEventListener('click', () => {
-            handleSort(header.dataset.sortKey);
-        });
-    });
-    
-    fetchGameData();
-});
             
-    </script>
-
+            fetchGameData();
+        });
+</script>
 </body>
 </html>
-
-
-
-
-
