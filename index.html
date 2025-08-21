@@ -202,9 +202,18 @@
         }
         .modal-overlay.active { visibility: visible; opacity: 1; }
         .modal-content {
-            background-color: var(--surface-color); padding: 32px; border-radius: 16px;
-            max-width: 500px; width: 90%; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transform: scale(0.95); transition: transform 0.3s ease-out;
+            background-color: var(--surface-color);
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
+            transition: transform 0.3s ease-out;
+            /* ADICIONE AS DUAS LINHAS ABAIXO */
+            max-height: 90vh; /* Limita a altura a 90% da altura da tela */
+            overflow-y: auto; /* Adiciona uma barra de rolagem se o conteúdo transbordar */
         }
         .modal-overlay.active .modal-content { transform: scale(1); }
         .close-button { position: absolute; top: 16px; right: 24px; font-size: 28px; color: var(--secondary-text); cursor: pointer; }
@@ -1072,16 +1081,15 @@
 
         function openGameModalForAdd() { document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = ''; document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; document.getElementById('addGameModal').classList.add('active'); }
         
-        function openGameModalForEdit(gameName) {
-            const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { showToast("Jogo não encontrado.", true); return; }
-            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = gameName;
-            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`; document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
-            document.getElementById('gameName').value = gameToEdit.Nome; document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
-            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = gameToEdit.Nota || '';
-            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
-            document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
-            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
+        function openGameModalForAdd() {
+            document.getElementById('addGameForm').reset();
+            document.getElementById('editMode').value = '';
+            document.getElementById('gameRawgId').value = ''; // Linha adicionada para garantir a limpeza
+            document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo';
+            document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
             document.getElementById('addGameModal').classList.add('active');
+            // Limpa qualquer resultado de busca anterior
+            document.getElementById('searchResultsContainer').innerHTML = ''; 
         }
 
         function closeGameModal() { document.getElementById('addGameModal').classList.remove('active'); }
@@ -1450,4 +1458,5 @@
 </script>
 </body>
 </html>
+
 
