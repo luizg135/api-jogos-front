@@ -20,7 +20,7 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            padding: 48px 16px;
+            padding: clamp(24px, 5vw, 48px) 16px;
             min-height: 100vh;
         }
         .profile-card {
@@ -28,8 +28,8 @@
             border: 1px solid #30363d;
             border-radius: 16px;
             width: 100%;
-            max-width: 600px;
-            padding: 24px;
+            max-width: 700px;
+            padding: clamp(24px, 4vw, 32px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
         .profile-header {
@@ -41,25 +41,71 @@
             margin-bottom: 16px;
         }
         .profile-avatar {
-            width: 80px;
-            height: 80px;
+            width: 96px;
+            height: 96px;
             border-radius: 50%;
-            border: 2px solid #9370db;
+            border: 3px solid var(--accent-purple);
             object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         .profile-info {
             flex-grow: 1;
         }
         .profile-info h1 {
-            font-size: 28px;
+            font-size: clamp(24px, 4vw, 32px);
             font-weight: 700;
             margin: 0;
-            color: #9370db;
+            color: var(--accent-purple);
         }
         .profile-info p {
-            font-size: 16px;
+            font-size: clamp(14px, 2vw, 16px);
             color: #7d8590;
             margin: 4px 0 0 0;
+        }
+        .level-progress-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .level-progress-info {
+            flex-grow: 1;
+        }
+        .level-text {
+            font-size: clamp(18px, 3vw, 24px);
+            font-weight: 700;
+            margin: 0;
+            color: #e6edf3;
+        }
+        .rank-text {
+            font-size: clamp(14px, 2vw, 16px);
+            font-weight: 500;
+            color: var(--rank-bronze);
+        }
+        .rank-text.rank-Prata { color: var(--rank-prata); }
+        .rank-text.rank-Ouro { color: var(--rank-ouro); }
+        .rank-text.rank-Platina { color: var(--rank-platina); }
+        .rank-text.rank-Diamante { color: var(--rank-diamante); }
+        .rank-text.rank-Mestre { color: var(--rank-mestre); }
+
+        .exp-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #30363d;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .exp-bar-progress {
+            height: 100%;
+            background-color: var(--accent-purple);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .exp-text {
+            font-size: 12px;
+            color: #7d8590;
+            margin-top: 4px;
         }
         .stats-grid {
             display: grid;
@@ -104,11 +150,17 @@
             aspect-ratio: 3 / 4;
             overflow: hidden;
             border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease;
+        }
+        .platinum-item:hover {
+            transform: translateY(-4px);
         }
         .platinum-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: brightness(0.8);
         }
         .platinum-overlay {
             position: absolute;
@@ -130,6 +182,16 @@
             <div class="profile-info">
                 <h1 id="publicGamerName">Carregando...</h1>
                 <p id="publicProfileSubtitle">Resumo da jornada!</p>
+                <div class="level-progress-area">
+                    <div class="level-progress-info">
+                        <div class="level-text" id="publicGamerLevel">Nível 0</div>
+                        <div class="rank-text" id="publicGamerRank">Rank</div>
+                        <div class="exp-bar-container">
+                            <div id="publicExpBar" class="exp-bar-progress"></div>
+                        </div>
+                        <div id="publicExpText" class="exp-text">0 / 1000 EXP</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -147,8 +209,12 @@
                 <div class="label">Platinas</div>
             </div>
             <div class="stat-item">
-                <div class="value" id="publicGamerLevel">Nível 0</div>
-                <div class="label" id="publicGamerRank">Rank</div>
+                <div class="value" id="publicMediaNotas">0</div>
+                <div class="label">Média de Notas</div>
+            </div>
+            <div class="stat-item">
+                <div class="value" id="publicTotalConquistas">0</div>
+                <div class="label">Conquistas</div>
             </div>
         </div>
 
@@ -163,7 +229,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const API_URL = 'https://api-jogos-nrma.onrender.com/api/games/public-profile'; // Endereço corrigido
+            const API_URL = 'https://api-jogos-nrma.onrender.com/api/games/public-profile';
 
             try {
                 const response = await fetch(API_URL);
@@ -181,14 +247,38 @@
                     avatar.src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
                 }
 
-                document.getElementById('publicGamerName').textContent = profile.profileName || 'Perfil do Jogador';
-                document.getElementById('publicProfileSubtitle').textContent = profile.profileSubtitle || 'Resumo da jornada!';
+                const gamerNameElement = document.getElementById('publicGamerName');
+                if(gamerNameElement) gamerNameElement.textContent = profile.profileName || 'Perfil do Jogador';
+
+                const subtitleElement = document.getElementById('publicProfileSubtitle');
+                if(subtitleElement) subtitleElement.textContent = profile.profileSubtitle || 'Resumo da jornada!';
+                
+                const levelElement = document.getElementById('publicGamerLevel');
+                if(levelElement) levelElement.textContent = `Nível ${stats.nivel_gamer || 0}`;
+                
+                const rankElement = document.getElementById('publicGamerRank');
+                if(rankElement) {
+                    const rank = stats.rank_gamer || 'Bronze';
+                    rankElement.textContent = rank;
+                    rankElement.className = `rank-text rank-${rank.replace(/\s/g, '')}`;
+                }
+
+                const expBar = document.getElementById('publicExpBar');
+                const expText = document.getElementById('publicExpText');
+                if (expBar && expText) {
+                    const currentExp = stats.exp_nivel_atual || 0;
+                    const expForNextLevel = stats.exp_para_proximo_nivel || 1000;
+                    const progressPercent = (currentExp / expForNextLevel) * 100;
+                    expBar.style.width = `${progressPercent}%`;
+                    expText.textContent = `${currentExp.toLocaleString('pt-BR')} / ${expForNextLevel.toLocaleString('pt-BR')} EXP`;
+                }
 
                 document.getElementById('publicTotalJogos').textContent = stats.total_jogos || 0;
                 document.getElementById('publicTotalHoras').textContent = `${stats.total_horas_jogadas || 0}h`;
                 document.getElementById('publicTotalPlatinados').textContent = stats.total_platinados || 0;
-                document.getElementById('publicGamerLevel').textContent = `Nível ${stats.nivel_gamer || 0}`;
-                document.getElementById('publicGamerRank').textContent = stats.rank_gamer || 'Indefinido';
+                document.getElementById('publicMediaNotas').textContent = stats.media_notas || 'N/A';
+                document.getElementById('publicTotalConquistas').textContent = stats.total_conquistas || 0;
+                
 
                 const platinumsContainer = document.getElementById('publicRecentPlatinums');
                 if (recentPlatinums.length > 0) {
