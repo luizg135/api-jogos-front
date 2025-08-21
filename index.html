@@ -453,6 +453,8 @@
     </div>
 
     <script>
+// COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
+
         // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
@@ -467,6 +469,7 @@
         let currentSortDirection = 'asc';
 
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
+
         function showToast(message, isError = false) {
             Toastify({
                 text: message, duration: 3000, gravity: "top", position: "right", stopOnFocus: true,
@@ -499,8 +502,8 @@
             renderWishlist(fullData.desejos);
             renderAchievements(fullData.conquistas_concluidas, fullData.conquistas_pendentes);
             populateFilters();
-            applyFilters('-graficos');
-            applyFilters('-biblioteca');
+            // Ordena os dados antes de aplicar os filtros pela primeira vez
+            handleSort(currentSortKey, true); // O 'true' impede a inversão inicial
         }
 
         function openPage(evt, pageName) {
@@ -712,7 +715,7 @@
             const hoursMin = suffix === '-biblioteca' ? parseInt(document.getElementById('hoursFilterMin').value) || 0 : 0;
             const hoursMax = suffix === '-biblioteca' ? parseInt(document.getElementById('hoursFilterMax').value) || Infinity : Infinity;
             const filteredGames = (fullData.biblioteca || []).filter(g => {
-                const gameRating = parseFloat(g.Nota) || 0;
+                const gameRating = parseFloat(String(g.Nota).replace(',', '.')) || 0;
                 const gameHours = parseInt(g['Tempo de Jogo']) || 0;
                 const baseFilter = (name ? g.Nome.toLowerCase().includes(name) : true) &&
                                    (platform !== 'all' ? g.Plataforma === platform : true) &&
@@ -726,7 +729,7 @@
             });
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',', '.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
+                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',', '.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a, b) => parseFloat(String(a).replace(',', '.')) + parseFloat(String(b).replace(',', '.')), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
                 renderSummaryCards(stats, 'summary-graficos');
                 renderAllCharts(filteredGames);
             } else if (suffix === '-biblioteca') {
@@ -938,6 +941,42 @@
             }
         }
 
+        function handleSort(key, preserveDirection = false) {
+            if (currentSortKey === key && !preserveDirection) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortKey = key;
+                if (!preserveDirection) {
+                    currentSortDirection = 'asc';
+                }
+            }
+            fullData.biblioteca.sort((a, b) => {
+                let valA = a[currentSortKey] || '';
+                let valB = b[currentSortKey] || '';
+                if (key === 'Nota' || key === 'Tempo de Jogo') {
+                    valA = parseFloat(String(valA).replace(',', '.')) || 0;
+                    valB = parseFloat(String(valB).replace(',', '.')) || 0;
+                }
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+                if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+            updateSortIcons();
+            applyFilters('-biblioteca');
+            applyFilters('-graficos');
+        }
+
+        function updateSortIcons() {
+            document.querySelectorAll('.sortable-header').forEach(header => {
+                header.classList.remove('sort-asc', 'sort-desc');
+                if (header.dataset.sortKey === currentSortKey) {
+                    header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+
         async function handleSearch(query) {
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
@@ -1073,7 +1112,11 @@
                 }
             });
 
-            updateSortIcons();
+            document.querySelectorAll('.sortable-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    handleSort(header.dataset.sortKey);
+                });
+            });
             
             fetchGameData();
         });
