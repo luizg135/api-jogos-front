@@ -1077,12 +1077,16 @@
             document.getElementById('addGameForm').reset();
             document.getElementById('editMode').value = '';
             const rawgIdInput = document.getElementById('gameRawgId');
-            if (rawgIdInput) rawgIdInput.value = '';
+            if (rawgIdInput) {
+                rawgIdInput.value = '';
+            }
             document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo';
             document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
             document.getElementById('addGameModal').classList.add('active');
             const searchResultsContainer = document.getElementById('searchResultsContainer');
-            if (searchResultsContainer) searchResultsContainer.innerHTML = '';
+            if (searchResultsContainer) {
+                searchResultsContainer.innerHTML = '';
+            }
         }
         
         function openGameModalForEdit(gameName) {
@@ -1113,6 +1117,7 @@
             event.preventDefault();
             const editModeValue = document.getElementById('editMode').value;
             const isEditing = editModeValue !== '';
+            
             const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
             const gameData = {
                 Nome: document.getElementById('gameName').value,
@@ -1126,16 +1131,37 @@
                 Preço: parseFloat(priceValue) || 0,
                 "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
                 "Terminado em": document.getElementById('gameTermino').value || '',
-                RAWG_ID: document.getElementById('gameRawgId').value
+                RAWG_ID: document.getElementById('gameRawgId')?.value || ''
             };
+        
+            // Lógica crucial para diferenciar Adicionar de Editar
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`;
             let method = isEditing ? 'PUT' : 'POST';
-            let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
+            let body = isEditing 
+                ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } 
+                : { list_type: 'games', item_data: gameData };
+        
             try {
-                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
-                if (response.ok) { showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeGameModal(); fetchGameData(); }
-                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
-            } catch (err) { showToast(`Erro de conexão.`, true); }
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(body)
+                });
+        
+                if (response.ok) {
+                    showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`);
+                    closeGameModal();
+                    fetchGameData();
+                } else {
+                    const error = await response.json();
+                    showToast(`Erro: ${error.message || 'Falha na operação.'}`, true);
+                }
+            } catch (err) {
+                showToast(`Erro de conexão.`, true);
+            }
         }
         
         async function deleteGame(gameName) {
@@ -1503,3 +1529,4 @@
     </script>
 </body>
 </html>
+
