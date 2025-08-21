@@ -176,8 +176,8 @@
         }
 
         .platinum-card:hover {
-            box-shadow: 0 8px 30px rgba(147, 112, 219, 0.4);
             transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
         .platinum-card img {
@@ -1545,7 +1545,6 @@
                 "Terminado em": document.getElementById('gameTermino').value || '',
             };
             
-            // Corrige o bug de envio de campos vazios da busca externa
             const metacritic = document.getElementById('gameMetacritic').value;
             if (metacritic !== null && metacritic !== '') {
                 gameData['Metacritic'] = parseInt(metacritic);
