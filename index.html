@@ -486,6 +486,36 @@
             padding: 4px;
             filter: drop-shadow(0 0 5px var(--accent-purple));
         }
+
+        /* Estilos para o cabeçalho ordenável da tabela */
+        .sortable-header {
+            cursor: pointer;
+            position: relative;
+            user-select: none; /* Impede a seleção de texto ao clicar */
+        }
+
+        .sortable-header:hover {
+            color: var(--primary-text);
+        }
+
+        .sort-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.6;
+        }
+
+/* Mostra uma seta para cima ou para baixo dependendo da classe */
+        .sortable-header.sort-asc .sort-icon::after {
+            content: '▲';
+            font-size: 10px;
+        }
+
+        .sortable-header.sort-desc .sort-icon::after {
+            content: '▼';
+            font-size: 10px;
+        }
         
     </style>
 </head>
@@ -596,7 +626,16 @@
                 </section>
                 <div class="table-container">
                     <table class="games-table">
-                        <thead><tr><th>Nome</th><th>Plataforma</th><th>Status</th><th>Nota</th><th>Horas</th><th>Ações</th></tr></thead>
+            <thead>
+                <tr>
+                    <th class="sortable-header" data-sort-key="Nome">Nome <span class="sort-icon"></span></th>
+                    <th class="sortable-header" data-sort-key="Plataforma">Plataforma <span class="sort-icon"></span></th>
+                    <th class="sortable-header" data-sort-key="Status">Status <span class="sort-icon"></span></th>
+                    <th class="sortable-header" data-sort-key="Nota">Nota <span class="sort-icon"></span></th>
+                    <th class="sortable-header" data-sort-key="Tempo de Jogo">Horas <span class="sort-icon"></span></th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
                         <tbody id="game-list-tbody"></tbody>
                     </table>
                 </div>
@@ -759,6 +798,8 @@
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
+        let currentSortKey = 'Nome'; // Coluna padrão para ordenação
+        let currentSortDirection = 'asc'; // Direção padrão
         const token = localStorage.getItem('jwt_token');
         if (!token) { window.location.href = 'login.html'; }
 
@@ -1303,6 +1344,13 @@
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
+
+            document.querySelectorAll('.sortable-header').forEach(header => {
+            header.addEventListener('click', () => {
+                handleSort(header.dataset.sortKey);
+            });
+        });
+        updateSortIcons();
             
             // Listeners dos Filtros
             const setupFilterListeners = (suffix) => {
@@ -1345,6 +1393,56 @@
                     wishSearchContainer.innerHTML = '';
                 }
             });
+
+            // Adicione esta nova função ao seu script
+                function handleSort(key) {
+                    if (currentSortKey === key) {
+        // Se clicar na mesma coluna, inverte a direção
+                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+        // Se clicar em uma nova coluna, reseta para ascendente
+                        currentSortKey = key;
+                        currentSortDirection = 'asc';
+    }
+
+    // Lógica de ordenação
+                    fullData.biblioteca.sort((a, b) => {
+                        let valA = a[currentSortKey] || '';
+                        let valB = b[currentSortKey] || '';
+
+        // Converte para número se for 'Nota' ou 'Tempo de Jogo'
+                        if (key === 'Nota' || key === 'Tempo de Jogo') {
+                            valA = parseFloat(valA) || 0;
+                            valB = parseFloat(valB) || 0;
+                        }
+
+        // Converte para string para comparação
+                        if (typeof valA === 'string') valA = valA.toLowerCase();
+                        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                        if (valA < valB) {
+                            return currentSortDirection === 'asc' ? -1 : 1;
+        }
+                        if (valA > valB) {
+                            return currentSortDirection === 'asc' ? 1 : -1;
+        }
+                        return 0;
+                    });
+
+    // Atualiza a interface
+                    updateSortIcons();
+                    applyFilters('-biblioteca');
+                }
+
+// Adicione também esta função auxiliar para atualizar os ícones
+                function updateSortIcons() {
+                    document.querySelectorAll('.sortable-header').forEach(header => {
+                        header.classList.remove('sort-asc', 'sort-desc');
+                        if (header.dataset.sortKey === currentSortKey) {
+                            header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                        }
+                    });
+                }
             
             // Busca os dados iniciais do servidor
             fetchGameData();
@@ -1352,5 +1450,6 @@
 </script>
 </body>
 </html>
+
 
 
