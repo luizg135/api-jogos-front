@@ -849,40 +849,48 @@
             });
         }
         
-            function renderGameGrid(games = []) {
-                const gridContainer = document.getElementById('game-grid-container');
-                if (!gridContainer) return;
+        function renderGameGrid(games = []) {
+            const gridContainer = document.getElementById('game-grid-container');
+            if (!gridContainer) return;
 
-                if (games.length === 0) {
-                    gridContainer.innerHTML = ''; // Limpa se não houver jogos
-                    return;
-                }
-
-                gridContainer.innerHTML = games.map(game => {
-                    const safeName = game.Nome.replace(/'/g, "\\'");
-                    const plataforma = game.Plataforma || '-';
-                    const tempoDeJogo = game['Tempo de Jogo'] || 0;
-
-                    return `
-                        <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
-                            <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
-                            <div class="game-card-info-overlay">
-                                <div class="game-title">${game.Nome}</div>
-                                <div class="game-card-details">
-                                    <span class="detail-item">
-                                        <span class="material-symbols-outlined">stadia_controller</span>
-                                        ${plataforma}
-                                    </span>
-                                    <span class="detail-item">
-                                        <span class="material-symbols-outlined">timer</span>
-                                        ${tempoDeJogo}h
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+            if (games.length === 0) {
+                gridContainer.innerHTML = '';
+                return;
             }
+
+            gridContainer.innerHTML = games.map(game => {
+                const safeName = game.Nome.replace(/'/g, "\\'");
+                const plataforma = game.Plataforma || '-';
+                const tempoDeJogo = game['Tempo de Jogo'] || 0;
+
+        // Lógica para adicionar o ícone de troféu apenas se o jogo for platinado
+                const trophyIconHTML = game['Platinado?'] === 'Sim' 
+                    ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>`
+                    : '';
+
+                return `
+                    <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
+                        <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
+
+                        ${trophyIconHTML}
+
+                        <div class="game-card-content">
+                            <div class="game-card-top-details">
+                                <span class="detail-item">
+                                    <span class="material-symbols-outlined">stadia_controller</span>
+                                    ${plataforma}
+                                </span>
+                                <span class="detail-item">
+                                    <span class="material-symbols-outlined">timer</span>
+                                    ${tempoDeJogo}h
+                                </span>
+                            </div>
+                            <div class="game-title">${game.Nome}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
         function renderWishlist(wishlist = []) {
             const container = document.getElementById('wishlist-container'); 
@@ -1293,5 +1301,6 @@
 </script>
 </body>
 </html>
+
 
 
