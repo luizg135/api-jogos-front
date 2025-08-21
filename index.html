@@ -1502,39 +1502,44 @@
         }
 
 function openDetailsModal(gameName) {
-    const game = fullData.biblioteca.find(g => g.Nome === gameName);
-    if (!game) {
-        showToast("Jogo não encontrado.", true);
-        return;
-    }
-    const detailsContainer = document.getElementById('details-content');
-    const safeName = game.Nome.replace(/'/g, "\\'");
-    const gameDescription = game.Descricao || 'Nenhuma descrição disponível.';
-    const metacriticScore = game.Metacritic ? `<span class="details-metacritic">${game.Metacritic}</span>` : '';
-    detailsContainer.innerHTML = `
-        <div class="details-cover">
-            <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.Nome}">
-        </div>
-        <div class="details-info">
-            <h2>
-                ${game.Nome}
-                ${metacriticScore}
-            </h2>
-            <p class="details-description">${gameDescription}</p>
-            <div class="details-actions">
-                <button class="action-btn-primary" data-action="edit-game" data-game-name="${safeName}">
-                    <span class="material-symbols-outlined">edit</span>
-                    Editar
-                </button>
-                <button class="action-btn-secondary" data-action="delete-game" data-game-name="${safeName}">
-                    <span class="material-symbols-outlined">delete</span>
-                    Excluir
-                </button>
-            </div>
-        </div>
-    `;
-    document.getElementById('gameDetailsModal').classList.add('active');
-}
+            const game = fullData.biblioteca.find(g => g.Nome === gameName);
+            if (!game) {
+                showToast("Jogo não encontrado.", true);
+                return;
+            }
+
+            const detailsContainer = document.getElementById('details-content');
+            const safeName = game.Nome.replace(/'/g, "\\'");
+            
+            // Verifica a existência das propriedades antes de usá-las
+            const gameDescription = game.Descricao || 'Nenhuma descrição disponível.';
+            const metacriticScore = (game.Metacritic && game.Metacritic !== 'N/A') ? `<span class="details-metacritic">${game.Metacritic}</span>` : '';
+
+            detailsContainer.innerHTML = `
+                <div class="details-cover">
+                    <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa de ${game.Nome}">
+                </div>
+                <div class="details-info">
+                    <h2>
+                        ${game.Nome}
+                        ${metacriticScore}
+                    </h2>
+                    <p class="details-description">${gameDescription}</p>
+                    <div class="details-actions">
+                        <button class="action-btn-primary" data-action="edit-game" data-game-name="${safeName}">
+                            <span class="material-symbols-outlined">edit</span>
+                            Editar
+                        </button>
+                        <button class="action-btn-secondary" data-action="delete-game" data-game-name="${safeName}">
+                            <span class="material-symbols-outlined">delete</span>
+                            Excluir
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('gameDetailsModal').classList.add('active');
+        }
         
 document.addEventListener('DOMContentLoaded', () => {
     const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
@@ -1657,6 +1662,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
