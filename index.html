@@ -404,6 +404,46 @@
             text-overflow: ellipsis;
             text-align: center;
         }
+
+        .game-card-grid {
+            position: relative; /* Necessário para o overlay de informações */
+        }
+
+        .game-card-grid .game-title {
+            /* Removemos o padding para um novo container controlar o espaço */
+            padding: 0;
+            text-align: left;
+        }
+
+        .game-card-info-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px;
+            background: linear-gradient(to top, rgba(16, 17, 22, 0.95) 30%, transparent);
+            border-radius: 0 0 12px 12px;
+            color: #fff;
+        }
+
+        .game-card-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--secondary-text);
+            margin-top: 6px;
+        }
+
+        .game-card-details .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .game-card-details .material-symbols-outlined {
+            font-size: 16px;
+        }
         
     </style>
 </head>
@@ -802,23 +842,40 @@
             });
         }
         
-        function renderGameGrid(games = []) {
-            const gridContainer = document.getElementById('game-grid-container');
-            if (!gridContainer) return;
-            if (games.length === 0) {
-                gridContainer.innerHTML = ''; // Limpa se não houver jogos
-                return;
+            function renderGameGrid(games = []) {
+                const gridContainer = document.getElementById('game-grid-container');
+                if (!gridContainer) return;
+
+                if (games.length === 0) {
+                    gridContainer.innerHTML = ''; // Limpa se não houver jogos
+                    return;
+                }
+
+                gridContainer.innerHTML = games.map(game => {
+                    const safeName = game.Nome.replace(/'/g, "\\'");
+                    const plataforma = game.Plataforma || '-';
+                    const tempoDeJogo = game['Tempo de Jogo'] || 0;
+
+                    return `
+                        <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
+                            <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
+                            <div class="game-card-info-overlay">
+                                <div class="game-title">${game.Nome}</div>
+                                <div class="game-card-details">
+                                    <span class="detail-item">
+                                        <span class="material-symbols-outlined">stadia_controller</span>
+                                        ${plataforma}
+                                    </span>
+                                    <span class="detail-item">
+                                        <span class="material-symbols-outlined">timer</span>
+                                        ${tempoDeJogo}h
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
-            gridContainer.innerHTML = games.map(game => {
-                const safeName = game.Nome.replace(/'/g, "\\'");
-                return `
-                    <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
-                        <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
-                        <div class="game-title">${game.Nome}</div>
-                    </div>
-                `;
-            }).join('');
-        }
 
         function renderWishlist(wishlist = []) {
             const container = document.getElementById('wishlist-container'); 
@@ -1229,3 +1286,4 @@
 </script>
 </body>
 </html>
+
