@@ -851,21 +851,16 @@
 <script>
 // COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
 
-        // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
-        let currentSortKey = 'Nome'; // Coluna padrão para ordenação
-        let currentSortDirection = 'asc'; // Direção padrão
         const token = localStorage.getItem('jwt_token');
         if (!token) { window.location.href = 'login.html'; }
 
         let searchTimeout;
         let wishSearchTimeout;
-
-        // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
-
+        
         function showToast(message, isError = false) {
             Toastify({
                 text: message, duration: 3000, gravity: "top", position: "right", stopOnFocus: true,
@@ -897,23 +892,9 @@
             renderRecentPlatinums(fullData.biblioteca);
             renderWishlist(fullData.desejos);
             renderAchievements(fullData.conquistas_concluidas, fullData.conquistas_pendentes);
-        function populateFilters() {
-            const library = fullData.biblioteca || [];
-            const platforms = [...new Set(library.map(g => g.Plataforma).filter(Boolean))].sort(); // Adicionado
-            const statuses = [...new Set(library.map(g => g.Status).filter(Boolean))].sort();
-            const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort();
-            const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))].sort((a,b) => b-a);
-
-            const populate = (elId, items) => { const select = document.getElementById(elId); if (!select) return; select.innerHTML = '<option value="all">Todos</option>'; items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); }
-
-            ['-biblioteca', '-graficos'].forEach(suffix => {
-                populate('platformFilter' + suffix, platforms); // Adicionado
-                populate('statusFilter' + suffix, statuses); 
-                populate('styleFilter' + suffix, styles); 
-        // O filtro de ano não existe na página de gráficos, mas não causa erro.
-                const yearFilter = document.getElementById('yearFilter' + suffix);
-                if(yearFilter) populate('yearFilter' + suffix, years);
-            });
+            populateFilters();
+            applyFilters('-graficos');
+            applyFilters('-biblioteca');
         }
 
         function openPage(evt, pageName) {
@@ -980,14 +961,11 @@
             }).join('');
         }
         
-        // --- FUNÇÃO CORRIGIDA ---
         function renderGameTable(games = []) {
             const tbody = document.getElementById('game-list-tbody');
             const noResults = document.getElementById('no-results-message');
             const tableContainer = document.querySelector('#biblioteca .table-container');
-
             if (!tbody || !noResults || !tableContainer) return;
-
             tbody.innerHTML = '';
             
             if (games.length === 0) {
@@ -995,8 +973,6 @@
                 noResults.style.display = 'block';
                 return;
             }
-
-            // A linha que forçava a visibilidade foi removida daqui
             noResults.style.display = 'none';
             
             games.forEach(game => {
@@ -1020,35 +996,23 @@
         function renderGameGrid(games = []) {
             const gridContainer = document.getElementById('game-grid-container');
             if (!gridContainer) return;
-
             if (games.length === 0) {
                 gridContainer.innerHTML = '';
                 return;
             }
-
             gridContainer.innerHTML = games.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 const plataforma = game.Plataforma || '-';
                 const tempoDeJogo = game['Tempo de Jogo'] || 0;
-                
-                const trophyIconHTML = game['Platinado?'] === 'Sim' 
-                    ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>`
-                    : '';
-
+                const trophyIconHTML = game['Platinado?'] === 'Sim' ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>` : '';
                 return `
                     <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
                         <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
                         ${trophyIconHTML}
                         <div class="game-card-content">
                             <div class="game-card-top-details">
-                                <span class="detail-item">
-                                    <span class="material-symbols-outlined">stadia_controller</span>
-                                    ${plataforma}
-                                </span>
-                                <span class="detail-item">
-                                    <span class="material-symbols-outlined">timer</span>
-                                    ${tempoDeJogo}h
-                                </span>
+                                <span class="detail-item"><span class="material-symbols-outlined">stadia_controller</span> ${plataforma}</span>
+                                <span class="detail-item"><span class="material-symbols-outlined">timer</span> ${tempoDeJogo}h</span>
                             </div>
                             <div class="game-title">${game.Nome}</div>
                         </div>
@@ -1117,57 +1081,54 @@
         
         function populateFilters() {
             const library = fullData.biblioteca || [];
+            const platforms = [...new Set(library.map(g => g.Plataforma).filter(Boolean))].sort();
             const statuses = [...new Set(library.map(g => g.Status).filter(Boolean))].sort();
             const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort();
             const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))].sort((a,b) => b-a);
             const populate = (elId, items) => { const select = document.getElementById(elId); if (!select) return; select.innerHTML = '<option value="all">Todos</option>'; items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); }
-            ['', '-biblioteca', '-graficos'].forEach(suffix => {
-                populate('statusFilter' + suffix, statuses); populate('styleFilter' + suffix, styles); populate('yearFilter' + suffix, years);
+            ['-biblioteca', '-graficos'].forEach(suffix => {
+                populate('platformFilter' + suffix, platforms);
+                populate('statusFilter' + suffix, statuses);
+                populate('styleFilter' + suffix, styles);
+                const yearFilter = document.getElementById('yearFilter' + suffix);
+                if(yearFilter) populate('yearFilter' + suffix, years);
             });
         }
         
-            function applyFilters(suffix) {
-    // Filtros básicos
-                const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || '';
-                const platform = document.getElementById('platformFilter' + suffix)?.value || 'all';
-                const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
-                const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
-                const yearInput = document.getElementById('yearFilter' + suffix);
-                const year = yearInput ? yearInput.value : 'all';
-
-    // Filtros avançados (só para a biblioteca)
-                const ratingMin = suffix === '-biblioteca' ? parseFloat(document.getElementById('ratingFilterMin').value) || 0 : 0;
-                const ratingMax = suffix === '-biblioteca' ? parseFloat(document.getElementById('ratingFilterMax').value) || 10 : 10;
-                const hoursMin = suffix === '-biblioteca' ? parseInt(document.getElementById('hoursFilterMin').value) || 0 : 0;
-                const hoursMax = suffix === '-biblioteca' ? parseInt(document.getElementById('hoursFilterMax').value) || Infinity : Infinity;
-
-                const filteredGames = (fullData.biblioteca || []).filter(g => {
-                    const gameRating = parseFloat(g.Nota) || 0;
-                    const gameHours = parseInt(g['Tempo de Jogo']) || 0;
-
-                    const baseFilter = (name ? g.Nome.toLowerCase().includes(name) : true) &&
-                                       (platform !== 'all' ? g.Plataforma === platform : true) &&
-                                       (status !== 'all' ? g.Status === status : true) &&
-                                       (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s => s.trim()).includes(style)) : true) &&
-                                       (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true);
-
-                    if (suffix !== '-biblioteca') return baseFilter;
-
-                    return baseFilter &&
-                           (gameRating >= ratingMin && gameRating <= ratingMax) &&
-                           (gameHours >= hoursMin && gameHours <= hoursMax);
-                });
-
-                if (suffix === '-graficos') {
-                    const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                    const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',', '.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
-                    renderSummaryCards(stats, 'summary-graficos');
-                    renderAllCharts(filteredGames);
-                } else if (suffix === '-biblioteca') {
-                    renderGameTable(filteredGames);
-                    renderGameGrid(filteredGames);
-                }
+        function applyFilters(suffix) {
+            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || '';
+            const platform = document.getElementById('platformFilter' + suffix)?.value || 'all';
+            const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
+            const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
+            const yearInput = document.getElementById('yearFilter' + suffix);
+            const year = yearInput ? yearInput.value : 'all';
+            const ratingMin = suffix === '-biblioteca' ? parseFloat(document.getElementById('ratingFilterMin').value) || 0 : 0;
+            const ratingMax = suffix === '-biblioteca' ? parseFloat(document.getElementById('ratingFilterMax').value) || 10 : 10;
+            const hoursMin = suffix === '-biblioteca' ? parseInt(document.getElementById('hoursFilterMin').value) || 0 : 0;
+            const hoursMax = suffix === '-biblioteca' ? parseInt(document.getElementById('hoursFilterMax').value) || Infinity : Infinity;
+            const filteredGames = (fullData.biblioteca || []).filter(g => {
+                const gameRating = parseFloat(g.Nota) || 0;
+                const gameHours = parseInt(g['Tempo de Jogo']) || 0;
+                const baseFilter = (name ? g.Nome.toLowerCase().includes(name) : true) &&
+                                   (platform !== 'all' ? g.Plataforma === platform : true) &&
+                                   (status !== 'all' ? g.Status === status : true) &&
+                                   (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s => s.trim()).includes(style)) : true) &&
+                                   (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true);
+                if (suffix !== '-biblioteca') return baseFilter;
+                return baseFilter &&
+                       (gameRating >= ratingMin && gameRating <= ratingMax) &&
+                       (gameHours >= hoursMin && gameHours <= hoursMax);
+            });
+            if (suffix === '-graficos') {
+                const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
+                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',', '.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
+                renderSummaryCards(stats, 'summary-graficos');
+                renderAllCharts(filteredGames);
+            } else if (suffix === '-biblioteca') {
+                renderGameTable(filteredGames);
+                renderGameGrid(filteredGames);
             }
+        }
 
         function openGameModalForAdd() { document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = ''; document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; document.getElementById('addGameModal').classList.add('active'); }
         
@@ -1356,6 +1317,22 @@
             event.currentTarget.classList.add('active');
         }
 
+        function toggleLibraryView() {
+            const tableContainer = document.querySelector('#biblioteca .table-container');
+            const gridContainer = document.getElementById('game-grid-container');
+            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
+            const isGridVisible = gridContainer.style.display !== 'none';
+            if (isGridVisible) {
+                gridContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                toggleBtnIcon.textContent = 'grid_view';
+            } else {
+                gridContainer.style.display = 'grid';
+                tableContainer.style.display = 'none';
+                toggleBtnIcon.textContent = 'view_list';
+            }
+        }
+
         // --- FUNÇÕES DA BUSCA API (BIBLIOTECA) ---
         async function handleSearch(query) {
             const resultsContainer = document.getElementById('searchResultsContainer');
@@ -1406,45 +1383,9 @@
             document.getElementById('wishSearchResultsContainer').innerHTML = '';
         }
         
-        function toggleLibraryView() {
-            const tableContainer = document.querySelector('#biblioteca .table-container');
-            const gridContainer = document.getElementById('game-grid-container');
-            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
-
-            const isGridVisible = gridContainer.style.display !== 'none';
-
-            if (isGridVisible) {
-                // Muda para a visão de tabela
-                gridContainer.style.display = 'none';
-                tableContainer.style.display = 'block';
-                toggleBtnIcon.textContent = 'grid_view';
-            } else {
-                // Muda para a visão de grade
-                gridContainer.style.display = 'grid';
-                tableContainer.style.display = 'none';
-                toggleBtnIcon.textContent = 'view_list';
-            }
-        }
-
         // --- CÓDIGO PRINCIPAL QUE RODA QUANDO A PÁGINA CARREGA ---
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
-
-            const toggleAdvancedBtn = document.getElementById('toggleAdvancedFiltersBtn');
-            if (toggleAdvancedBtn) {
-                toggleAdvancedBtn.addEventListener('click', () => {
-                        const advancedContainer = document.getElementById('advanced-filters-container');
-                        const isVisible = advancedContainer.style.display !== 'none';
-                    advancedContainer.style.display = isVisible ? 'none' : 'grid';
-                });
-            }
-
-            ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', () => applyFilters('-biblioteca'));
-                }
-            });
             
             // Listeners de Forms e Botões
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
@@ -1461,13 +1402,6 @@
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
-
-            document.querySelectorAll('.sortable-header').forEach(header => {
-            header.addEventListener('click', () => {
-                handleSort(header.dataset.sortKey);
-            });
-        });
-        updateSortIcons();
             
             // Listeners dos Filtros
             const setupFilterListeners = (suffix) => {
@@ -1482,7 +1416,7 @@
                             const el = document.getElementById(id + suffix); 
                             if(el) el.value = el.tagName === 'SELECT' ? 'all' : ''; 
                         });
-                        if (suffix === '-biblioteca') { // Limpa também os filtros avançados
+                        if (suffix === '-biblioteca') {
                             ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
                                 const el = document.getElementById(id);
                                 if(el) el.value = '';
@@ -1495,6 +1429,22 @@
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
             
+            // ATIVAÇÃO DOS FILTROS AVANÇADOS
+            const toggleAdvancedBtn = document.getElementById('toggleAdvancedFiltersBtn');
+            if (toggleAdvancedBtn) {
+                toggleAdvancedBtn.addEventListener('click', () => {
+                    const advancedContainer = document.getElementById('advanced-filters-container');
+                    const isVisible = advancedContainer.style.display !== 'none';
+                    advancedContainer.style.display = isVisible ? 'none' : 'grid';
+                });
+            }
+            ['ratingFilterMin', 'ratingFilterMax', 'hoursFilterMin', 'hoursFilterMax'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => applyFilters('-biblioteca'));
+                }
+            });
+
             // ATIVAÇÃO DA BUSCA (BIBLIOTECA)
             const gameNameInput = document.getElementById('gameName');
             if (gameNameInput) {
@@ -1520,63 +1470,12 @@
                 if (searchContainer && !searchContainer.contains(event.target) && event.target !== nameInput) {
                     searchContainer.innerHTML = '';
                 }
-
                 const wishSearchContainer = document.getElementById('wishSearchResultsContainer');
                 const wishNameInput = document.getElementById('wishGameName');
                 if (wishSearchContainer && !wishSearchContainer.contains(event.target) && event.target !== wishNameInput) {
                     wishSearchContainer.innerHTML = '';
                 }
             });
-
-            // Adicione esta nova função ao seu script
-                function handleSort(key) {
-                    if (currentSortKey === key) {
-        // Se clicar na mesma coluna, inverte a direção
-                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-                    } else {
-        // Se clicar em uma nova coluna, reseta para ascendente
-                        currentSortKey = key;
-                        currentSortDirection = 'asc';
-    }
-
-    // Lógica de ordenação
-                    fullData.biblioteca.sort((a, b) => {
-                        let valA = a[currentSortKey] || '';
-                        let valB = b[currentSortKey] || '';
-
-        // Converte para número se for 'Nota' ou 'Tempo de Jogo'
-                        if (key === 'Nota' || key === 'Tempo de Jogo') {
-                            valA = parseFloat(valA) || 0;
-                            valB = parseFloat(valB) || 0;
-                        }
-
-        // Converte para string para comparação
-                        if (typeof valA === 'string') valA = valA.toLowerCase();
-                        if (typeof valB === 'string') valB = valB.toLowerCase();
-
-                        if (valA < valB) {
-                            return currentSortDirection === 'asc' ? -1 : 1;
-        }
-                        if (valA > valB) {
-                            return currentSortDirection === 'asc' ? 1 : -1;
-        }
-                        return 0;
-                    });
-
-    // Atualiza a interface
-                    updateSortIcons();
-                    applyFilters('-biblioteca');
-                }
-
-// Adicione também esta função auxiliar para atualizar os ícones
-                function updateSortIcons() {
-                    document.querySelectorAll('.sortable-header').forEach(header => {
-                        header.classList.remove('sort-asc', 'sort-desc');
-                        if (header.dataset.sortKey === currentSortKey) {
-                            header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
-                        }
-                    });
-                }
             
             // Busca os dados iniciais do servidor
             fetchGameData();
@@ -1584,6 +1483,7 @@
 </script>
 </body>
 </html>
+
 
 
 
