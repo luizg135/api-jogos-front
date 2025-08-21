@@ -1581,7 +1581,7 @@ function renderGameTable(games = []) {
                 });
             });
 
-            function closeDetailsModal() {
+function closeDetailsModal() {
     document.getElementById('gameDetailsModal').classList.remove('active');
 }
 
@@ -1617,6 +1617,42 @@ function openDetailsModal(gameName) {
             </div>
         </div>
     `;
+
+    document.getElementById('gameDetailsModal').classList.add('active');
+}
+
+function renderGameTable(games = []) {
+    const tbody = document.getElementById('game-list-tbody'), 
+          noResults = document.getElementById('no-results-message'), 
+          tableContainer = document.querySelector('#biblioteca .table-container');
+
+    if (!tbody || !noResults || !tableContainer) return;
+
+    tbody.innerHTML = '';
+    if (games.length === 0) { 
+        tableContainer.style.display = 'none'; 
+        noResults.style.display = 'block'; 
+        return; 
+    }
+
+    tableContainer.style.display = 'block'; 
+    noResults.style.display = 'none';
+
+    games.forEach(game => {
+        const isPlatinado = game['Platinado?'] === 'Sim';
+        const safeName = game.Nome.replace(/'/g, "\\'");
+
+        // A linha <tr> agora tem o onclick e a coluna de ações foi removida
+        tbody.innerHTML += `
+            <tr class="${isPlatinado ? 'platinado-row' : ''}" onclick="openDetailsModal('${safeName}')" style="cursor: pointer;">
+                <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
+                <td>${game.Plataforma || '-'}</td>
+                <td>${game.Status || '-'}</td>
+                <td class="nota-cell">${game.Nota || '-'}</td>
+                <td>${game['Tempo de Jogo'] || 0}h</td>
+            </tr>`;
+    });
+}
     
     document.getElementById('gameDetailsModal').classList.add('active');
 }
@@ -1683,6 +1719,7 @@ function openDetailsModal(gameName) {
 
 </body>
 </html>
+
 
 
 
