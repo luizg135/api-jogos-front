@@ -525,6 +525,20 @@
             content: '▼';
             font-size: 10px;
         }
+
+        .search-result-info {
+            /* Permite que o container de informações cresça e ocupe o espaço */
+            flex-grow: 1;
+            /* Impede que o container ultrapasse o limite do card */
+            min-width: 0;
+        }
+        
+        .search-result-info span {
+            /* Garante que o texto longo seja cortado com "..." */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         
     </style>
 </head>
@@ -1078,18 +1092,55 @@
                 renderGameGrid(filteredGames);
             }
         }
-
-        function openGameModalForAdd() { document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = ''; document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; document.getElementById('addGameModal').classList.add('active'); }
         
         function openGameModalForAdd() {
             document.getElementById('addGameForm').reset();
             document.getElementById('editMode').value = '';
-            document.getElementById('gameRawgId').value = ''; // Linha adicionada para garantir a limpeza
+            // Limpa o ID da RAWG para garantir que não seja enviado ao criar um novo jogo manualmente
+            const rawgIdInput = document.getElementById('gameRawgId');
+            if (rawgIdInput) {
+                rawgIdInput.value = '';
+            }
             document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo';
             document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
             document.getElementById('addGameModal').classList.add('active');
             // Limpa qualquer resultado de busca anterior
-            document.getElementById('searchResultsContainer').innerHTML = ''; 
+            const searchResultsContainer = document.getElementById('searchResultsContainer');
+            if (searchResultsContainer) {
+                searchResultsContainer.innerHTML = '';
+            }
+        }
+        
+        function openGameModalForEdit(gameName) {
+            const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName);
+            if (!gameToEdit) {
+                showToast("Jogo não encontrado.", true);
+                return;
+            }
+            document.getElementById('addGameForm').reset();
+            document.getElementById('editMode').value = gameName;
+            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`;
+            document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
+        
+            // Preenche todos os campos do formulário
+            document.getElementById('gameName').value = gameToEdit.Nome || '';
+            document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
+            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila';
+            document.getElementById('gameRating').value = gameToEdit.Nota || '';
+            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || '';
+            document.getElementById('gameLink').value = gameToEdit.Link || '';
+            document.getElementById('gameStyle').value = gameToEdit.Estilo || '';
+            document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
+            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || '';
+            document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
+        
+            // Limpa o ID da RAWG, pois a edição não deve buscar novos dados automaticamente
+            const rawgIdInput = document.getElementById('gameRawgId');
+            if (rawgIdInput) {
+                rawgIdInput.value = '';
+            }
+        
+            document.getElementById('addGameModal').classList.add('active');
         }
 
         function closeGameModal() { document.getElementById('addGameModal').classList.remove('active'); }
@@ -1458,5 +1509,6 @@
 </script>
 </body>
 </html>
+
 
 
