@@ -13,7 +13,6 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -96,60 +95,17 @@
             transition: all 0.2s ease;
         }
         .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
-        .rank-colors-Bronze .card:hover, 
-        .rank-colors-Bronze .platinum-card:hover, 
-        .rank-colors-Bronze .wish-card:hover,
-        .rank-colors-Bronze .game-card-grid:hover { 
-            border-bottom-color: var(--rank-bronze); 
-        }
-
-        .rank-colors-Prata .card:hover, 
-        .rank-colors-Prata .platinum-card:hover, 
-        .rank-colors-Prata .wish-card:hover,
-        .rank-colors-Prata .game-card-grid:hover {
-            border-bottom-color: var(--rank-prata); 
-        }
-
-        .rank-colors-Ouro .card:hover, 
-        .rank-colors-Ouro .platinum-card:hover, 
-        .rank-colors-Ouro .wish-card:hover,
-        .rank-colors-Ouro .game-card-grid:hover {
-            border-bottom-color: var(--rank-ouro); 
-        }
-
-        .rank-colors-Platina .card:hover, 
-        .rank-colors-Platina .platinum-card:hover, 
-        .rank-colors-Platina .wish-card:hover,
-        .rank-colors-Platina .game-card-grid:hover {
-            border-bottom-color: var(--rank-platina); 
-        }
-
-        .rank-colors-Diamante .card:hover, 
-        .rank-colors-Diamante .platinum-card:hover, 
-        .rank-colors-Diamante .wish-card:hover,
-        .rank-colors-Diamante .game-card-grid:hover {
-            border-bottom-color: var(--rank-diamante); 
-        }
-
-        .rank-colors-Mestre .card:hover, 
-        .rank-colors-Mestre .platinum-card:hover, 
-        .rank-colors-Mestre .wish-card:hover,
-        .rank-colors-Mestre .game-card-grid:hover {
-            border-bottom-color: var(--rank-mestre); 
-        }
+        .rank-colors-Bronze .card:hover, .rank-colors-Bronze .platinum-card:hover, .rank-colors-Bronze .wish-card:hover, .rank-colors-Bronze .game-card-grid:hover { border-bottom-color: var(--rank-bronze); }
+        .rank-colors-Prata .card:hover, .rank-colors-Prata .platinum-card:hover, .rank-colors-Prata .wish-card:hover, .rank-colors-Prata .game-card-grid:hover { border-bottom-color: var(--rank-prata); }
+        .rank-colors-Ouro .card:hover, .rank-colors-Ouro .platinum-card:hover, .rank-colors-Ouro .wish-card:hover, .rank-colors-Ouro .game-card-grid:hover { border-bottom-color: var(--rank-ouro); }
+        .rank-colors-Platina .card:hover, .rank-colors-Platina .platinum-card:hover, .rank-colors-Platina .wish-card:hover, .rank-colors-Platina .game-card-grid:hover { border-bottom-color: var(--rank-platina); }
+        .rank-colors-Diamante .card:hover, .rank-colors-Diamante .platinum-card:hover, .rank-colors-Diamante .wish-card:hover, .rank-colors-Diamante .game-card-grid:hover { border-bottom-color: var(--rank-diamante); }
+        .rank-colors-Mestre .card:hover, .rank-colors-Mestre .platinum-card:hover, .rank-colors-Mestre .wish-card:hover, .rank-colors-Mestre .game-card-grid:hover { border-bottom-color: var(--rank-mestre); }
         .card-header { display: flex; align-items: center; gap: 12px; color: var(--secondary-text); font-weight: 500; font-size: 14px; }
         .card-header .material-symbols-outlined { font-size: 20px; }
         .card-content { font-size: 24px; font-weight: 700; margin-top: 8px; }
-        .recent-platinums-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 32px; }
-        .platinum-card {
-            background-color: var(--surface-color); border-radius: 12px;
-            border: 1px solid var(--border-color); overflow: hidden; border-bottom: 3px solid transparent;
-            transition: all 0.2s ease;
-        }
-        .platinum-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .platinum-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
-        .platinum-card .game-title { padding: 12px; font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
-        .filter-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .recent-platinums-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+        .filter-bar { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; align-items: end; }
         .filter-group { display: flex; flex-direction: column; }
         .filter-group label { font-size: 12px; font-weight: 500; color: var(--secondary-text); margin-bottom: 8px; }
         .filter-group input, .filter-group select {
@@ -160,7 +116,7 @@
             background: transparent; color: var(--secondary-text); border: 1px solid var(--border-color);
             padding: 10px 12px; border-radius: 8px; font-size: 14px; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.2s ease; margin-top: auto;
+            transition: all 0.2s ease; 
         }
         .clear-filters-btn:hover { color: var(--primary-text); border-color: var(--primary-text); }
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-top: 32px; }
@@ -260,311 +216,23 @@
         .achievement-icon.tier-Diamante .material-symbols-outlined { color: var(--rank-diamante); }
         .achievement-icon.tier-Mestre .material-symbols-outlined { color: var(--rank-mestre); }
     
-        .achievements-list::-webkit-scrollbar {
-            width: 8px; 
-        }
-
-        .achievements-list::-webkit-scrollbar-track {
-            background: transparent; 
-        }
-
+        .achievements-list::-webkit-scrollbar { width: 8px; }
+        .achievements-list::-webkit-scrollbar-track { background: transparent; }
         .achievements-list::-webkit-scrollbar-thumb {
             background-color: var(--border-color); 
             border-radius: 10px; 
             border: 2px solid var(--surface-color); 
         }
-
-        .achievements-list::-webkit-scrollbar-thumb:hover {
-            background-color: var(--secondary-text); 
-        }
-
+        .achievements-list::-webkit-scrollbar-thumb:hover { background-color: var(--secondary-text); }
         .achievements-list {
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) var(--surface-color);
         }
-
-        #searchResultsContainer {
-            position: relative;
-        }
-        .search-results-list {
-            position: absolute; width: 100%; background-color: var(--surface-color);
-            border: 1px solid var(--border-color); border-radius: 8px;
-            margin-top: 5px; max-height: 300px; overflow-y: auto; z-index: 1001;
-        }
-        .search-result-item {
-            display: flex; align-items: center; padding: 10px; cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .search-result-item:last-child { border-bottom: none; }
-        .search-result-item:hover { background-color: var(--bg-color); }
-        .search-result-item img {
-            width: 90px; height: 60px; object-fit: cover;
-            border-radius: 4px; margin-right: 12px;
-        }
-        .search-result-info span { display: block; font-size: 14px; font-weight: 500; }
-        .search-result-info small { font-size: 12px; color: var(--secondary-text); margin-top: 4px; }
-
-        .platinum-card {
-            position: relative; /* Essencial para o overlay */
-            aspect-ratio: 3 / 4; /* Proporção mais vertical */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .platinum-card:hover {
-            box-shadow: 0 8px 30px rgba(147, 112, 219, 0.4); /* Efeito de brilho roxo */
-        }
-
-        .platinum-card img {
-            width: 100%;
-            height: 100%; /* Ocupa todo o card */
-            object-fit: cover;
-            border-radius: 12px;
-        }
-
-        .platinum-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50%;
-            border-radius: 0 0 12px 12px;
-            background: linear-gradient(to top, rgba(16, 17, 22, 0.9) 20%, transparent);
-            transition: all 0.3s ease;
-        }
-
-        .platinum-card:hover .platinum-overlay {
-            background: linear-gradient(to top, rgba(16, 17, 22, 1) 40%, transparent);
-        }
-
-        .platinum-info {
-            position: absolute;
-            bottom: 12px;
-            left: 12px;
-            right: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #fff;
-        }
-
-        .platinum-trophy {
-            font-size: 36px !important;
-            color: var(--rank-platina);
-            filter: drop-shadow(0 0 8px var(--rank-platina));
-        }
-
-        .platinum-details {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .platinum-title {
-            font-weight: 600;
-            font-size: 14px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        .platinum-date {
-            font-size: 12px;
-            color: var(--secondary-text);
-            font-weight: 500;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-top: 48px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--secondary-text);
-        }
-
-        .section-header h2 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--primary-text);
-        }
-
-        .section-header .material-symbols-outlined {
-            font-size: 24px;
-            color: var(--accent-purple);
-        }
-        /* Estilos para a Visualização em Grade e Botões de Ação */
-        .header-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Aumentei um pouco o tamanho mínimo */
-            gap: 20px;
-        }
-
-        .game-card-grid {
-            background-color: var(--surface-color);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            display: flex; /* Novo: para organizar a imagem e o conteúdo */
-            flex-direction: column; /* Novo: imagem em cima, conteúdo embaixo */
-            position: relative; /* Novo: para o troféu */
-            border-bottom: 3px solid transparent;
-        }
-
-            .game-card-grid:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-
-        .game-card-grid img {
-            width: 100%;
-            height: 215px; /* Altura fixa para a imagem */
-            object-fit: cover;
-            display: block;
-        }
-
-        .game-card-content {
-            padding: 12px;
-            flex-grow: 1; /* Faz o conteúdo preencher o espaço restante */
-            display: flex;
-            flex-direction: column;
-        }
-
-        .game-card-top-details {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--secondary-text);
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .game-card-top-details .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .game-card-top-details .material-symbols-outlined {
-            font-size: 14px;
-        }
-
-        .game-card-grid .game-title {
-            padding: 0;
-            text-align: left;
-            font-weight: 600;
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-top: auto; /* Empurra o título para a parte de baixo do card */
-        }
-
-        .game-card-trophy {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 28px !important;
-            color: var(--accent-purple);
-            background-color: rgba(0,0,0,0.5);
-            border-radius: 50%;
-            padding: 4px;
-            filter: drop-shadow(0 0 5px var(--accent-purple));
-        }
-
-        /* Estilos para o cabeçalho ordenável da tabela */
-        .sortable-header {
-            cursor: pointer;
-            position: relative;
-            user-select: none; /* Impede a seleção de texto ao clicar */
-        }
-
-        .sortable-header:hover {
-            color: var(--primary-text);
-        }
-
-        .sort-icon {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.6;
-        }
-
-/* Mostra uma seta para cima ou para baixo dependendo da classe */
-        .sortable-header.sort-asc .sort-icon::after {
-            content: '▲';
-            font-size: 10px;
-        }
-
-        .sortable-header.sort-desc .sort-icon::after {
-            content: '▼';
-            font-size: 10px;
-        }
-
-        /* Estilos para os Filtros Avançados */
-        .filter-bar {
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            align-items: end;
-        }
-
-        .advanced-filters {
-            grid-column: 1 / -1; /* Ocupa a linha inteira */
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .filter-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .filter-actions button {
-            flex-grow: 1;
-        }
-
-        .action-btn-secondary {
-            background: transparent;
-            color: var(--secondary-text);
-            border: 1px solid var(--border-color);
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .action-btn-secondary:hover {
-            color: var(--primary-text);
-            border-color: var(--primary-text);
-        }
-        
+        .section-header{display:flex;align-items:center;gap:16px;margin-top:48px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border-color);color:var(--secondary-text)}.section-header h2{margin:0;font-size:18px;font-weight:500;color:var(--primary-text)}.section-header .material-symbols-outlined{font-size:24px;color:var(--accent-purple)}.header-actions{display:flex;gap:8px}.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px}.game-card-grid{background-color:var(--surface-color);border-radius:12px;border:1px solid var(--border-color);overflow:hidden;transition:all .2s ease;cursor:pointer;display:flex;flex-direction:column;position:relative;border-bottom:3px solid transparent}.game-card-grid:hover{transform:translateY(-5px);box-shadow:0 10px 20px rgba(0,0,0,.3)}.game-card-grid img{width:100%;height:215px;object-fit:cover;display:block}.game-card-content{padding:12px;flex-grow:1;display:flex;flex-direction:column}.game-card-top-details{display:flex;justify-content:space-between;font-size:11px;color:var(--secondary-text);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border-color)}.game-card-top-details .detail-item{display:flex;align-items:center;gap:4px}.game-card-top-details .material-symbols-outlined{font-size:14px}.game-card-grid .game-title{padding:0;text-align:left;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:auto}.game-card-trophy{position:absolute;top:8px;right:8px;font-size:28px!important;color:var(--accent-purple);background-color:rgba(0,0,0,.5);border-radius:50%;padding:4px;filter:drop-shadow(0 0 5px var(--accent-purple))}.sortable-header{cursor:pointer;position:relative;user-select:none}.sortable-header:hover{color:var(--primary-text)}.sort-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);opacity:.6}.sortable-header.sort-asc .sort-icon::after{content:'▲';font-size:10px}.sortable-header.sort-desc .sort-icon::after{content:'▼';font-size:10px}.advanced-filters{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-top:16px}.filter-actions{display:flex;gap:8px}.filter-actions button{flex-grow:1}.action-btn-secondary{background:transparent;color:var(--secondary-text);border:1px solid var(--border-color);padding:10px 12px;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s ease}.action-btn-secondary:hover{color:var(--primary-text);border-color:var(--primary-text)}
+        .search-results-container{position:relative}.search-results-list{position:absolute;width:100%;background-color:var(--surface-color);border:1px solid var(--border-color);border-radius:8px;margin-top:4px;max-height:250px;overflow-y:auto;z-index:1001}.search-result-item{display:flex;align-items:center;padding:8px;cursor:pointer;transition:background-color .2s ease}.search-result-item:hover{background-color:var(--bg-color)}.search-result-item img{width:60px;height:40px;object-fit:cover;border-radius:4px;margin-right:12px}.search-result-info span{display:block;font-size:14px}.search-result-info small{font-size:12px;color:var(--secondary-text)}
     </style>
 </head>
-
 <body class="dark-mode">
-
     <nav class="sidebar">
         <span class="material-symbols-outlined sidebar-logo">stadia_controller</span>
         <div class="sidebar-nav">
@@ -581,139 +249,133 @@
     </nav>
 
     <main class="main-content" id="main-content">
-<div id="content">
-    <section id="perfil" class="page active">
-        <header class="profile-header">
-            <div class="profile-main">
-                <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
-                <div class="profile-info">
-                    <h1 id="gamerName">Carregando...</h1>
-                    <p id="profileSubtitle">Resumo da jornada!</p>
-                </div>
-                <div class="profile-level">
-                    <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
-                        <span class="material-symbols-outlined">military_tech</span>
+        <div id="content">
+            <section id="perfil" class="page active">
+                <header class="profile-header">
+                    <div class="profile-main">
+                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
+                        <div class="profile-info">
+                            <h1 id="gamerName">Carregando...</h1>
+                            <p id="profileSubtitle">Resumo da jornada!</p>
+                        </div>
+                        <div class="profile-level">
+                            <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
+                                <span class="material-symbols-outlined">military_tech</span>
+                            </div>
+                            <div class="level-progress" style="flex-grow: 1;">
+                                <div id="levelDisplay" class="level-text">Nível 0</div>
+                                <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
+                                <div id="expText" class="exp-text">0 / 1000 EXP</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="level-progress" style="flex-grow: 1;">
-                        <div id="levelDisplay" class="level-text">Nível 0</div>
-                        <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
-                        <div id="expText" class="exp-text">0 / 1000 EXP</div>
+                </header>
+                <div id="summary" class="summary-grid"></div>
+                <div class="section-header">
+                    <span class="material-symbols-outlined">emoji_events</span>
+                    <h2>Últimos Jogos Platinados</h2>
+                </div>
+                <div id="recent-platinums" class="recent-platinums-grid"></div>
+            </section>
+
+            <section id="conquistas" class="page">
+                <header class="profile-header">
+                    <div class="profile-main">
+                        <div class="profile-info">
+                            <h1 style="color: var(--accent-purple);">Minhas Conquistas</h1>
+                            <p>Seus marcos e feitos notáveis na jornada gamer.</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </header>
-        <div id="summary" class="summary-grid"></div>
+                </header>
+                <div id="achievements-container" class="achievements-grid"></div>
+            </section>
 
-        <div class="section-header">
-            <span class="material-symbols-outlined">emoji_events</span>
-            <h2>Últimos Jogos Platinados</h2>
+            <section id="graficos" class="page">
+                <header class="profile-header">
+                    <div class="profile-main">
+                        <div class="profile-info">
+                            <h1 style="color: var(--accent-purple);">Análise Gráfica</h1>
+                            <p>Visão detalhada sobre seus hábitos e conquistas.</p>
+                        </div>
+                    </div>
+                </header>
+                <section class="filter-bar">
+                    <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
+                    <div class="filter-group"><label for="platformFilter-graficos">Plataforma</label><select id="platformFilter-graficos"></select></div>
+                    <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
+                    <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
+                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-graficos" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span>Limpar</button></div>
+                </section>
+                <div id="summary-graficos" class="summary-grid"></div>
+                <div id="charts-container" class="charts-grid">
+                    <div class="chart-card"><h3>Jogos Platinados</h3><div class="chart-wrapper"><canvas id="platinadosChart"></canvas></div></div>
+                    <div class="chart-card"><h3>Jogos por Plataforma</h3><div class="chart-wrapper"><canvas id="platformChart"></canvas></div></div>
+                    <div class="chart-card"><h3>Jogos por Status</h3><div class="chart-wrapper"><canvas id="statusChart"></canvas></div></div>
+                    <div class="chart-card"><h3>Top 5 Estilos</h3><div class="chart-wrapper"><canvas id="styleChart"></canvas></div></div>
+                </div>
+            </section>
+
+            <section id="biblioteca" class="page">
+                <header class="profile-header">
+                    <div class="profile-main" style="justify-content: space-between;">
+                        <div class="profile-info">
+                            <h1 style="color: var(--accent-purple);">Biblioteca de Jogos</h1>
+                            <p>Explore toda a sua coleção.</p>
+                        </div>
+                        <div class="header-actions">
+                            <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">grid_view</span></button>
+                            <button class="nav-button" id="addGameBtn" title="Adicionar Novo Jogo"><span class="material-symbols-outlined">add</span></button>
+                        </div>
+                    </div>
+                </header>
+                <section class="filter-bar">
+                    <div class="filter-group"><label for="nameFilter-biblioteca">Buscar por Nome</label><input type="search" id="nameFilter-biblioteca" placeholder="Ex: Elden Ring"></div>
+                    <div class="filter-group"><label for="platformFilter-biblioteca">Plataforma</label><select id="platformFilter-biblioteca"></select></div>
+                    <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
+                    <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
+                    <div class="filter-group filter-actions">
+                        <button id="toggleAdvancedFiltersBtn" class="action-btn-secondary"><span class="material-symbols-outlined">tune</span> Avançados</button>
+                        <button id="clearFiltersBtn-biblioteca" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span>Limpar</button>
+                    </div>
+                    <div class="advanced-filters" id="advanced-filters-container" style="display: none;">
+                        <div class="filter-group"><label for="ratingFilterMin">Nota Mínima</label><input type="number" id="ratingFilterMin" min="0" max="10" step="0.1" placeholder="Ex: 8.5"></div>
+                        <div class="filter-group"><label for="ratingFilterMax">Nota Máxima</label><input type="number" id="ratingFilterMax" min="0" max="10" step="0.1" placeholder="Ex: 10"></div>
+                        <div class="filter-group"><label for="hoursFilterMin">Horas Mínimas</label><input type="number" id="hoursFilterMin" min="0" placeholder="Ex: 50"></div>
+                        <div class="filter-group"><label for="hoursFilterMax">Horas Máximas</label><input type="number" id="hoursFilterMax" min="0" placeholder="Ex: 100"></div>
+                    </div>
+                </section>
+                <div class="table-container">
+                    <table class="games-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable-header" data-sort-key="Nome">Nome <span class="sort-icon"></span></th>
+                                <th class="sortable-header" data-sort-key="Plataforma">Plataforma <span class="sort-icon"></span></th>
+                                <th class="sortable-header" data-sort-key="Status">Status <span class="sort-icon"></span></th>
+                                <th class="sortable-header" data-sort-key="Nota">Nota <span class="sort-icon"></span></th>
+                                <th class="sortable-header" data-sort-key="Tempo de Jogo">Horas <span class="sort-icon"></span></th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="game-list-tbody"></tbody>
+                    </table>
+                </div>
+                <div id="game-grid-container" class="games-grid" style="display: none;"></div>
+                <div id="no-results-message" class="no-results" style="display: none;"><p>Nenhum jogo encontrado.</p></div>
+            </section>
+            
+            <section id="desejos" class="page">
+                <header class="profile-header">
+                    <div class="profile-main" style="justify-content: space-between;">
+                        <div class="profile-info">
+                            <h1 style="color: var(--accent-purple);">Lista de Desejos</h1>
+                            <p>Seus próximos jogos e futuras aventuras.</p>
+                        </div>
+                        <button class="nav-button" id="addWishBtn" title="Adicionar Jogo à Lista"><span class="material-symbols-outlined">add</span></button>
+                    </div>
+                </header>
+                <div id="wishlist-container" class="wishlist-grid"></div>
+            </section>
         </div>
-        <div id="recent-platinums" class="recent-platinums-grid"></div>
-    </section>
-
-    <section id="conquistas" class="page">
-        <header class="profile-header">
-            <div class="profile-main">
-                <div class="profile-info">
-                    <h1 style="color: var(--accent-purple);">Minhas Conquistas</h1>
-                    <p>Seus marcos e feitos notáveis na jornada gamer.</p>
-                </div>
-            </div>
-        </header>
-        <div id="achievements-container" class="achievements-grid"></div>
-    </section>
-
-    <section id="graficos" class="page">
-        <header class="profile-header">
-            <div class="profile-main">
-                <div class="profile-info">
-                    <h1 style="color: var(--accent-purple);">Análise Gráfica</h1>
-                    <p>Visão detalhada sobre seus hábitos e conquistas.</p>
-                </div>
-            </div>
-        </header>
-        <section class="filter-bar">
-            <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
-            <div class="filter-group"><label for="platformFilter-graficos">Plataforma</label><select id="platformFilter-graficos"></select></div>
-            <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
-            <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
-            <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-graficos" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span>Limpar</button></div>
-        </section>
-        <div id="summary-graficos" class="summary-grid"></div>
-        <div id="charts-container" class="charts-grid">
-            <div class="chart-card"><h3>Jogos Platinados</h3><div class="chart-wrapper"><canvas id="platinadosChart"></canvas></div></div>
-            <div class="chart-card"><h3>Jogos por Plataforma</h3><div class="chart-wrapper"><canvas id="platformChart"></canvas></div></div>
-            <div class="chart-card"><h3>Jogos por Status</h3><div class="chart-wrapper"><canvas id="statusChart"></canvas></div></div>
-            <div class="chart-card"><h3>Top 5 Estilos</h3><div class="chart-wrapper"><canvas id="styleChart"></canvas></div></div>
-        </div>
-    </section>
-
-    <section id="biblioteca" class="page">
-        <header class="profile-header">
-            <div class="profile-main" style="justify-content: space-between;">
-                <div class="profile-info">
-                    <h1 style="color: var(--accent-purple);">Biblioteca de Jogos</h1>
-                    <p>Explore toda a sua coleção.</p>
-                </div>
-                <div class="header-actions">
-                    <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">grid_view</span></button>
-                    <button class="nav-button" id="addGameBtn" title="Adicionar Novo Jogo"><span class="material-symbols-outlined">add</span></button>
-                </div>
-            </div>
-        </header>
-        <section class="filter-bar">
-            <div class="filter-group"><label for="nameFilter-biblioteca">Buscar por Nome</label><input type="search" id="nameFilter-biblioteca" placeholder="Ex: Elden Ring"></div>
-            <div class="filter-group"><label for="platformFilter-biblioteca">Plataforma</label><select id="platformFilter-biblioteca"></select></div>
-            <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
-            <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
-
-            <div class="filter-group filter-actions">
-                <button id="toggleAdvancedFiltersBtn" class="action-btn-secondary"><span class="material-symbols-outlined">tune</span> Avançados</button>
-                <button id="clearFiltersBtn-biblioteca" class="clear-filters-btn"><span class="material-symbols-outlined">delete_sweep</span>Limpar</button>
-            </div>
-
-            <div class="advanced-filters" id="advanced-filters-container" style="display: none;">
-                <div class="filter-group"><label for="ratingFilterMin">Nota Mínima</label><input type="number" id="ratingFilterMin" min="0" max="10" step="0.1" placeholder="Ex: 8.5"></div>
-                <div class="filter-group"><label for="ratingFilterMax">Nota Máxima</label><input type="number" id="ratingFilterMax" min="0" max="10" step="0.1" placeholder="Ex: 10"></div>
-                <div class="filter-group"><label for="hoursFilterMin">Horas Mínimas</label><input type="number" id="hoursFilterMin" min="0" placeholder="Ex: 50"></div>
-                <div class="filter-group"><label for="hoursFilterMax">Horas Máximas</label><input type="number" id="hoursFilterMax" min="0" placeholder="Ex: 100"></div>
-            </div>
-        </section>
-
-        <div class="table-container">
-            <table class="games-table">
-                <thead>
-                    <tr>
-                        <th class="sortable-header" data-sort-key="Nome">Nome <span class="sort-icon"></span></th>
-                        <th class="sortable-header" data-sort-key="Plataforma">Plataforma <span class="sort-icon"></span></th>
-                        <th class="sortable-header" data-sort-key="Status">Status <span class="sort-icon"></span></th>
-                        <th class="sortable-header" data-sort-key="Nota">Nota <span class="sort-icon"></span></th>
-                        <th class="sortable-header" data-sort-key="Tempo de Jogo">Horas <span class="sort-icon"></span></th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="game-list-tbody"></tbody>
-            </table>
-        </div>
-        
-        <div id="game-grid-container" class="games-grid" style="display: none;"></div>
-        
-        <div id="no-results-message" class="no-results" style="display: none;"><p>Nenhum jogo encontrado.</p></div>
-    </section>
-    
-    <section id="desejos" class="page">
-        <header class="profile-header">
-            <div class="profile-main" style="justify-content: space-between;">
-                <div class="profile-info">
-                    <h1 style="color: var(--accent-purple);">Lista de Desejos</h1>
-                    <p>Seus próximos jogos e futuras aventuras.</p>
-                </div>
-                <button class="nav-button" id="addWishBtn" title="Adicionar Jogo à Lista"><span class="material-symbols-outlined">add</span></button>
-            </div>
-        </header>
-        <div id="wishlist-container" class="wishlist-grid"></div>
-    </section>
-</div>
     </main>
     
     <div id="addGameModal" class="modal-overlay">
@@ -721,66 +383,22 @@
             <span class="close-button" onclick="closeGameModal()">&times;</span>
             <h2 id="gameModalTitle">Adicionar Novo Jogo</h2>
             <form id="addGameForm">
-<input type="hidden" id="editMode" value="">
-
-<div class="form-group">
-    <label for="gameName">Nome do Jogo</label>
-    <input type="text" id="gameName" required autocomplete="off">
-    <div id="searchResultsContainer"></div>
-</div>
-
-<div class="form-group">
-    <label for="gamePlatform">Plataforma</label>
-    <input type="text" id="gamePlatform" placeholder="Ex: PC, PS5">
-</div>
-
-<div class="form-group">
-    <label for="gameStatus">Status</label>
-    <select id="gameStatus">
-        <option value="Na Fila">Na Fila</option>
-        <option value="Jogando">Jogando</option>
-        <option value="Finalizado">Finalizado</option>
-        <option value="Platinado">Platinado</option>
-        <option value="Abandonado">Abandonado</option>
-    </select>
-</div>
-
-<div class="form-group">
-    <label for="gameRating">Nota</label>
-    <input type="number" id="gameRating" step="0.1" min="0" max="10">
-</div>
-
-<div class="form-group">
-    <label for="gameHours">Horas de Jogo</label>
-    <input type="number" id="gameHours" min="0">
-</div>
-
-<div class="form-group">
-    <label for="gameTermino">Data de Conclusão</label>
-    <input type="date" id="gameTermino">
-</div>
-
-<div class="form-group" style="display: none;">
-    <label for="gameLink">Link da Capa (URL)</label>
-    <input type="url" id="gameLink" placeholder="URL da imagem">
-</div>
-
-<div class="form-group">
-    <label for="gameStyle">Estilo (separado por vírgula)</label>
-    <input type="text" id="gameStyle" placeholder="Ex: RPG, Aventura">
-</div>
-
-<div class="form-group">
-    <label for="gamePrice">Preço (R$)</label>
-    <input type="text" inputmode="decimal" id="gamePrice" placeholder="Ex: 149,90">
-</div>
-
-<div class="form-group">
-    <label for="gameConquistas">Conquistas Obtidas</label>
-    <input type="number" id="gameConquistas" min="0">
-</div>
-
-<button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
+                <input type="hidden" id="editMode" value="">
+                <div class="form-group">
+                    <label for="gameName">Nome do Jogo</label>
+                    <input type="text" id="gameName" required autocomplete="off">
+                    <div id="searchResultsContainer"></div>
+                </div>
+                <div class="form-group"><label for="gamePlatform">Plataforma</label><input type="text" id="gamePlatform" placeholder="Ex: PC, PS5"></div>
+                <div class="form-group"><label for="gameStatus">Status</label><select id="gameStatus"><option value="Na Fila">Na Fila</option><option value="Jogando">Jogando</option><option value="Finalizado">Finalizado</option><option value="Platinado">Platinado</option><option value="Abandonado">Abandonado</option></select></div>
+                <div class="form-group"><label for="gameRating">Nota</label><input type="number" id="gameRating" step="0.1" min="0" max="10"></div>
+                <div class="form-group"><label for="gameHours">Horas de Jogo</label><input type="number" id="gameHours" min="0"></div>
+                <div class="form-group"><label for="gameTermino">Data de Conclusão</label><input type="date" id="gameTermino"></div>
+                <div class="form-group" style="display: none;"><label for="gameLink">Link da Capa (URL)</label><input type="url" id="gameLink" placeholder="URL da imagem"></div>
+                <div class="form-group"><label for="gameStyle">Estilo (separado por vírgula)</label><input type="text" id="gameStyle" placeholder="Ex: RPG, Aventura"></div>
+                <div class="form-group"><label for="gamePrice">Preço (R$)</label><input type="text" inputmode="decimal" id="gamePrice" placeholder="Ex: 149,90"></div>
+                <div class="form-group"><label for="gameConquistas">Conquistas Obtidas</label><input type="number" id="gameConquistas" min="0"></div>
+                <button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
             </form>
         </div>
     </div>
@@ -790,33 +408,19 @@
             <span class="close-button" onclick="closeWishModal()">&times;</span>
             <h2 id="wishModalTitle">Adicionar à Lista de Desejos</h2>
             <form id="addWishForm">
-            <input type="hidden" id="editWishMode" value="">
-
-            <div class="form-group">
-                <label for="wishGameName">Nome do Jogo</label>
-                <input type="text" id="wishGameName" required autocomplete="off">
-                <div id="wishSearchResultsContainer"></div>
-            </div>
-
-            <div class="form-group" style="display: none;">
-                <label for="wishGameLink">Link da Capa (URL)</label>
-                <input type="url" id="wishGameLink" placeholder="URL da imagem">
-            </div>
-
-            <div class="form-group">
-                <label for="wishGameRelease">Data Lançamento / Status</label>
-                <input type="text" id="wishGameRelease" placeholder="Ex: 2025, Em Breve">
-            </div>
-
-            <div class="form-group">
-                <label for="wishGamePrice">Preço (R$)</label>
-                <input type="text" inputmode="decimal" id="wishGamePrice" placeholder="Ex: 59,90">
-            </div>
-
-            <button type="submit" id="wishModalSubmitBtn">Adicionar à Lista</button>
-                        </form>
-                    </div>
+                <input type="hidden" id="editWishMode" value="">
+                <div class="form-group">
+                    <label for="wishGameName">Nome do Jogo</label>
+                    <input type="text" id="wishGameName" required autocomplete="off">
+                    <div id="wishSearchResultsContainer"></div>
                 </div>
+                <div class="form-group" style="display: none;"><label for="wishGameLink">Link da Capa (URL)</label><input type="url" id="wishGameLink" placeholder="URL da imagem"></div>
+                <div class="form-group"><label for="wishGameRelease">Data Lançamento / Status</label><input type="text" id="wishGameRelease" placeholder="Ex: 2025, Em Breve"></div>
+                <div class="form-group"><label for="wishGamePrice">Preço (R$)</label><input type="text" inputmode="decimal" id="wishGamePrice" placeholder="Ex: 59,90"></div>
+                <button type="submit" id="wishModalSubmitBtn">Adicionar à Lista</button>
+            </form>
+        </div>
+    </div>
 
     <div id="settingsModal" class="modal-overlay">
         <div class="modal-content">
@@ -848,9 +452,8 @@
         </div>
     </div>
 
-<script>
-// COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
-
+    <script>
+        // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
@@ -860,7 +463,10 @@
 
         let searchTimeout;
         let wishSearchTimeout;
-        
+        let currentSortKey = 'Nome';
+        let currentSortDirection = 'asc';
+
+        // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
         function showToast(message, isError = false) {
             Toastify({
                 text: message, duration: 3000, gravity: "top", position: "right", stopOnFocus: true,
@@ -969,7 +575,6 @@
             tbody.innerHTML = '';
             
             if (games.length === 0) {
-                tableContainer.style.display = 'none';
                 noResults.style.display = 'block';
                 return;
             }
@@ -1333,7 +938,6 @@
             }
         }
 
-        // --- FUNÇÕES DA BUSCA API (BIBLIOTECA) ---
         async function handleSearch(query) {
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
@@ -1356,7 +960,6 @@
             document.getElementById('searchResultsContainer').innerHTML = '';
         }
 
-        // --- FUNÇÕES DA BUSCA API (WISHLIST) ---
         async function handleWishSearch(query) {
             const resultsContainer = document.getElementById('wishSearchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
@@ -1383,11 +986,9 @@
             document.getElementById('wishSearchResultsContainer').innerHTML = '';
         }
         
-        // --- CÓDIGO PRINCIPAL QUE RODA QUANDO A PÁGINA CARREGA ---
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
             
-            // Listeners de Forms e Botões
             setupListener('addGameForm', 'submit', handleGameFormSubmit);
             setupListener('addWishForm', 'submit', handleWishFormSubmit);
             setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
@@ -1403,7 +1004,6 @@
             });
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
             
-            // Listeners dos Filtros
             const setupFilterListeners = (suffix) => {
                 ['nameFilter', 'platformFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => {
                     const el = document.getElementById(id + suffix);
@@ -1429,7 +1029,6 @@
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
             
-            // ATIVAÇÃO DOS FILTROS AVANÇADOS
             const toggleAdvancedBtn = document.getElementById('toggleAdvancedFiltersBtn');
             if (toggleAdvancedBtn) {
                 toggleAdvancedBtn.addEventListener('click', () => {
@@ -1445,7 +1044,6 @@
                 }
             });
 
-            // ATIVAÇÃO DA BUSCA (BIBLIOTECA)
             const gameNameInput = document.getElementById('gameName');
             if (gameNameInput) {
                 gameNameInput.addEventListener('keyup', (event) => {
@@ -1454,7 +1052,6 @@
                 });
             }
 
-            // ATIVAÇÃO DA BUSCA (WISHLIST)
             const wishGameNameInput = document.getElementById('wishGameName');
             if (wishGameNameInput) {
                 wishGameNameInput.addEventListener('keyup', (event) => {
@@ -1463,7 +1060,6 @@
                 });
             }
 
-            // FECHA AS LISTAS DE BUSCA AO CLICAR FORA
             document.addEventListener('click', function(event) {
                 const searchContainer = document.getElementById('searchResultsContainer');
                 const nameInput = document.getElementById('gameName');
@@ -1476,17 +1072,11 @@
                     wishSearchContainer.innerHTML = '';
                 }
             });
+
+            updateSortIcons();
             
-            // Busca os dados iniciais do servidor
             fetchGameData();
         });
-</script>
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
