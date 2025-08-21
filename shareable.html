@@ -205,7 +205,9 @@
             } catch (error) {
                 console.error('Erro ao carregar perfil público:', error);
                 const profileCard = document.querySelector('.profile-card');
-                profileCard.innerHTML = '<p style="text-align: center; color: #cb2d3e;">Não foi possível carregar o perfil.</p>';
+                if (profileCard) {
+                    profileCard.innerHTML = '<p style="text-align: center; color: #cb2d3e;">Não foi possível carregar o perfil.</p>';
+                }
             }
         });
     </script>
