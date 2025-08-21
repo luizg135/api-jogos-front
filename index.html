@@ -663,7 +663,9 @@
             <span class="close-button" onclick="closeGameModal()">&times;</span>
             <h2 id="gameModalTitle">Adicionar Novo Jogo</h2>
             <form id="addGameForm">
-<input type="hidden" id="editMode" value="">
+                <input type="hidden" id="editMode" value="">
+                <input type="hidden" id="gameRawgId" value=""> ...
+            </form>
 
 <div class="form-group">
     <label for="gameName">Nome do Jogo</label>
@@ -1089,7 +1091,20 @@
             event.preventDefault();
             const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
             const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
-            const gameData = { Nome: document.getElementById('gameName').value, Plataforma: document.getElementById('gamePlatform').value, Status: document.getElementById('gameStatus').value, Nota: parseFloat(document.getElementById('gameRating').value) || null, "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0, Link: document.getElementById('gameLink').value, Estilo: document.getElementById('gameStyle').value, "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não', Preço: parseFloat(priceValue) || 0, "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0, "Terminado em": document.getElementById('gameTermino').value || '' };
+            const gameData = {
+                Nome: document.getElementById('gameName').value,
+                Plataforma: document.getElementById('gamePlatform').value,
+                Status: document.getElementById('gameStatus').value,
+                Nota: parseFloat(document.getElementById('gameRating').value) || null,
+                "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
+                Link: document.getElementById('gameLink').value,
+                Estilo: document.getElementById('gameStyle').value,
+                "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
+                Preço: parseFloat(priceValue) || 0,
+                "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
+                "Terminado em": document.getElementById('gameTermino').value || '', // Adicione uma vírgula aqui
+                RAWG_ID: document.getElementById('gameRawgId').value // E separe a nova propriedade
+            };
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
             try {
@@ -1266,17 +1281,18 @@
                 const safeName = game.name.replace(/'/g, "\\'");
                 const safeStyles = game.styles.replace(/'/g, "\\'");
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
+                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', styles: '${safeStyles}', id: '${game.id}' })">...</div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
 
-        function selectGame(game) {
-            document.getElementById('gameName').value = game.name;
-            document.getElementById('gameLink').value = game.background_image;
-            document.getElementById('gameStyle').value = game.styles;
-            document.getElementById('searchResultsContainer').innerHTML = '';
-        }
+                function selectGame(game) {
+                    document.getElementById('gameName').value = game.name;
+                    document.getElementById('gameLink').value = game.background_image;
+                    document.getElementById('gameStyle').value = game.styles;
+                    document.getElementById('gameRawgId').value = game.id; // ADICIONE ESTA LINHA
+                    document.getElementById('searchResultsContainer').innerHTML = '';
+                }
 
         // --- FUNÇÕES DA BUSCA API (WISHLIST) ---
         async function handleWishSearch(query) {
@@ -1434,3 +1450,4 @@
 </script>
 </body>
 </html>
+
