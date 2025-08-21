@@ -794,7 +794,7 @@
             const cards = [
                 { t: 'Total de Jogos', v: stats.total_jogos || 0, i: 'sports_esports' }, { t: 'Horas Jogadas', v: `${(stats.total_horas_jogadas || 0).toLocaleString('pt-BR')}h`, i: 'timer' },
                 { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' }, { t: 'Média das Notas', v: stats.media_notas || 'N/A', i: 'star' },
-                { t: 'Platinados', v: stats.total_platinados || 0, i: 'military_tech' }, { t: 'Conquistas', v: stats.total_conquistas || 0, i: 'emoji_events' }
+                { t: 'Platinados', v: stats.total_platinados || 0, i: 'emoji_events' }, { t: 'Conquistas', v: stats.total_conquistas || 0, i: 'military_tech' }
             ];
             container.innerHTML = cards.map(c => `<div class="card"><div class="card-header"><span class="material-symbols-outlined">${c.i}</span><span>${c.t}</span></div><p class="card-content">${c.v}</p></div>`).join('');
         }
@@ -832,20 +832,40 @@
             }).join('');
         }
         
+        // --- FUNÇÃO CORRIGIDA ---
         function renderGameTable(games = []) {
-            const tbody = document.getElementById('game-list-tbody'), noResults = document.getElementById('no-results-message'), tableContainer = document.querySelector('#biblioteca .table-container');
+            const tbody = document.getElementById('game-list-tbody');
+            const noResults = document.getElementById('no-results-message');
+            const tableContainer = document.querySelector('#biblioteca .table-container');
+
             if (!tbody || !noResults || !tableContainer) return;
+
             tbody.innerHTML = '';
+            
             if (games.length === 0) {
                 tableContainer.style.display = 'none';
-                document.getElementById('game-grid-container').innerHTML = ''; // Limpa a grade também
-                noResults.style.display = 'block'; 
-                return; 
+                noResults.style.display = 'block';
+                return;
             }
-            tableContainer.style.display = 'block'; noResults.style.display = 'none';
+
+            // A linha que forçava a visibilidade foi removida daqui
+            noResults.style.display = 'none';
+            
             games.forEach(game => {
                 const isPlatinado = game['Platinado?'] === 'Sim';
-                tbody.innerHTML += `<tr class="${isPlatinado ? 'platinado-row' : ''}"><td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td><td>${game.Plataforma || '-'}</td><td>${game.Status || '-'}</td><td class="nota-cell">${game.Nota || '-'}</td><td>${game['Tempo de Jogo'] || 0}h</td><td><div class="action-buttons"><button class="action-button" onclick="editGame('${game.Nome.replace(/'/g, "\\'")}')"><span class="material-symbols-outlined">edit</span></button><button class="action-button" onclick="deleteGame('${game.Nome.replace(/'/g, "\\'")}')"><span class="material-symbols-outlined">delete</span></button></div></td></tr>`;
+                const safeName = game.Nome.replace(/'/g, "\\'");
+                tbody.innerHTML += `
+                    <tr class="${isPlatinado ? 'platinado-row' : ''}">
+                        <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
+                        <td>${game.Plataforma || '-'}</td>
+                        <td>${game.Status || '-'}</td>
+                        <td class="nota-cell">${game.Nota || '-'}</td>
+                        <td>${game['Tempo de Jogo'] || 0}h</td>
+                        <td><div class="action-buttons">
+                            <button class="action-button" onclick="editGame('${safeName}')"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="action-button" onclick="deleteGame('${safeName}')"><span class="material-symbols-outlined">delete</span></button>
+                        </div></td>
+                    </tr>`;
             });
         }
         
@@ -862,8 +882,7 @@
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 const plataforma = game.Plataforma || '-';
                 const tempoDeJogo = game['Tempo de Jogo'] || 0;
-
-        // Lógica para adicionar o ícone de troféu apenas se o jogo for platinado
+                
                 const trophyIconHTML = game['Platinado?'] === 'Sim' 
                     ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>`
                     : '';
@@ -871,9 +890,7 @@
                 return `
                     <div class="game-card-grid" onclick="openGameModalForEdit('${safeName}')" title="${safeName}">
                         <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
-
                         ${trophyIconHTML}
-
                         <div class="game-card-content">
                             <div class="game-card-top-details">
                                 <span class="detail-item">
@@ -1212,6 +1229,26 @@
             document.getElementById('wishSearchResultsContainer').innerHTML = '';
         }
         
+        function toggleLibraryView() {
+            const tableContainer = document.querySelector('#biblioteca .table-container');
+            const gridContainer = document.getElementById('game-grid-container');
+            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
+
+            const isGridVisible = gridContainer.style.display !== 'none';
+
+            if (isGridVisible) {
+                // Muda para a visão de tabela
+                gridContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                toggleBtnIcon.textContent = 'grid_view';
+            } else {
+                // Muda para a visão de grade
+                gridContainer.style.display = 'grid';
+                tableContainer.style.display = 'none';
+                toggleBtnIcon.textContent = 'view_list';
+            }
+        }
+
         // --- CÓDIGO PRINCIPAL QUE RODA QUANDO A PÁGINA CARREGA ---
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
@@ -1231,7 +1268,7 @@
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
-
+            
             // Listeners dos Filtros
             const setupFilterListeners = (suffix) => {
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => setupListener(id + suffix, 'input', () => applyFilters(suffix)));
@@ -1277,30 +1314,6 @@
             // Busca os dados iniciais do servidor
             fetchGameData();
         });
-
-        // Adicionada a função que faltava
-        function toggleLibraryView() {
-            const tableContainer = document.querySelector('#biblioteca .table-container');
-            const gridContainer = document.getElementById('game-grid-container');
-            const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
-
-            const isGridVisible = gridContainer.style.display !== 'none';
-
-            if (isGridVisible) {
-                // Muda para a visão de tabela
-                gridContainer.style.display = 'none';
-                toggleBtnIcon.textContent = 'grid_view';
-            } else {
-                // Muda para a visão de grade
-                gridContainer.style.display = 'grid';
-                tableContainer.style.display = 'none';
-                toggleBtnIcon.textContent = 'view_list';
-            }
-        }
 </script>
 </body>
 </html>
-
-
-
-
