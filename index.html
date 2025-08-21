@@ -1002,7 +1002,7 @@
                 const safeName = game.Nome.replace(/'/g, "\\'");
 
                 tbody.innerHTML += `
-                        <tr class="${isPlatinado ? 'platinado-row' : ''}" data-game-name="${safeName}" style="cursor: pointer;">
+                        <tr class="${isPlatinado ? 'platinado-row' : ''}" data-action="open-details" data-game-name="${safeName}" style="cursor: pointer;">
                         <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
                         <td>${game.Plataforma || '-'}</td>
                         <td>${game.Status || '-'}</td>
@@ -1025,7 +1025,7 @@
                 const tempoDeJogo = game['Tempo de Jogo'] || 0;
                 const trophyIconHTML = game['Platinado?'] === 'Sim' ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>` : '';
                 return `
-                        <div class="game-card-grid" data-game-name="${safeName}" title="${safeName}">
+                        <div class="game-card-grid" data-action="open-details" data-game-name="${safeName}" title="${safeName}">
                         <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
                         ${trophyIconHTML}
                         <div class="game-card-content">
@@ -1657,5 +1657,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
