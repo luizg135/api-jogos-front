@@ -118,7 +118,7 @@
             transition: all 0.2s ease; 
         }
         .clear-filters-btn:hover { color: var(--primary-text); border-color: var(--primary-text); }
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-top: 32px; }
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; margin-top: 32px; }
         .chart-card {
             background-color: var(--surface-color); padding: 24px; border-radius: 12px;
             border: 1px solid var(--border-color); height: 380px;
@@ -251,32 +251,33 @@
     <main class="main-content" id="main-content">
         <div id="content">
             <section id="perfil" class="page active">
-                <header class="profile-header">
-                    <div class="profile-main">
-                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
-                        <div class="profile-info">
-                            <h1 id="gamerName">Carregando...</h1>
-                            <p id="profileSubtitle">Resumo da jornada!</p>
-                        </div>
-                        <div class="profile-level">
-                            <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
-                                <span class="material-symbols-outlined">military_tech</span>
-                            </div>
-                            <div class="level-progress" style="flex-grow: 1;">
-                                <div id="levelDisplay" class="level-text">Nível 0</div>
-                                <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
-                                <div id="expText" class="exp-text">0 / 1000 EXP</div>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-                <div id="summary" class="summary-grid"></div>
-                <div class="section-header">
-                    <span class="material-symbols-outlined">emoji_events</span>
-                    <h2>Últimos Jogos Platinados</h2>
+    <header class="profile-header">
+        <div class="profile-main">
+            <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
+            <div class="profile-info">
+                <h1 id="gamerName">Carregando...</h1>
+                <p id="profileSubtitle">Carregando...</p>
+            </div>
+            <div class="profile-level">
+                <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
+                    <span class="material-symbols-outlined">military_tech</span>
                 </div>
-                <div id="recent-platinums" class="recent-platinums-grid"></div>
-            </section>
+                <div class="level-progress" style="flex-grow: 1;">
+                    <div id="levelDisplay" class="level-text">Nível 0</div>
+                    <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
+                    <div id="expText" class="exp-text">0 / 1000 EXP</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div id="summary" class="summary-grid"></div>
+
+    <div class="section-header">
+        <span class="material-symbols-outlined">emoji_events</span>
+        <h2>Últimos Jogos Platinados</h2>
+    </div>
+    <div id="recent-platinums" class="recent-platinums-grid"></div>
+</section>
 
             <section id="conquistas" class="page">
                 <header class="profile-header">
@@ -1122,3 +1123,4 @@
     </script>
 </body>
 </html>
+
