@@ -202,18 +202,9 @@
         }
         .modal-overlay.active { visibility: visible; opacity: 1; }
         .modal-content {
-            background-color: var(--surface-color);
-            padding: 32px;
-            border-radius: 16px;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transform: scale(0.95);
-            transition: transform 0.3s ease-out;
-            /* ADICIONE AS DUAS LINHAS ABAIXO */
-            max-height: 90vh; /* Limita a altura a 90% da altura da tela */
-            overflow-y: auto; /* Adiciona uma barra de rolagem se o conteúdo transbordar */
+            background-color: var(--surface-color); padding: 32px; border-radius: 16px;
+            max-width: 500px; width: 90%; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95); transition: transform 0.3s ease-out;
         }
         .modal-overlay.active .modal-content { transform: scale(1); }
         .close-button { position: absolute; top: 16px; right: 24px; font-size: 28px; color: var(--secondary-text); cursor: pointer; }
@@ -525,20 +516,6 @@
             content: '▼';
             font-size: 10px;
         }
-
-        .search-result-info {
-            /* Permite que o container de informações cresça e ocupe o espaço */
-            flex-grow: 1;
-            /* Impede que o container ultrapasse o limite do card */
-            min-width: 0;
-        }
-        
-        .search-result-info span {
-            /* Garante que o texto longo seja cortado com "..." */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
         
     </style>
 </head>
@@ -685,10 +662,8 @@
         <div class="modal-content">
             <span class="close-button" onclick="closeGameModal()">&times;</span>
             <h2 id="gameModalTitle">Adicionar Novo Jogo</h2>
-    <form id="addGameForm">
-        <input type="hidden" id="editMode" value="">
-        <input type="hidden" id="gameRawgId" value=""> ...
-    </form>
+            <form id="addGameForm">
+<input type="hidden" id="editMode" value="">
 
 <div class="form-group">
     <label for="gameName">Nome do Jogo</label>
@@ -1092,54 +1067,18 @@
                 renderGameGrid(filteredGames);
             }
         }
-        
-        function openGameModalForAdd() {
-            document.getElementById('addGameForm').reset();
-            document.getElementById('editMode').value = '';
-            // Limpa o ID da RAWG para garantir que não seja enviado ao criar um novo jogo manualmente
-            const rawgIdInput = document.getElementById('gameRawgId');
-            if (rawgIdInput) {
-                rawgIdInput.value = '';
-            }
-            document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo';
-            document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo';
-            document.getElementById('addGameModal').classList.add('active');
-            // Limpa qualquer resultado de busca anterior
-            const searchResultsContainer = document.getElementById('searchResultsContainer');
-            if (searchResultsContainer) {
-                searchResultsContainer.innerHTML = '';
-            }
-        }
+
+        function openGameModalForAdd() { document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = ''; document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; document.getElementById('addGameModal').classList.add('active'); }
         
         function openGameModalForEdit(gameName) {
-            const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName);
-            if (!gameToEdit) {
-                showToast("Jogo não encontrado.", true);
-                return;
-            }
-            document.getElementById('addGameForm').reset();
-            document.getElementById('editMode').value = gameName;
-            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`;
-            document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
-        
-            // Preenche todos os campos do formulário
-            document.getElementById('gameName').value = gameToEdit.Nome || '';
-            document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
-            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila';
-            document.getElementById('gameRating').value = gameToEdit.Nota || '';
-            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || '';
-            document.getElementById('gameLink').value = gameToEdit.Link || '';
-            document.getElementById('gameStyle').value = gameToEdit.Estilo || '';
-            document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
-            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || '';
-            document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
-        
-            // Limpa o ID da RAWG, pois a edição não deve buscar novos dados automaticamente
-            const rawgIdInput = document.getElementById('gameRawgId');
-            if (rawgIdInput) {
-                rawgIdInput.value = '';
-            }
-        
+            const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { showToast("Jogo não encontrado.", true); return; }
+            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = gameName;
+            document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`; document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
+            document.getElementById('gameName').value = gameToEdit.Nome; document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
+            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = gameToEdit.Nota || '';
+            document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
+            document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
+            document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
             document.getElementById('addGameModal').classList.add('active');
         }
 
@@ -1150,20 +1089,7 @@
             event.preventDefault();
             const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
             const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
-            const gameData = {
-                Nome: document.getElementById('gameName').value,
-                Plataforma: document.getElementById('gamePlatform').value,
-                Status: document.getElementById('gameStatus').value,
-                Nota: parseFloat(document.getElementById('gameRating').value) || null,
-                "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
-                Link: document.getElementById('gameLink').value,
-                Estilo: document.getElementById('gameStyle').value,
-                "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
-                Preço: parseFloat(priceValue) || 0,
-                "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
-                "Terminado em": document.getElementById('gameTermino').value || '',
-                RAWG_ID: document.getElementById('gameRawgId').value // ADICIONE ESTA LINHA
-            };
+            const gameData = { Nome: document.getElementById('gameName').value, Plataforma: document.getElementById('gamePlatform').value, Status: document.getElementById('gameStatus').value, Nota: parseFloat(document.getElementById('gameRating').value) || null, "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0, Link: document.getElementById('gameLink').value, Estilo: document.getElementById('gameStyle').value, "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não', Preço: parseFloat(priceValue) || 0, "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0, "Terminado em": document.getElementById('gameTermino').value || '' };
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
             try {
@@ -1340,18 +1266,17 @@
                 const safeName = game.name.replace(/'/g, "\\'");
                 const safeStyles = game.styles.replace(/'/g, "\\'");
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', styles: '${safeStyles}', id: '${game.id}' })">...</div>`;
+                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
 
-            function selectGame(game) {
-                document.getElementById('gameName').value = game.name;
-                document.getElementById('gameLink').value = game.background_image;
-                document.getElementById('gameStyle').value = game.styles;
-                document.getElementById('gameRawgId').value = game.id; // ADICIONE ESTA LINHA
-                document.getElementById('searchResultsContainer').innerHTML = '';
-            }
+        function selectGame(game) {
+            document.getElementById('gameName').value = game.name;
+            document.getElementById('gameLink').value = game.background_image;
+            document.getElementById('gameStyle').value = game.styles;
+            document.getElementById('searchResultsContainer').innerHTML = '';
+        }
 
         // --- FUNÇÕES DA BUSCA API (WISHLIST) ---
         async function handleWishSearch(query) {
@@ -1509,6 +1434,3 @@
 </script>
 </body>
 </html>
-
-
-
