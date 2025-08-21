@@ -104,7 +104,6 @@
         .card-header { display: flex; align-items: center; gap: 12px; color: var(--secondary-text); font-weight: 500; font-size: 14px; }
         .card-header .material-symbols-outlined { font-size: 20px; }
         .card-content { font-size: 24px; font-weight: 700; margin-top: 8px; }
-        .recent-platinums-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
         .filter-bar { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; align-items: end; }
         .filter-group { display: flex; flex-direction: column; }
         .filter-group label { font-size: 12px; font-weight: 500; color: var(--secondary-text); margin-bottom: 8px; }
@@ -228,8 +227,9 @@
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) var(--surface-color);
         }
+        /* ESTILOS ADICIONADOS PARA AS NOVAS FUNCIONALIDADES */
         .section-header{display:flex;align-items:center;gap:16px;margin-top:48px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border-color);color:var(--secondary-text)}.section-header h2{margin:0;font-size:18px;font-weight:500;color:var(--primary-text)}.section-header .material-symbols-outlined{font-size:24px;color:var(--accent-purple)}.header-actions{display:flex;gap:8px}.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px}.game-card-grid{background-color:var(--surface-color);border-radius:12px;border:1px solid var(--border-color);overflow:hidden;transition:all .2s ease;cursor:pointer;display:flex;flex-direction:column;position:relative;border-bottom:3px solid transparent}.game-card-grid:hover{transform:translateY(-5px);box-shadow:0 10px 20px rgba(0,0,0,.3)}.game-card-grid img{width:100%;height:215px;object-fit:cover;display:block}.game-card-content{padding:12px;flex-grow:1;display:flex;flex-direction:column}.game-card-top-details{display:flex;justify-content:space-between;font-size:11px;color:var(--secondary-text);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border-color)}.game-card-top-details .detail-item{display:flex;align-items:center;gap:4px}.game-card-top-details .material-symbols-outlined{font-size:14px}.game-card-grid .game-title{padding:0;text-align:left;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:auto}.game-card-trophy{position:absolute;top:8px;right:8px;font-size:28px!important;color:var(--accent-purple);background-color:rgba(0,0,0,.5);border-radius:50%;padding:4px;filter:drop-shadow(0 0 5px var(--accent-purple))}.sortable-header{cursor:pointer;position:relative;user-select:none}.sortable-header:hover{color:var(--primary-text)}.sort-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);opacity:.6}.sortable-header.sort-asc .sort-icon::after{content:'▲';font-size:10px}.sortable-header.sort-desc .sort-icon::after{content:'▼';font-size:10px}.advanced-filters{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-top:16px}.filter-actions{display:flex;gap:8px}.filter-actions button{flex-grow:1}.action-btn-secondary{background:transparent;color:var(--secondary-text);border:1px solid var(--border-color);padding:10px 12px;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s ease}.action-btn-secondary:hover{color:var(--primary-text);border-color:var(--primary-text)}
-        .search-results-container{position:relative}.search-results-list{position:absolute;width:100%;background-color:var(--surface-color);border:1px solid var(--border-color);border-radius:8px;margin-top:4px;max-height:250px;overflow-y:auto;z-index:1001}.search-result-item{display:flex;align-items:center;padding:8px;cursor:pointer;transition:background-color .2s ease}.search-result-item:hover{background-color:var(--bg-color)}.search-result-item img{width:60px;height:40px;object-fit:cover;border-radius:4px;margin-right:12px}.search-result-info span{display:block;font-size:14px}.search-result-info small{font-size:12px;color:var(--secondary-text)}
+        .search-results-container, #wishSearchResultsContainer {position:relative}.search-results-list{position:absolute;width:100%;background-color:var(--surface-color);border:1px solid var(--border-color);border-radius:8px;margin-top:4px;max-height:250px;overflow-y:auto;z-index:1001}.search-result-item{display:flex;align-items:center;padding:8px;cursor:pointer;transition:background-color .2s ease}.search-result-item:hover{background-color:var(--bg-color)}.search-result-item img{width:60px;height:40px;object-fit:cover;border-radius:4px;margin-right:12px}.search-result-info span{display:block;font-size:14px}.search-result-info small{font-size:12px;color:var(--secondary-text)}
     </style>
 </head>
 <body class="dark-mode">
@@ -453,8 +453,6 @@
     </div>
 
     <script>
-// COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
-
         // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
@@ -502,8 +500,7 @@
             renderWishlist(fullData.desejos);
             renderAchievements(fullData.conquistas_concluidas, fullData.conquistas_pendentes);
             populateFilters();
-            // Ordena os dados antes de aplicar os filtros pela primeira vez
-            handleSort(currentSortKey, true); // O 'true' impede a inversão inicial
+            handleSort(currentSortKey, true);
         }
 
         function openPage(evt, pageName) {
@@ -1117,6 +1114,8 @@
                     handleSort(header.dataset.sortKey);
                 });
             });
+
+            updateSortIcons();
             
             fetchGameData();
         });
