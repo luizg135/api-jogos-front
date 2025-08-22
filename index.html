@@ -665,9 +665,6 @@
             color: var(--primary-text);
             background-color: var(--bg-color);
         }
-        .game-details-actions .action-button .material-symbols-outlined {
-            font-size: 20px;
-        }
         .game-details-actions .delete-btn {
             color: #cb2d3e;
             border-color: #cb2d3e;
@@ -852,7 +849,7 @@
 
 <div class="form-group">
     <label for="gameRating">Nota</label>
-    <input type="number" id="gameRating" step="0.1" min="0" max="10">
+    <input type="number" id="gameRating" step="1" min="0" max="100">
 </div>
 
 <div class="form-group">
@@ -1085,7 +1082,7 @@
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             const cards = [
                 { t: 'Total de Jogos', v: stats.total_jogos || 0, i: 'sports_esports' }, { t: 'Horas Jogadas', v: `${(stats.total_horas_jogadas || 0).toLocaleString('pt-BR')}h`, i: 'timer' },
-                { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' }, { t: 'Média das Notas', v: stats.media_notas || 'N/A', i: 'star' },
+                { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' }, { t: 'Média das Notas', v: stats.media_notas?.toFixed(2) || 'N/A', i: 'star' },
                 { t: 'Platinados', v: stats.total_platinados || 0, i: 'emoji_events' }, { t: 'Conquistas', v: stats.total_conquistas || 0, i: 'military_tech' }
             ];
             container.innerHTML = cards.map(c => `<div class="card"><div class="card-header"><span class="material-symbols-outlined">${c.i}</span><span>${c.t}</span></div><p class="card-content">${c.v}</p></div>`).join('');
@@ -1274,7 +1271,7 @@
             const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) && (status !== 'all' ? g.Status === status : true) && (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true) && (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
+                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
                 renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
             } else if (suffix === '-biblioteca') {
                 renderGameTable(filteredGames);
@@ -1511,9 +1508,9 @@
             gameRatingDetails.textContent = game.Nota || 'N/A';
             gameRatingDetails.className = 'rating-score';
             if (!isNaN(gameRating)) {
-                if (gameRating >= 8) {
+                if (gameRating >= 80) {
                     gameRatingDetails.classList.add('good');
-                } else if (gameRating >= 5) {
+                } else if (gameRating >= 50) {
                     gameRatingDetails.classList.add('mixed');
                 } else if (gameRating >= 0) {
                     gameRatingDetails.classList.add('bad');
