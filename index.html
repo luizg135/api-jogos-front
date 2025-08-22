@@ -59,6 +59,7 @@
             background-color: transparent; border: none; color: var(--secondary-text); cursor: pointer;
             padding: 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
             width: 52px; height: 52px; transition: all 0.2s ease;
+            position: relative; /* Adicionado para o badge */
         }
         .nav-button:hover { background-color: var(--surface-color); color: var(--primary-text); }
         .nav-button.active { background-color: var(--accent-purple); color: white; }
@@ -371,17 +372,20 @@
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .achievements-list { display: flex; flex-direction: column; gap: 16px; max-height: 50vh; overflow-y: auto; padding-right: 10px; }
-        .achievement-card {
+        .achievements-list, .notifications-list { display: flex; flex-direction: column; gap: 16px; max-height: 50vh; overflow-y: auto; padding-right: 10px; }
+        .achievement-card, .notification-card {
             background-color: var(--bg-color); border: 1px solid var(--border-color);
             border-left: 5px solid var(--accent-purple); border-radius: 8px;
             padding: 16px; display: flex; align-items: center; gap: 16px;
         }
         .achievement-card.completed { border-left-color: var(--accent-green); }
-        .achievement-icon .material-symbols-outlined { font-size: 40px; color: var(--accent-purple); }
-        .achievement-details { flex-grow: 1; }
-        .achievement-details h3 { margin: 0 0 4px 0; font-size: 16px; color: var(--primary-text); }
-        .achievement-details p { margin: 0; font-size: 12px; color: var(--secondary-text); }
+        .notification-card.read { border-left-color: var(--secondary-text); opacity: 0.7; }
+        .notification-card.unread { border-left-color: var(--accent-purple); }
+
+        .achievement-icon .material-symbols-outlined, .notification-icon .material-symbols-outlined { font-size: 40px; color: var(--accent-purple); }
+        .achievement-details, .notification-details { flex-grow: 1; }
+        .achievement-details h3, .notification-details h3 { margin: 0 0 4px 0; font-size: 16px; color: var(--primary-text); }
+        .achievement-details p, .notification-details p { margin: 0; font-size: 12px; color: var(--secondary-text); }
         .achievement-progress-bar-container {
             width: 100%; height: 6px; background-color: var(--border-color);
             border-radius: 3px; overflow: hidden; margin-top: 8px;
@@ -399,21 +403,21 @@
         .achievement-icon.tier-Diamante .material-symbols-outlined { color: var(--rank-diamante); }
         .achievement-icon.tier-Mestre .material-symbols-outlined { color: var(--rank-mestre); }
     
-        .achievements-list::-webkit-scrollbar {
+        .achievements-list::-webkit-scrollbar, .notifications-list::-webkit-scrollbar {
             width: 8px; 
         }
 
-        .achievements-list::-webkit-scrollbar-track {
+        .achievements-list::-webkit-scrollbar-track, .notifications-list::-webkit-scrollbar-track {
             background: transparent; 
         }
 
-        .achievements-list::-webkit-scrollbar-thumb {
+        .achievements-list::-webkit-scrollbar-thumb, .notifications-list::-webkit-scrollbar-thumb {
             background-color: var(--border-color); 
             border-radius: 10px; 
             border: 2px solid var(--surface-color); 
         }
 
-        .achievements-list {
+        .achievements-list, .notifications-list {
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) var(--surface-color);
         }
@@ -733,6 +737,24 @@
             background-color: #cb2d3e;
             color: white;
         }
+
+        /* Estilos para o badge de notificação */
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: #cb2d3e; /* Vermelho para não lido */
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            display: none; /* Escondido por padrão */
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+        }
     
     </style>
 </head>
@@ -746,10 +768,13 @@
             <button class="nav-button" onclick="openPage(event, 'graficos')" title="Gráficos"><span class="material-symbols-outlined">bar_chart</span></button>
             <button class="nav-button" onclick="openPage(event, 'biblioteca')" title="Lista de Jogos"><span class="material-symbols-outlined">list_alt</span></button>
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
+            <button class="nav-button" id="notificationsBtn" title="Notificações" onclick="openNotificationsModal()">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="notification-badge" id="unreadNotificationsBadge">0</span>
+            </button>
         </div>
         <div class="sidebar-footer">
-<!--             <button class="nav-button" id="theme-toggle" title="Mudar Tema"><span class="material-symbols-outlined">light_mode</span></button> -->
-            <div class="profile-actions">
+<div class="profile-actions">
                 <button class="nav-button" id="shareProfileBtn" title="Compartilhar Perfil">
                      <span class="material-symbols-outlined">share</span>
                      </button>
@@ -1147,6 +1172,23 @@
         </div>
     </div>
 
+    <div id="notificationsModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeNotificationsModal()">&times;</span>
+            <h2>Notificações</h2>
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchNotificationTab(event, 'unread-notifications')">Não Lidas</button>
+                <button class="tab-button" onclick="switchNotificationTab(event, 'read-notifications')">Lidas</button>
+            </div>
+            <div id="unread-notifications" class="tab-content active">
+                <div id="unread-notifications-list" class="notifications-list"></div>
+            </div>
+            <div id="read-notifications" class="tab-content">
+                <div id="read-notifications-list" class="notifications-list"></div>
+            </div>
+        </div>
+    </div>
+
 <script>
 // COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
 
@@ -1154,6 +1196,7 @@
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
+        let notificationsData = { unread: [], read: [] }; // Nova variável para notificações
         let createdCharts = {};
         let currentSortKey = 'Nome';
         let currentSortDirection = 'asc';
@@ -1183,6 +1226,7 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 fullData = await response.json();
                 renderAllPages();
+                await fetchNotifications(); // Buscar notificações após carregar os dados principais
             } catch (err) {
                 console.error('Erro ao buscar dados:', err);
                 document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
@@ -1924,6 +1968,124 @@
                 }
             setupShareButton();
             fetchGameData();
+
+
+            // --- Funções de Notificação (Novo) ---
+
+            async function fetchNotifications() {
+                try {
+                    const response = await fetch(`${API_URL}/notifications`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    if (response.status === 401) { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; return; }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    
+                    const newNotificationsData = await response.json();
+
+                    // Identificar novas notificações não lidas para o popup
+                    const previouslyUnreadIds = new Set(notificationsData.unread.map(n => n.ID));
+                    const currentUnread = newNotificationsData.unread || [];
+                    
+                    const newUnreadNotifications = currentUnread.filter(n => !previouslyUnreadIds.has(n.ID));
+
+                    notificationsData = newNotificationsData; // Atualiza os dados globais de notificação
+                    updateNotificationBadge();
+                    
+                    // Mostrar pop-ups para novas notificações não lidas
+                    newUnreadNotifications.forEach(n => {
+                        showToast(n.Mensagem);
+                    });
+
+                    renderNotificationsModal(); // Renderiza o modal com os dados mais recentes
+                } catch (err) {
+                    console.error('Erro ao buscar notificações:', err);
+                    showToast('Erro ao carregar notificações.', true);
+                }
+            }
+
+            function updateNotificationBadge() {
+                const badge = document.getElementById('unreadNotificationsBadge');
+                if (badge) {
+                    const unreadCount = notificationsData.unread.length;
+                    badge.textContent = unreadCount;
+                    badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                }
+            }
+
+            function openNotificationsModal() {
+                document.getElementById('notificationsModal').classList.add('active');
+                markAllUnreadAsRead(); // Marca todas as notificações como lidas ao abrir o modal
+            }
+
+            function closeNotificationsModal() {
+                document.getElementById('notificationsModal').classList.remove('active');
+            }
+
+            function switchNotificationTab(event, tabName) {
+                document.querySelectorAll('#notificationsModal .tab-content').forEach(tc => tc.classList.remove('active'));
+                document.querySelectorAll('#notificationsModal .tab-button').forEach(tb => tb.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                event.currentTarget.classList.add('active');
+            }
+
+            function renderNotificationsModal() {
+                const unreadContainer = document.getElementById('unread-notifications-list');
+                const readContainer = document.getElementById('read-notifications-list');
+
+                if (!unreadContainer || !readContainer) return;
+
+                const createNotificationHTML = (notification, isRead) => {
+                    const date = new Date(notification.Data).toLocaleDateString('pt-BR', {
+                        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+                    return `
+                        <div class="notification-card ${isRead ? 'read' : 'unread'}">
+                            <div class="notification-icon">
+                                <span class="material-symbols-outlined">${notification.Tipo === 'Conquista' ? 'military_tech' : 'card_giftcard'}</span>
+                            </div>
+                            <div class="notification-details">
+                                <h3>${notification.Mensagem}</h3>
+                                <p>${date}</p>
+                            </div>
+                        </div>
+                    `;
+                };
+
+                unreadContainer.innerHTML = notificationsData.unread.length > 0 
+                    ? notificationsData.unread.map(n => createNotificationHTML(n, false)).join('') 
+                    : `<p style="color: var(--secondary-text);">Nenhuma notificação não lida.</p>`;
+                
+                readContainer.innerHTML = notificationsData.read.length > 0
+                    ? notificationsData.read.map(n => createNotificationHTML(n, true)).join('')
+                    : `<p style="color: var(--secondary-text);">Nenhuma notificação lida.</p>`;
+            }
+
+            async function markAllUnreadAsRead() {
+                const unreadIds = notificationsData.unread.map(n => n.ID);
+                if (unreadIds.length === 0) return;
+
+                try {
+                    const response = await fetch(`${API_URL}/notifications/mark-as-read`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ notification_ids: unreadIds })
+                    });
+
+                    if (response.ok) {
+                        // Após marcar como lido, re-fetch as notificações para atualizar o estado
+                        await fetchNotifications();
+                    } else {
+                        const error = await response.json();
+                        showToast(`Erro ao marcar notificações como lidas: ${error.message || 'Falha na operação.'}`, true);
+                    }
+                } catch (err) {
+                    console.error('Erro de conexão ao marcar notificações como lidas:', err);
+                    showToast('Erro de conexão ao marcar notificações como lidas.', true);
+                }
+            }
+
+            // Adicionar listener para o botão de notificações
+            setupListener('notificationsBtn', 'click', openNotificationsModal);
+            // Chamar fetchNotifications na carga inicial da página
+            fetchNotifications();
         });
 </script>
 </body>
