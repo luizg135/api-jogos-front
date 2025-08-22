@@ -673,7 +673,62 @@
             background-color: #cb2d3e;
             color: white;
         }
-    
+
+.notification-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: #cb2d3e;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    z-index: 10;
+}
+.modal-content.notifications {
+    max-width: 450px;
+}
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+.notification-item {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--accent-purple);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.notification-item.read {
+    opacity: 0.6;
+    border-left-color: var(--secondary-text);
+}
+.notification-icon {
+    font-size: 28px !important;
+    color: var(--accent-purple);
+}
+.notification-text {
+    flex-grow: 1;
+    font-size: 14px;
+    color: var(--primary-text);
+}
+.notification-date {
+    font-size: 10px;
+    color: var(--secondary-text);
+    white-space: nowrap;
+}
+        
     </style>
 </head>
 
@@ -697,24 +752,28 @@
         <div id="content">
             <section id="perfil" class="page active">
                 <header class="profile-header">
-                    <div class="profile-main">
-                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar" onclick="openSettingsModal()">
-                        <div class="profile-info">
-                            <h1 id="gamerName">Carregando...</h1>
-                            <p id="profileSubtitle">Resumo da jornada!</p>
+                <div class="profile-main">
+                    <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar" onclick="openSettingsModal()">
+                    <div class="profile-info">
+                        <h1 id="gamerName">Carregando...</h1>
+                        <p id="profileSubtitle">Resumo da jornada!</p>
+                    </div>
+                    <div style="position: relative; margin-left: auto; display: flex; align-items: center; gap: 16px;">
+                        <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
+                            <span class="material-symbols-outlined">military_tech</span>
                         </div>
-                        <div class="profile-level">
-                            <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
-                                <span class="material-symbols-outlined">military_tech</span>
-                            </div>
-                            <div class="level-progress" style="flex-grow: 1;">
-                                <div id="levelDisplay" class="level-text">Nível 0</div>
-                                <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
-                                <div id="expText" class="exp-text">0 / 1000 EXP</div>
-                            </div>
+                        <button class="nav-button" id="notificationBellBtn" title="Notificações" onclick="openNotificationsModal()">
+                            <span class="material-symbols-outlined">notifications</span>
+                            <div class="notification-badge" id="notificationBadge" style="display:none;">0</div>
+                        </button>
+                        <div class="level-progress" style="flex-grow: 1;">
+                            <div id="levelDisplay" class="level-text">Nível 0</div>
+                            <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
+                            <div id="expText" class="exp-text">0 / 1000 EXP</div>
                         </div>
                     </div>
-                </header>
+                </div>
+            </header>
                 <div id="summary" class="summary-grid"></div>
                 <div class="section-header">
                     <span class="material-symbols-outlined">emoji_events</span>
@@ -1729,6 +1788,112 @@
             
             fetchGameData();
         });
+    let notifications = [];
+
+    // Funções para abrir/fechar o modal de notificações
+    function openNotificationsModal() {
+        document.getElementById('notificationsModal').classList.add('active');
+        // Após abrir, marca as notificações como lidas no backend
+        markAllNotificationsAsRead();
+    }
+    function closeNotificationsModal() {
+        document.getElementById('notificationsModal').classList.remove('active');
+    }
+
+    // Função para carregar e exibir as notificações
+    function renderNotifications() {
+        const listContainer = document.getElementById('notificationsList');
+        if (!notifications || notifications.length === 0) {
+            listContainer.innerHTML = '<p style="text-align: center; color: var(--secondary-text);">Nenhuma notificação por enquanto.</p>';
+        } else {
+            listContainer.innerHTML = notifications.map(n => {
+                const iconMap = {
+                    'conquista': 'emoji_events',
+                    'adicao_biblioteca': 'library_add',
+                    'remocao_biblioteca': 'delete',
+                    'alteracao_biblioteca': 'edit_note',
+                    'adicao_desejos': 'add_shopping_cart',
+                    'remocao_desejos': 'remove_shopping_cart',
+                    'alteracao_desejos': 'edit_note',
+                    'compra_desejo': 'shopping_cart_checkout',
+                    'lancamento': 'calendar_today'
+                };
+                const icon = iconMap[n.Tipo] || 'notifications';
+                const date = new Date(n.Data).toLocaleDateString('pt-BR');
+                return `
+                    <div class="notification-item ${n.Lida === 'Sim' ? 'read' : ''}">
+                        <span class="material-symbols-outlined notification-icon">${icon}</span>
+                        <div class="notification-text">${n.Mensagem}</div>
+                        <div class="notification-date">${date}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    // Função para atualizar o contador de notificações
+    function updateNotificationBadge(unreadCount) {
+        const badge = document.getElementById('notificationBadge');
+        if (unreadCount > 0) {
+            badge.textContent = unreadCount;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    // Função para buscar as notificações
+    async function fetchNotifications() {
+        try {
+            const response = await fetch(`${API_URL}/notifications/check`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                notifications = await response.json();
+                notifications.sort((a, b) => new Date(b.Data) - new Date(a.Data));
+                updateNotificationBadge(notifications.filter(n => n.Lida === 'Não').length);
+                renderNotifications();
+            }
+        } catch (error) {
+            console.error('Erro ao buscar notificações:', error);
+        }
+    }
+
+    // Função para marcar todas como lidas (ao abrir o modal)
+    async function markAllNotificationsAsRead() {
+        for (const notif of notifications.filter(n => n.Lida === 'Não')) {
+            try {
+                await fetch(`${API_URL}/notifications/mark-as-read/${notif.ID}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+            } catch (error) {
+            }
+        }
+        notifications.forEach(n => n.Lida = 'Sim');
+        updateNotificationBadge(0);
+        renderNotifications();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // ... código existente ...
+        fetchGameData();
+        // NOVO: Inicia a busca de notificações periodicamente
+        fetchNotifications();
+        // Checa a cada 5 minutos por novas notificações
+        setInterval(fetchNotifications, 300000);
+    });
 </script>
+<div id="notificationsModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeNotificationsModal()">&times;</span>
+        <h2>Notificações</h2>
+        <div id="notificationsList" class="achievements-list">
+            <p style="text-align: center; color: var(--secondary-text);">Nenhuma notificação por enquanto.</p>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
