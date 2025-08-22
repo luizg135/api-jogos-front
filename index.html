@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil Gamer</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap)" rel="stylesheet">
+    <link rel="stylesheet" href="[https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200](https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200)" />
+    <script src="[https://cdn.jsdelivr.net/npm/chart.js](https://cdn.jsdelivr.net/npm/chart.js)"></script>
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" type="text/css" href="[https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css](https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css)">
+    <script type="text/javascript" src="[https://cdn.jsdelivr.net/npm/toastify-js](https://cdn.jsdelivr.net/npm/toastify-js)"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="[https://cdn.jsdelivr.net/npm/sweetalert2@11](https://cdn.jsdelivr.net/npm/sweetalert2@11)"></script>
 
     <style>
         :root {
@@ -789,6 +789,7 @@
             <button class="nav-button" onclick="openPage(event, 'graficos')" title="Gráficos"><span class="material-symbols-outlined">bar_chart</span></button>
             <button class="nav-button" onclick="openPage(event, 'biblioteca')" title="Lista de Jogos"><span class="material-symbols-outlined">list_alt</span></button>
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
+            <button class="nav-button" id="notificationBtn" title="Notificações"><span class="material-symbols-outlined">notifications</span></button>
         </div>
         <div class="sidebar-footer">
             <button class="nav-button" id="theme-toggle" title="Mudar Tema"><span class="material-symbols-outlined">light_mode</span></button>
@@ -802,7 +803,7 @@
             <section id="perfil" class="page active">
                 <header class="profile-header">
                     <div class="profile-main">
-                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar" onclick="openSettingsModal()">
+                        <img src="[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)" alt="Avatar" class="profile-avatar" id="profileAvatar" onclick="openSettingsModal()">
                         <div class="profile-info">
                             <h1 id="gamerName">Carregando...</h1>
                             <p id="profileSubtitle">Resumo da jornada!</p>
@@ -1080,9 +1081,9 @@
         <div class="game-details-modal-content">
             <span class="close-button" onclick="closeGameDetailsModal()">&times;</span>
             <div class="game-details-header">
-                <img id="gameCoverBackground" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo">
+                <img id="gameCoverBackground" src="[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)" alt="Capa do Jogo">
                 <div class="game-details-info">
-                    <img id="gameCoverArt" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo" class="game-cover-art">
+                    <img id="gameCoverArt" src="[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)" alt="Capa do Jogo" class="game-cover-art">
                     <div class="game-details-info-text">
                         <h2 id="gameNameDetails">Nome do Jogo</h2>
                         <p id="gamePlatformDetails">Plataforma</p>
@@ -1205,7 +1206,7 @@
 // COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
 
         // --- VARIÁVEIS GLOBAIS ---
-        const API_URL = 'https://api-jogos-nrma.onrender.com/api';
+        const API_URL = '[https://api-jogos-nrma.onrender.com/api](https://api-jogos-nrma.onrender.com/api)';
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
@@ -1375,7 +1376,7 @@
 
                 return `
                     <div class="game-card-grid" onclick="openGameDetailsModal('${safeName}')" title="${safeName}">
-                        <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
+                        <img src="${game.Link || '[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)'}" alt="${safeName}">
                         ${trophyIconHTML}
                         <div class="game-card-content">
                             <div class="game-card-top-details">
@@ -1407,7 +1408,7 @@
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 return `
                 <div class="wish-card">
-                    <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" class="wish-card-img" alt="${safeName}">
+                    <img src="${game.Link || '[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)'}" class="wish-card-img" alt="${safeName}">
                     <div class="wish-card-info">
                         <h3 class="wish-card-title">${game.Nome}</h3>
                         <div class="wish-card-details">
@@ -1726,7 +1727,7 @@
         function loadProfileSettings(profile = {}) {
             document.getElementById('gamerName').textContent = profile.profileName || 'Seu Nome';
             document.getElementById('profileSubtitle').textContent = profile.profileSubtitle || 'Resumo da jornada!';
-            document.getElementById('profileAvatar').src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
+            document.getElementById('profileAvatar').src = profile.profileAvatar || '[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)';
             
             const headerBg = document.getElementById('header-bg');
             if(profile.headerBackgroundUrl) {
@@ -1789,7 +1790,7 @@
                 gameMetacriticDetails.classList.add('mixed');
             }
             
-            const coverArt = game.Link || 'https://i.imgur.com/Z0ebi8o.png';
+            const coverArt = game.Link || '[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)';
             document.getElementById('gameCoverArt').src = coverArt;
             document.getElementById('gameCoverBackground').src = coverArt;
 
