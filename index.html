@@ -472,6 +472,68 @@
             display: flex;
             gap: 8px;
         }
+        
+        .filter-bar-container.active {
+            display: block !important;
+        }
+
+        .filter-bar { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 16px; 
+            margin-bottom: 16px;
+            align-items: flex-end;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-color);
+            margin-top: 16px;
+        }
+        .filter-group { 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .filter-group label { 
+            font-size: 12px; 
+            font-weight: 500; 
+            color: var(--secondary-text); 
+            margin-bottom: 8px; 
+        }
+        .filter-group input, 
+        .filter-group select {
+            width: 100%; 
+            background-color: var(--bg-color); 
+            color: var(--primary-text);
+            border: 1px solid var(--border-color); 
+            padding: 10px 12px; 
+            border-radius: 8px; 
+            font-size: 14px;
+            box-sizing: border-box;
+            height: 40px;
+        }
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            grid-column: 1 / -1;
+            margin-left: auto;
+        }
+        .filter-button {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--secondary-text);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .filter-button:hover {
+            color: var(--primary-text);
+            border-color: var(--primary-text);
+        }
 
         .games-grid {
             display: grid;
@@ -1516,7 +1578,7 @@
                         <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
                         <td>${game.Plataforma || '-'}</td>
                         <td>${game.Status || '-'}</td>
-                        <td class="nota-cell">${game.Nota || '-'}</td>
+                        <td class="nota-cell">${String(game.Nota || '-').replace('.', ',')}</td>
                         <td>${game['Tempo de Jogo'] || 0}h</td>
                         <td><div class="action-buttons">
                             <button class="action-button" onclick="event.stopPropagation(); editGame('${safeName}')"><span class="material-symbols-outlined">edit</span></button>
@@ -2023,8 +2085,7 @@
         
         function toggleMainFilters(suffix) {
             const filterContainer = document.getElementById('filter-bar-container' + suffix);
-            const isVisible = filterContainer.style.display !== 'none';
-            filterContainer.style.display = isVisible ? 'none' : 'block';
+            const isVisible = filterContainer.classList.toggle('active');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -2067,10 +2128,14 @@
                 const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
                 if (clearBtn) { 
                     clearBtn.addEventListener('click', () => { 
-                        ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter', 'minRating', 'maxRating', 'minHours', 'maxHours', 'minPrice', 'maxPrice', 'minMetacritic', 'maxMetacritic'].forEach(id => { 
+                        ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { 
                             const el = document.getElementById(id + suffix); 
                             if(el) el.value = el.tagName === 'SELECT' ? 'all' : '';
-                        }); 
+                        });
+                        ['minRating', 'maxRating', 'minHours', 'maxHours', 'minPrice', 'maxPrice', 'minMetacritic', 'maxMetacritic'].forEach(id => {
+                             const el = document.getElementById(id + suffix);
+                             if(el) el.value = '';
+                        });
                         applyFilters(suffix); 
                     }); 
                 }
