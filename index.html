@@ -238,31 +238,31 @@
             color: var(--secondary-text);
             font-weight: 500;
         }
-        .filter-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
+        .filter-bar { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 16px; 
             margin-bottom: 16px;
             align-items: flex-end;
         }
-        .filter-group {
-            display: flex;
-            flex-direction: column;
+        .filter-group { 
+            display: flex; 
+            flex-direction: column; 
         }
-        .filter-group label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--secondary-text);
-            margin-bottom: 8px;
+        .filter-group label { 
+            font-size: 12px; 
+            font-weight: 500; 
+            color: var(--secondary-text); 
+            margin-bottom: 8px; 
         }
-        .filter-group input,
+        .filter-group input, 
         .filter-group select {
-            width: 100%;
-            background-color: var(--bg-color);
+            width: 100%; 
+            background-color: var(--bg-color); 
             color: var(--primary-text);
-            border: 1px solid var(--border-color);
-            padding: 10px 12px;
-            border-radius: 8px;
+            border: 1px solid var(--border-color); 
+            padding: 10px 12px; 
+            border-radius: 8px; 
             font-size: 14px;
             box-sizing: border-box;
             height: 40px;
@@ -272,7 +272,6 @@
             gap: 8px;
             justify-content: flex-end;
             margin-left: auto;
-            align-self: flex-end; /* Alinha os botões com os campos */
         }
         .filter-button {
             background-color: var(--bg-color);
@@ -754,30 +753,105 @@
             gap: 8px;
             align-items: center;
         }
-    
-        /* Estilos para a nova seção de background */
-        .header-bg-section {
-            padding-top: 16px;
-            border-top: 1px solid var(--border-color);
-            margin-top: 24px;
-        }
-        .header-bg-section h3 {
-            margin: 0 0 16px 0;
-            color: var(--primary-text);
-        }
-        .header-bg-search {
+        .notification-icon-container {
             position: relative;
         }
-        .header-bg-preview {
-            width: 100%;
-            height: 150px;
-            margin-top: 16px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-            display: block;
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: #da3633;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
         }
-        
+    
+        .filter-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+            align-items: flex-end;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--secondary-text);
+            margin-bottom: 8px;
+        }
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            background-color: var(--bg-color);
+            color: var(--primary-text);
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            height: 40px;
+        }
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-left: auto;
+            align-self: flex-end;
+        }
+        .filter-button {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--secondary-text);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .filter-button:hover {
+            color: var(--primary-text);
+            border-color: var(--primary-text);
+        }
+        .advanced-filters {
+            display: none;
+            grid-column: 1 / -1;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-color);
+            margin-top: 16px;
+        }
+        .advanced-filters.active {
+            display: grid;
+        }
+        .advanced-filters .filter-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+        }
+        .advanced-filters .filter-group label {
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-top: 32px; }
+        .chart-card {
+            background-color: var(--surface-color); padding: 24px; border-radius: 12px;
+            border: 1px solid var(--border-color); height: 380px;
+            display: flex; flex-direction: column;
+        }
+        .chart-card h3 { margin-top: 0; margin-bottom: 24px; text-align: center; font-weight: 500; color: var(--secondary-text); flex-shrink: 0; }
+        .chart-wrapper { position: relative; flex-grow: 1; }
     </style>
 </head>
 
@@ -790,7 +864,10 @@
             <button class="nav-button" onclick="openPage(event, 'graficos')" title="Gráficos"><span class="material-symbols-outlined">bar_chart</span></button>
             <button class="nav-button" onclick="openPage(event, 'biblioteca')" title="Lista de Jogos"><span class="material-symbols-outlined">list_alt</span></button>
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
-            <button class="nav-button" id="notificationBtn" title="Notificações"><span class="material-symbols-outlined">notifications</span></button>
+            <div class="notification-icon-container">
+                <button class="nav-button" id="notificationBtn" title="Notificações"><span class="material-symbols-outlined">notifications</span></button>
+                <span class="notification-badge" id="notification-badge">0</span>
+            </div>
         </div>
         <div class="sidebar-footer">
             <button class="nav-button" id="theme-toggle" title="Mudar Tema"><span class="material-symbols-outlined">light_mode</span></button>
@@ -799,7 +876,6 @@
     </nav>
 
     <main class="main-content" id="main-content">
-        <div id="header-bg" class="header-bg"></div>
         <div id="content">
             <section id="perfil" class="page active">
                 <header class="profile-header">
@@ -1171,16 +1247,6 @@
                 <div class="form-group"><label for="profileNameInput">Nome do Perfil</label><input type="text" id="profileNameInput" required></div>
                 <div class="form-group"><label for="profileSubtitleInput">Subtítulo do Perfil</label><input type="text" id="profileSubtitleInput"></div>
                 <div class="form-group"><label for="profileAvatarInput">URL da Foto de Perfil</label><input type="url" id="profileAvatarInput"></div>
-                <div class="header-bg-section">
-                    <h3>Background do Cabeçalho</h3>
-                    <div class="form-group header-bg-search">
-                        <label for="headerBgGameName">Buscar Jogo (opcional)</label>
-                        <input type="text" id="headerBgGameName" autocomplete="off" placeholder="Ex: Cyberpunk 2077">
-                        <div id="headerBgSearchResultsContainer"></div>
-                        <input type="hidden" id="headerBgGameLink">
-                    </div>
-                    <img id="headerBgPreview" class="header-bg-preview" src="" style="display: none;">
-                </div>
                 <button type="submit">Salvar Alterações</button>
             </form>
         </div>
@@ -1212,7 +1278,6 @@
     </div>
 
 <script>
-    // --- VARIÁVEIS GLOBAIS ---
     const API_URL = 'https://api-jogos-nrma.onrender.com/api';
     const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
     let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
@@ -1224,7 +1289,6 @@
 
     let searchTimeout;
     let wishSearchTimeout;
-    let headerBgSearchTimeout;
 
     // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
@@ -1615,7 +1679,7 @@
         document.getElementById('wishGameName').value = wishToEdit.Nome;
         document.getElementById('wishGameLink').value = wishToEdit.Link || '';
         document.getElementById('wishGameRelease').value = wishToEdit["Data Lançamento"] || '';
-        document.getElementById('wishGamePrice').value = String(wishToToEdit.Preço || '').replace('.', ',');
+        document.getElementById('wishGamePrice').value = String(wishToEdit.Preço || '').replace('.', ',');
         document.getElementById('addWishModal').classList.add('active');
     }
 
@@ -1741,10 +1805,6 @@
         fetchNotifications();
     }
     
-    function closeNotificationsModal() {
-        document.getElementById('notificationsModal').classList.remove('active');
-    }
-    
     async function fetchNotifications() {
         try {
             const response = await fetch(`${API_URL}/games/notifications`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -1867,34 +1927,6 @@
             return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
         }).join('');
         resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
-    }
-    
-    async function handleHeaderBgSearch(query) {
-        const resultsContainer = document.getElementById('headerBgSearchResultsContainer');
-        if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
-        const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
-        const games = await response.json();
-        if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
-        const listHTML = games.map(game => {
-            const safeName = game.name.replace(/'/g, "\\'");
-            const safeLink = game.background_image || '';
-            return `<div class="search-result-item" onclick="selectHeaderBgGame('${safeName}', '${safeLink}')"><img src="${safeLink || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span></div></div>`;
-        }).join('');
-        resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
-    }
-
-    function selectHeaderBgGame(gameName, gameLink) {
-        document.getElementById('headerBgGameName').value = gameName;
-        document.getElementById('headerBgGameLink').value = gameLink;
-        
-        const preview = document.getElementById('headerBgPreview');
-        if (gameLink) {
-            preview.src = gameLink;
-            preview.style.display = 'block';
-        } else {
-            preview.style.display = 'none';
-        }
-        document.getElementById('headerBgSearchResultsContainer').innerHTML = '';
     }
 
     function selectGame(game) {
