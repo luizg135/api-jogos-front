@@ -1229,6 +1229,18 @@
                 if (response.status === 401) { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; return; }
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 fullData = await response.json();
+                
+                 console.log("Dados carregados com sucesso. Iniciando renderização...");
+        try {
+            renderAllPages();
+            console.log("Renderização da página concluída.");
+            await fetchNotifications();
+            console.log("Notificações carregadas com sucesso.");
+        } catch (renderErr) {
+            console.error("ERRO DURANTE A RENDERIZAÇÃO DA PÁGINA:", renderErr);
+            document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar dados.</p>`;
+        }
+                
                 renderAllPages();
                 await fetchNotifications(); // Buscar notificações após carregar os dados principais
             } catch (err) {
