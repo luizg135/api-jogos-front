@@ -673,62 +673,7 @@
             background-color: #cb2d3e;
             color: white;
         }
-
-.notification-badge {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background-color: #cb2d3e;
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    z-index: 10;
-}
-.modal-content.notifications {
-    max-width: 450px;
-}
-.notifications-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    max-height: 50vh;
-    overflow-y: auto;
-}
-.notification-item {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-left: 5px solid var(--accent-purple);
-    border-radius: 8px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.notification-item.read {
-    opacity: 0.6;
-    border-left-color: var(--secondary-text);
-}
-.notification-icon {
-    font-size: 28px !important;
-    color: var(--accent-purple);
-}
-.notification-text {
-    flex-grow: 1;
-    font-size: 14px;
-    color: var(--primary-text);
-}
-.notification-date {
-    font-size: 10px;
-    color: var(--secondary-text);
-    white-space: nowrap;
-}
-        
+    
     </style>
 </head>
 
@@ -752,28 +697,24 @@
         <div id="content">
             <section id="perfil" class="page active">
                 <header class="profile-header">
-                <div class="profile-main">
-                    <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar" onclick="openSettingsModal()">
-                    <div class="profile-info">
-                        <h1 id="gamerName">Carregando...</h1>
-                        <p id="profileSubtitle">Resumo da jornada!</p>
-                    </div>
-                    <div style="position: relative; margin-left: auto; display: flex; align-items: center; gap: 16px;">
-                        <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
-                            <span class="material-symbols-outlined">military_tech</span>
+                    <div class="profile-main">
+                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar" onclick="openSettingsModal()">
+                        <div class="profile-info">
+                            <h1 id="gamerName">Carregando...</h1>
+                            <p id="profileSubtitle">Resumo da jornada!</p>
                         </div>
-                        <button class="nav-button" id="notificationBellBtn" title="Notificações" onclick="openNotificationsModal()">
-                            <span class="material-symbols-outlined">notifications</span>
-                            <div class="notification-badge" id="notificationBadge" style="display:none;">0</div>
-                        </button>
-                        <div class="level-progress" style="flex-grow: 1;">
-                            <div id="levelDisplay" class="level-text">Nível 0</div>
-                            <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
-                            <div id="expText" class="exp-text">0 / 1000 EXP</div>
+                        <div class="profile-level">
+                            <div class="achievements-shortcut" id="achievementsShortcut" title="Ver Conquistas">
+                                <span class="material-symbols-outlined">military_tech</span>
+                            </div>
+                            <div class="level-progress" style="flex-grow: 1;">
+                                <div id="levelDisplay" class="level-text">Nível 0</div>
+                                <div class="exp-bar-container"><div id="expBar" class="exp-bar-progress"></div></div>
+                                <div id="expText" class="exp-text">0 / 1000 EXP</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </header>
+                </header>
                 <div id="summary" class="summary-grid"></div>
                 <div class="section-header">
                     <span class="material-symbols-outlined">emoji_events</span>
@@ -1788,143 +1729,6 @@
             
             fetchGameData();
         });
-    let notifications = [];
-
-// Funções de controle do modal
-function openNotificationsModal() {
-    document.getElementById('notificationsModal').classList.add('active');
-    markAllNotificationsAsRead();
-}
-
-function closeNotificationsModal() {
-    document.getElementById('notificationsModal').classList.remove('active');
-}
-
-// Função de controle das abas do modal
-function switchNotificationTab(event, tabName) {
-    document.querySelectorAll('#notificationsModal .tab-content').forEach(tc => tc.classList.remove('active'));
-    document.querySelectorAll('#notificationsModal .tab-button').forEach(tb => tb.classList.remove('active'));
-    document.getElementById(tabName).classList.add('active');
-    event.currentTarget.classList.add('active');
-}
-
-// Função para renderizar as notificações nas abas corretas
-function renderNotifications() {
-    const unreadList = document.getElementById('unreadNotificationsList');
-    const readList = document.getElementById('readNotificationsList');
-    const unreadNotifs = notifications.filter(n => n.Lida !== 'Sim');
-    const readNotifs = notifications.filter(n => n.Lida === 'Sim').slice(0, 50); // Limita a 50 lidas para desempenho
-
-    const renderList = (list, container) => {
-        if (list.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: var(--secondary-text);">Nenhuma notificação por enquanto.</p>';
-            return;
-        }
-        container.innerHTML = list.map(n => {
-            const iconMap = {
-                'conquista': 'emoji_events',
-                'adicao_biblioteca': 'library_add',
-                'remocao_biblioteca': 'delete',
-                'alteracao_biblioteca': 'edit_note',
-                'adicao_desejos': 'add_shopping_cart',
-                'remocao_desejos': 'remove_shopping_cart',
-                'alteracao_desejos': 'edit_note',
-                'compra_desejo': 'shopping_cart_checkout',
-                'lancamento': 'calendar_today'
-            };
-            const icon = iconMap[n.Tipo] || 'notifications';
-            const date = new Date(n.Data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            return `
-                <div class="notification-item ${n.Lida === 'Sim' ? 'read' : ''}">
-                    <span class="material-symbols-outlined notification-icon">${icon}</span>
-                    <div class="notification-text">${n.Mensagem}</div>
-                    <div class="notification-date">${date}</div>
-                </div>
-            `;
-        }).join('');
-    };
-
-    renderList(unreadNotifs, unreadList);
-    renderList(readNotifs, readList);
-    updateNotificationBadge(unreadNotifs.length);
-}
-
-// Função para atualizar o contador de notificações
-function updateNotificationBadge(unreadCount) {
-    const badge = document.getElementById('notificationBadge');
-    if (unreadCount > 0) {
-        badge.textContent = unreadCount;
-        badge.style.display = 'flex';
-    } else {
-        badge.style.display = 'none';
-    }
-}
-
-// Função para buscar as notificações
-async function fetchNotifications() {
-    try {
-        const response = await fetch(`${API_URL}/notifications/check`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                biblioteca: fullData.biblioteca,
-                desejos: fullData.desejos,
-                conquistas_concluidas: fullData.conquistas_concluidas
-            })
-        });
-        if (response.ok) {
-            notifications = await response.json();
-            notifications.sort((a, b) => new Date(b.Data) - new Date(a.Data));
-            renderNotifications();
-        }
-    } catch (error) {
-        console.error('Erro ao buscar notificações:', error);
-    }
-}
-
-// Função para marcar todas como lidas (ao abrir o modal)
-async function markAllNotificationsAsRead() {
-    const unreadNotifs = notifications.filter(n => n.Lida !== 'Sim');
-    for (const notif of unreadNotifs) {
-        try {
-            const response = await fetch(`${API_URL}/notifications/mark-as-read/${notif.ID}`, {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
-                notif.Lida = 'Sim';
-            }
-        } catch (error) {
-            console.error(`Erro ao marcar notificação ${notif.ID} como lida:`, error);
-        }
-    }
-    renderNotifications();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    // ...código existente...
-    fetchGameData();
-    fetchNotifications();
-    setInterval(fetchNotifications, 300000);
-});
 </script>
-    
-<div id="notificationsModal" class="modal-overlay">
-    <div class="modal-content notifications">
-        <span class="close-button" onclick="closeNotificationsModal()">&times;</span>
-        <h2>Notificações</h2>
-        <div class="tabs">
-            <button class="tab-button active" onclick="switchNotificationTab(event, 'unread-notifs')">Não Lidas</button>
-            <button class="tab-button" onclick="switchNotificationTab(event, 'read-notifs')">Lidas</button>
-        </div>
-        <div id="unread-notifs" class="tab-content active">
-            <div id="unreadNotificationsList" class="notifications-list"></div>
-        </div>
-        <div id="read-notifs" class="tab-content">
-            <div id="readNotificationsList" class="notifications-list"></div>
-        </div>
-    </div>
-</div>
-
 </body>
 </html>
