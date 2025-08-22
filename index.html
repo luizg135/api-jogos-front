@@ -1843,22 +1843,27 @@
     }
 
     // Função para buscar as notificações
-    async function fetchNotifications() {
-        try {
-            const response = await fetch(`${API_URL}/notifications/check`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
-                notifications = await response.json();
-                notifications.sort((a, b) => new Date(b.Data) - new Date(a.Data));
-                updateNotificationBadge(notifications.filter(n => n.Lida === 'Não').length);
-                renderNotifications();
-            }
-        } catch (error) {
-            console.error('Erro ao buscar notificações:', error);
+async function fetchNotifications() {
+    try {
+        const response = await fetch(`${API_URL}/notifications/check`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                biblioteca: fullData.biblioteca,
+                desejos: fullData.desejos,
+                conquistas_concluidas: fullData.conquistas_concluidas
+            })
+        });
+        if (response.ok) {
+            notifications = await response.json();
+            notifications.sort((a, b) => new Date(b.Data) - new Date(a.Data));
+            updateNotificationBadge(notifications.filter(n => n.Lida === 'Não').length);
+            renderNotifications();
         }
+    } catch (error) {
+        console.error('Erro ao buscar notificações:', error);
     }
+}
 
     // Função para marcar todas como lidas (ao abrir o modal)
     async function markAllNotificationsAsRead() {
