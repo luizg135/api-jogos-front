@@ -90,7 +90,6 @@
         .achievements-shortcut:hover { color: var(--rank-mestre); }
         .achievements-shortcut .material-symbols-outlined { font-size: 32px; }
         .level-progress { flex-grow: 1; }
-        .level-text { font-size: 24px; font-weight: 700; }
         .exp-bar-container { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; margin-top: 8px; }
         .exp-bar-progress { height: 100%; border-radius: 4px; width: 0%; transition: width 0.5s ease; }
         .exp-bar-progress.rank-Mestre { background-color: var(--rank-mestre); box-shadow: 0 0 10px var(--rank-mestre); }
@@ -199,6 +198,12 @@
             color: #fff;
         }
 
+        .platinum-trophy {
+            font-size: 36px !important;
+            color: var(--rank-platina);
+            filter: drop-shadow(0 0 8px var(--rank-platina));
+        }
+
         .platinum-details {
             display: flex;
             flex-direction: column;
@@ -271,7 +276,7 @@
             color: var(--primary-text);
             border-color: var(--primary-text);
         }
-        .hidden-filters {
+        .advanced-filters {
             display: none;
             grid-column: 1 / -1;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -280,16 +285,16 @@
             border-top: 1px dashed var(--border-color);
             margin-top: 16px;
         }
-        .hidden-filters.active {
+        .advanced-filters.active {
             display: grid;
         }
-        .hidden-filters .filter-group {
+        .advanced-filters .filter-group {
             display: flex;
             flex-direction: row;
             align-items: center;
             gap: 8px;
         }
-        .hidden-filters .filter-group label {
+        .advanced-filters .filter-group label {
             margin-bottom: 0;
             white-space: nowrap;
         }
@@ -361,8 +366,8 @@
         }
         .modal-content .tab-button.active { color: var(--primary-text); }
         .modal-content .tab-button.active::after {
-            content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
-            height: 2px; background-color: var(--accent-purple);
+            content: '', position: absolute; bottom: -1px, left: 0, right: 0,
+            height: 2px, background-color: var(--accent-purple),
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -465,68 +470,6 @@
         .header-actions {
             display: flex;
             gap: 8px;
-        }
-        
-        .filter-bar-container.active {
-            display: block !important;
-        }
-
-        .filter-bar { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 16px; 
-            margin-bottom: 16px;
-            align-items: flex-end;
-            padding-top: 16px;
-            border-top: 1px dashed var(--border-color);
-            margin-top: 16px;
-        }
-        .filter-group { 
-            display: flex; 
-            flex-direction: column; 
-        }
-        .filter-group label { 
-            font-size: 12px; 
-            font-weight: 500; 
-            color: var(--secondary-text); 
-            margin-bottom: 8px; 
-        }
-        .filter-group input, 
-        .filter-group select {
-            width: 100%; 
-            background-color: var(--bg-color); 
-            color: var(--primary-text);
-            border: 1px solid var(--border-color); 
-            padding: 10px 12px; 
-            border-radius: 8px; 
-            font-size: 14px;
-            box-sizing: border-box;
-            height: 40px;
-        }
-        .filter-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            grid-column: 1 / -1;
-            margin-left: auto;
-        }
-        .filter-button {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--secondary-text);
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-        .filter-button:hover {
-            color: var(--primary-text);
-            border-color: var(--primary-text);
         }
 
         .games-grid {
@@ -844,6 +787,7 @@
             color: var(--secondary-text);
             margin-top: 4px;
         }
+    
     </style>
 </head>
 
@@ -915,29 +859,30 @@
 
             <section id="graficos" class="page">
                 <header class="profile-header">
-                    <div class="profile-main" style="justify-content: space-between;">
+                    <div class="profile-main">
                         <div class="profile-info">
                             <h1 style="color: var(--accent-purple);">Análise Gráfica</h1>
                             <p>Visão detalhada sobre seus hábitos e conquistas.</p>
                         </div>
-                        <div class="header-actions">
-                            <button class="nav-button" id="toggleMainFiltersBtn-graficos" title="Filtros"><span class="material-symbols-outlined">filter_list</span></button>
-                        </div>
                     </div>
                 </header>
-                <div id="filter-bar-container-graficos" class="filter-bar-container" style="display: none;">
-                    <section class="filter-bar">
-                        <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
-                        <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
-                        <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
-                        <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
+                <section class="filter-bar">
+                    <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
+                    <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
+                    <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
+                    <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
+                    <div class="filter-actions">
+                        <button id="toggleAdvancedFiltersBtn-graficos" class="filter-button" title="Filtros Avançados"><span class="material-symbols-outlined">tune</span></button>
+                        <button id="clearFiltersBtn-graficos" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
+                    </div>
+                    <div id="advancedFilters-graficos" class="advanced-filters">
                         <div class="filter-group">
                             <label for="minRating-graficos">Nota Mín.</label>
-                            <input type="text" inputmode="decimal" id="minRating-graficos" min="0" max="10">
+                            <input type="number" id="minRating-graficos" min="0" max="10" step="0.1">
                         </div>
                         <div class="filter-group">
                             <label for="maxRating-graficos">Nota Máx.</label>
-                            <input type="text" inputmode="decimal" id="maxRating-graficos" min="0" max="10">
+                            <input type="number" id="maxRating-graficos" min="0" max="10" step="0.1">
                         </div>
                         <div class="filter-group">
                             <label for="minHours-graficos">Horas Mín.</label>
@@ -949,11 +894,11 @@
                         </div>
                         <div class="filter-group">
                             <label for="minPrice-graficos">Preço Mín.</label>
-                            <input type="text" inputmode="decimal" id="minPrice-graficos" min="0">
+                            <input type="number" id="minPrice-graficos" min="0">
                         </div>
                         <div class="filter-group">
                             <label for="maxPrice-graficos">Preço Máx.</label>
-                            <input type="text" inputmode="decimal" id="maxPrice-graficos" min="0">
+                            <input type="number" id="maxPrice-graficos" min="0">
                         </div>
                         <div class="filter-group">
                             <label for="minMetacritic-graficos">Metacritic Mín.</label>
@@ -963,11 +908,8 @@
                             <label for="maxMetacritic-graficos">Metacritic Máx.</label>
                             <input type="number" id="maxMetacritic-graficos" min="0" max="100">
                         </div>
-                        <div class="filter-actions">
-                            <button id="clearFiltersBtn-graficos" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
-                        </div>
-                    </section>
-                </div>
+                    </div>
+                </section>
                 <div id="summary-graficos" class="summary-grid"></div>
                 <div id="charts-container" class="charts-grid">
                     <div class="chart-card"><h3>Jogos Platinados</h3><div class="chart-wrapper"><canvas id="platinadosChart"></canvas></div></div>
@@ -978,32 +920,35 @@
             </section>
 
             <section id="biblioteca" class="page">
-                <header class="profile-header">
-                    <div class="profile-main" style="justify-content: space-between;">
-                        <div class="profile-info">
-                            <h1 style="color: var(--accent-purple);">Biblioteca de Jogos</h1>
-                            <p>Explore toda a sua coleção.</p>
-                        </div>
-                        <div class="header-actions">
-                            <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">view_list</span></button>
-                            <button class="nav-button" id="toggleMainFiltersBtn-biblioteca" title="Filtros"><span class="material-symbols-outlined">filter_list</span></button>
-                            <button class="nav-button" id="addGameBtn" title="Adicionar Novo Jogo"><span class="material-symbols-outlined">add</span></button>
-                        </div>
+            <header class="profile-header">
+                <div class="profile-main" style="justify-content: space-between;">
+                    <div class="profile-info">
+                        <h1 style="color: var(--accent-purple);">Biblioteca de Jogos</h1>
+                        <p>Explore toda a sua coleção.</p>
                     </div>
-                </header>
-                <div id="filter-bar-container-biblioteca" class="filter-bar-container" style="display: none;">
-                    <section class="filter-bar">
-                        <div class="filter-group"><label for="nameFilter-biblioteca">Buscar por Nome</label><input type="search" id="nameFilter-biblioteca" placeholder="Ex: Elden Ring"></div>
-                        <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
-                        <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
-                        <div class="filter-group"><label for="yearFilter-biblioteca">Ano de Conclusão</label><select id="yearFilter-biblioteca"></select></div>
+                    <div class="header-actions">
+                        <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">grid_view</span></button>
+                        <button class="nav-button" id="addGameBtn" title="Adicionar Novo Jogo"><span class="material-symbols-outlined">add</span></button>
+                    </div>
+                </div>
+            </header>
+                <section class="filter-bar">
+                    <div class="filter-group"><label for="nameFilter-biblioteca">Buscar por Nome</label><input type="search" id="nameFilter-biblioteca" placeholder="Ex: Elden Ring"></div>
+                    <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
+                    <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
+                    <div class="filter-group"><label for="yearFilter-biblioteca">Ano de Conclusão</label><select id="yearFilter-biblioteca"></select></div>
+                    <div class="filter-actions">
+                        <button id="toggleAdvancedFiltersBtn-biblioteca" class="filter-button" title="Filtros Avançados"><span class="material-symbols-outlined">tune</span></button>
+                        <button id="clearFiltersBtn-biblioteca" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
+                    </div>
+                    <div id="advancedFilters-biblioteca" class="advanced-filters">
                         <div class="filter-group">
                             <label for="minRating-biblioteca">Nota Mín.</label>
-                            <input type="text" inputmode="decimal" id="minRating-biblioteca" min="0" max="10">
+                            <input type="number" id="minRating-biblioteca" min="0" max="10" step="0.1">
                         </div>
                         <div class="filter-group">
                             <label for="maxRating-biblioteca">Nota Máx.</label>
-                            <input type="text" inputmode="decimal" id="maxRating-biblioteca" min="0" max="10">
+                            <input type="number" id="maxRating-biblioteca" min="0" max="10" step="0.1">
                         </div>
                         <div class="filter-group">
                             <label for="minHours-biblioteca">Horas Mín.</label>
@@ -1015,11 +960,11 @@
                         </div>
                         <div class="filter-group">
                             <label for="minPrice-biblioteca">Preço Mín.</label>
-                            <input type="text" inputmode="decimal" id="minPrice-biblioteca" min="0">
+                            <input type="number" id="minPrice-biblioteca" min="0">
                         </div>
                         <div class="filter-group">
                             <label for="maxPrice-biblioteca">Preço Máx.</label>
-                            <input type="text" inputmode="decimal" id="maxPrice-biblioteca" min="0">
+                            <input type="number" id="maxPrice-biblioteca" min="0">
                         </div>
                         <div class="filter-group">
                             <label for="minMetacritic-biblioteca">Metacritic Mín.</label>
@@ -1029,28 +974,25 @@
                             <label for="maxMetacritic-biblioteca">Metacritic Máx.</label>
                             <input type="number" id="maxMetacritic-biblioteca" min="0" max="100">
                         </div>
-                        <div class="filter-actions">
-                            <button id="clearFiltersBtn-biblioteca" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
-                        </div>
-                    </section>
-                </div>
-                <div class="table-container" style="display: none;">
+                    </div>
+                </section>
+                <div class="table-container">
                     <table class="games-table">
-                        <thead>
-                            <tr>
-                                <th class="sortable-header" data-sort-key="Nome">Nome <span class="sort-icon"></span></th>
-                                <th class="sortable-header" data-sort-key="Plataforma">Plataforma <span class="sort-icon"></span></th>
-                                <th class="sortable-header" data-sort-key="Status">Status <span class="sort-icon"></span></th>
-                                <th class="sortable-header" data-sort-key="Nota">Nota <span class="sort-icon"></span></th>
-                                <th class="sortable-header" data-sort-key="Tempo de Jogo">Horas <span class="sort-icon"></span></th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
+            <thead>
+                <tr>
+                    <th class="sortable-header" data-sort-key="Nome">Nome <span class="sort-icon"></span></th>
+                    <th class="sortable-header" data-sort-key="Plataforma">Plataforma <span class="sort-icon"></span></th>
+                    <th class="sortable-header" data-sort-key="Status">Status <span class="sort-icon"></span></th>
+                    <th class="sortable-header" data-sort-key="Nota">Nota <span class="sort-icon"></span></th>
+                    <th class="sortable-header" data-sort-key="Tempo de Jogo">Horas <span class="sort-icon"></span></th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
                         <tbody id="game-list-tbody"></tbody>
                     </table>
                 </div>
                 <div id="no-results-message" class="no-results" style="display: none;"><p>Nenhum jogo encontrado.</p></div>
-                <div id="game-grid-container" class="games-grid"></div>
+                <div id="game-grid-container" class="games-grid" style="display: none;"></div>
             </section>
             
             <section id="desejos" class="page">
@@ -1099,7 +1041,7 @@
 
 <div class="form-group">
     <label for="gameRating">Nota</label>
-    <input type="text" inputmode="decimal" id="gameRating" min="0" max="10">
+    <input type="number" id="gameRating" step="0.1" min="0" max="10">
 </div>
 
 <div class="form-group">
@@ -1572,7 +1514,7 @@
                         <td><div class="game-name-cell">${isPlatinado ? '<span class="material-symbols-outlined trophy-icon">emoji_events</span>' : '<span style="width: 22px;"></span>'}<span>${game.Nome}</span></div></td>
                         <td>${game.Plataforma || '-'}</td>
                         <td>${game.Status || '-'}</td>
-                        <td class="nota-cell">${String(game.Nota || '-').replace('.', ',')}</td>
+                        <td class="nota-cell">${game.Nota || '-'}</td>
                         <td>${game['Tempo de Jogo'] || 0}h</td>
                         <td><div class="action-buttons">
                             <button class="action-button" onclick="event.stopPropagation(); editGame('${safeName}')"><span class="material-symbols-outlined">edit</span></button>
@@ -1697,15 +1639,14 @@
             const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
             const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
 
-            // Garante que os valores de filtro numéricos sejam tratados com ponto decimal
-            const minRating = parseFloat((document.getElementById('minRating' + suffix)?.value || '0').replace(',', '.')) || 0;
-            const maxRating = parseFloat((document.getElementById('maxRating' + suffix)?.value || '10').replace(',', '.')) || 10;
-            const minHours = parseFloat((document.getElementById('minHours' + suffix)?.value || '0').replace(',', '.')) || 0;
-            const maxHours = parseFloat((document.getElementById('maxHours' + suffix)?.value || 'Infinity').replace(',', '.')) || Infinity;
-            const minPrice = parseFloat((document.getElementById('minPrice' + suffix)?.value || '0').replace(',', '.')) || 0;
-            const maxPrice = parseFloat((document.getElementById('maxPrice' + suffix)?.value || 'Infinity').replace(',', '.')) || Infinity;
-            const minMetacritic = parseFloat((document.getElementById('minMetacritic' + suffix)?.value || '0').replace(',', '.')) || 0;
-            const maxMetacritic = parseFloat((document.getElementById('maxMetacritic' + suffix)?.value || '100').replace(',', '.')) || 100;
+            const minRating = parseFloat(document.getElementById('minRating' + suffix)?.value) || 0;
+            const maxRating = parseFloat(document.getElementById('maxRating' + suffix)?.value) || 10;
+            const minHours = parseFloat(document.getElementById('minHours' + suffix)?.value) || 0;
+            const maxHours = parseFloat(document.getElementById('maxHours' + suffix)?.value) || Infinity;
+            const minPrice = parseFloat(document.getElementById('minPrice' + suffix)?.value) || 0;
+            const maxPrice = parseFloat(document.getElementById('maxPrice' + suffix)?.value) || Infinity;
+            const minMetacritic = parseFloat(document.getElementById('minMetacritic' + suffix)?.value) || 0;
+            const maxMetacritic = parseFloat(document.getElementById('maxMetacritic' + suffix)?.value) || 100;
 
             const filteredGames = (fullData.biblioteca || []).filter(g => {
                 const gameNameMatch = name ? g.Nome.toLowerCase().includes(name) : true;
@@ -1713,8 +1654,7 @@
                 const styleMatch = style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true;
                 const yearMatch = year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true;
 
-                // Converte os valores do jogo para float, tratando a vírgula
-                const gameRating = parseFloat(String(g.Nota).replace(',', '.')) || 0;
+                const gameRating = parseFloat(g.Nota) || 0;
                 const ratingMatch = gameRating >= minRating && gameRating <= maxRating;
                 
                 const gameHours = parseInt(g['Tempo de Jogo']) || 0;
@@ -1731,7 +1671,7 @@
 
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(String(a).replace(',','.'))+parseFloat(String(b).replace(',','.')), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
+                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
                 renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
             } else if (suffix === '-biblioteca') {
                 renderGameTable(filteredGames);
@@ -1746,7 +1686,7 @@
             document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = gameName;
             document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`; document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
             document.getElementById('gameName').value = gameToEdit.Nome; document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
-            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = String(gameToEdit.Nota || '').replace('.', ',');
+            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = gameToEdit.Nota || '';
             document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
             document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
             document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
@@ -1760,16 +1700,12 @@
         async function handleGameFormSubmit(event) {
             event.preventDefault();
             const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
-            
-            // Corrige a formatação para números
             const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
-            const ratingValue = document.getElementById('gameRating').value.replace(',', '.');
-
             const gameData = {
                 Nome: document.getElementById('gameName').value,
                 Plataforma: document.getElementById('gamePlatform').value,
                 Status: document.getElementById('gameStatus').value,
-                Nota: parseFloat(ratingValue) || null,
+                Nota: parseFloat(document.getElementById('gameRating').value.replace(',', '.')) || null,
                 "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
                 Link: document.getElementById('gameLink').value,
                 Estilo: document.getElementById('gameStyle').value,
@@ -1840,15 +1776,8 @@
         async function handleWishFormSubmit(event) {
             event.preventDefault();
             const editModeValue = document.getElementById('editWishMode').value; const isEditing = editModeValue !== '';
-            
             const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
-            
-            const wishData = { 
-                Nome: document.getElementById('wishGameName').value, 
-                Link: document.getElementById('wishGameLink').value, 
-                "Data Lançamento": document.getElementById('wishGameRelease').value, 
-                Preço: parseFloat(priceValue) || 0 
-            };
+            const wishData = { Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value, "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0 };
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
             try {
@@ -1965,8 +1894,8 @@
             document.getElementById('gameStatusDetails').textContent = game.Status || 'Não informado';
             
             const gameRatingDetails = document.getElementById('gameRatingDetails');
-            const gameRating = parseFloat(String(game.Nota).replace(',', '.'));
-            gameRatingDetails.textContent = String(game.Nota || 'N/A').replace('.', ',');
+            const gameRating = parseFloat(game.Nota);
+            gameRatingDetails.textContent = game.Nota || 'N/A';
             gameRatingDetails.className = 'rating-score';
             if (!isNaN(gameRating)) {
                 if (gameRating >= 8) {
@@ -2064,9 +1993,10 @@
             const tableContainer = document.querySelector('#biblioteca .table-container');
             const gridContainer = document.getElementById('game-grid-container');
             const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
-            const isGridViewActive = gridContainer.style.display !== 'none';
 
-            if (isGridViewActive) {
+            const isGridVisible = gridContainer.style.display !== 'none';
+
+            if (isGridVisible) {
                 gridContainer.style.display = 'none';
                 tableContainer.style.display = 'block';
                 toggleBtnIcon.textContent = 'grid_view';
@@ -2075,11 +2005,6 @@
                 tableContainer.style.display = 'none';
                 toggleBtnIcon.textContent = 'view_list';
             }
-        }
-        
-        function toggleMainFilters(suffix) {
-            const filterContainer = document.getElementById('filter-bar-container' + suffix);
-            const isVisible = filterContainer.classList.toggle('active');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -2097,8 +2022,6 @@
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
-            setupListener('toggleMainFiltersBtn-biblioteca', 'click', () => toggleMainFilters('-biblioteca'));
-            setupListener('toggleMainFiltersBtn-graficos', 'click', () => toggleMainFilters('-graficos'));
             setupListener('achievementsShortcut', 'click', openAchievementsModal);
             setupListener('notificationBtn', 'click', openNotificationModal);
             setupListener('gameDetailsModal', 'click', (event) => {
@@ -2115,6 +2038,11 @@
         updateSortIcons();
             
             const setupFilterListeners = (suffix) => {
+                const advancedFiltersContainer = document.getElementById('advancedFilters' + suffix);
+                setupListener('toggleAdvancedFiltersBtn' + suffix, 'click', () => {
+                    advancedFiltersContainer.classList.toggle('active');
+                });
+
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter', 'minRating', 'maxRating', 'minHours', 'maxHours', 'minPrice', 'maxPrice', 'minMetacritic', 'maxMetacritic'].forEach(id => {
                     setupListener(id + suffix, 'input', () => applyFilters(suffix));
                 });
@@ -2122,14 +2050,10 @@
                 const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
                 if (clearBtn) { 
                     clearBtn.addEventListener('click', () => { 
-                        ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { 
+                        ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter', 'minRating', 'maxRating', 'minHours', 'maxHours', 'minPrice', 'maxPrice', 'minMetacritic', 'maxMetacritic'].forEach(id => { 
                             const el = document.getElementById(id + suffix); 
                             if(el) el.value = el.tagName === 'SELECT' ? 'all' : '';
-                        });
-                        ['minRating', 'maxRating', 'minHours', 'maxHours', 'minPrice', 'maxPrice', 'minMetacritic', 'maxMetacritic'].forEach(id => {
-                             const el = document.getElementById(id + suffix);
-                             if(el) el.value = '';
-                        });
+                        }); 
                         applyFilters(suffix); 
                     }); 
                 }
@@ -2180,8 +2104,8 @@
                         let valB = b[currentSortKey] || '';
 
                         if (key === 'Nota' || key === 'Tempo de Jogo') {
-                            valA = parseFloat(String(valA).replace(',', '.')) || 0;
-                            valB = parseFloat(String(valB).replace(',', '.')) || 0;
+                            valA = parseFloat(valA) || 0;
+                            valB = parseFloat(valB) || 0;
                         }
 
                         if (typeof valA === 'string') valA = valA.toLowerCase();
