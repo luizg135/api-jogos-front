@@ -277,7 +277,7 @@
             color: var(--primary-text);
             border-color: var(--primary-text);
         }
-        .advanced-filters {
+        .hidden-filters {
             display: none;
             grid-column: 1 / -1;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -286,16 +286,16 @@
             border-top: 1px dashed var(--border-color);
             margin-top: 16px;
         }
-        .advanced-filters.active {
+        .hidden-filters.active {
             display: grid;
         }
-        .advanced-filters .filter-group {
+        .hidden-filters .filter-group {
             display: flex;
             flex-direction: row;
             align-items: center;
             gap: 8px;
         }
-        .advanced-filters .filter-group label {
+        .hidden-filters .filter-group label {
             margin-bottom: 0;
             white-space: nowrap;
         }
@@ -471,15 +471,6 @@
         .header-actions {
             display: flex;
             gap: 8px;
-        }
-        
-        .filter-group input, .filter-group select, .filter-group label {
-            width: 100%; 
-            box-sizing: border-box;
-        }
-        
-        .filter-group label {
-            text-align: left;
         }
 
         .games-grid {
@@ -797,28 +788,6 @@
             color: var(--secondary-text);
             margin-top: 4px;
         }
-        .hidden-filters {
-            display: none;
-            padding-top: 16px;
-            border-top: 1px dashed var(--border-color);
-            margin-top: 16px;
-        }
-        .hidden-filters.active {
-            display: grid;
-            grid-column: 1 / -1;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-        }
-        .hidden-filters .filter-group {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 8px;
-        }
-        .hidden-filters .filter-group label {
-            margin-bottom: 0;
-            white-space: nowrap;
-        }
     </style>
 </head>
 
@@ -900,48 +869,46 @@
                         </div>
                     </div>
                 </header>
-                <div id="filter-bar-container-graficos" style="display: none;">
+                <div id="filter-bar-container-graficos" class="filter-bar-container" style="display: none;">
                     <section class="filter-bar">
                         <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
                         <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
                         <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
                         <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
+                        <div class="filter-group">
+                            <label for="minRating-graficos">Nota Mín.</label>
+                            <input type="text" inputmode="decimal" id="minRating-graficos" min="0" max="10">
+                        </div>
+                        <div class="filter-group">
+                            <label for="maxRating-graficos">Nota Máx.</label>
+                            <input type="text" inputmode="decimal" id="maxRating-graficos" min="0" max="10">
+                        </div>
+                        <div class="filter-group">
+                            <label for="minHours-graficos">Horas Mín.</label>
+                            <input type="number" id="minHours-graficos" min="0">
+                        </div>
+                        <div class="filter-group">
+                            <label for="maxHours-graficos">Horas Máx.</label>
+                            <input type="number" id="maxHours-graficos" min="0">
+                        </div>
+                        <div class="filter-group">
+                            <label for="minPrice-graficos">Preço Mín.</label>
+                            <input type="text" inputmode="decimal" id="minPrice-graficos" min="0">
+                        </div>
+                        <div class="filter-group">
+                            <label for="maxPrice-graficos">Preço Máx.</label>
+                            <input type="text" inputmode="decimal" id="maxPrice-graficos" min="0">
+                        </div>
+                        <div class="filter-group">
+                            <label for="minMetacritic-graficos">Metacritic Mín.</label>
+                            <input type="number" id="minMetacritic-graficos" min="0" max="100">
+                        </div>
+                        <div class="filter-group">
+                            <label for="maxMetacritic-graficos">Metacritic Máx.</label>
+                            <input type="number" id="maxMetacritic-graficos" min="0" max="100">
+                        </div>
                         <div class="filter-actions">
                             <button id="clearFiltersBtn-graficos" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
-                        </div>
-                        <div class="hidden-filters">
-                            <div class="filter-group">
-                                <label for="minRating-graficos">Nota Mín.</label>
-                                <input type="number" id="minRating-graficos" min="0" max="10" step="0.1">
-                            </div>
-                            <div class="filter-group">
-                                <label for="maxRating-graficos">Nota Máx.</label>
-                                <input type="number" id="maxRating-graficos" min="0" max="10" step="0.1">
-                            </div>
-                            <div class="filter-group">
-                                <label for="minHours-graficos">Horas Mín.</label>
-                                <input type="number" id="minHours-graficos" min="0">
-                            </div>
-                            <div class="filter-group">
-                                <label for="maxHours-graficos">Horas Máx.</label>
-                                <input type="number" id="maxHours-graficos" min="0">
-                            </div>
-                            <div class="filter-group">
-                                <label for="minPrice-graficos">Preço Mín.</label>
-                                <input type="number" id="minPrice-graficos" min="0">
-                            </div>
-                            <div class="filter-group">
-                                <label for="maxPrice-graficos">Preço Máx.</label>
-                                <input type="number" id="maxPrice-graficos" min="0">
-                            </div>
-                            <div class="filter-group">
-                                <label for="minMetacritic-graficos">Metacritic Mín.</label>
-                                <input type="number" id="minMetacritic-graficos" min="0" max="100">
-                            </div>
-                            <div class="filter-group">
-                                <label for="maxMetacritic-graficos">Metacritic Máx.</label>
-                                <input type="number" id="maxMetacritic-graficos" min="0" max="100">
-                            </div>
                         </div>
                     </section>
                 </div>
@@ -968,48 +935,46 @@
                         </div>
                     </div>
                 </header>
-                <div id="filter-bar-container-biblioteca" style="display: none;">
+                <div id="filter-bar-container-biblioteca" class="filter-bar-container" style="display: none;">
                     <section class="filter-bar">
                         <div class="filter-group"><label for="nameFilter-biblioteca">Buscar por Nome</label><input type="search" id="nameFilter-biblioteca" placeholder="Ex: Elden Ring"></div>
                         <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
                         <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
                         <div class="filter-group"><label for="yearFilter-biblioteca">Ano de Conclusão</label><select id="yearFilter-biblioteca"></select></div>
+                        <div class="filter-group">
+                            <label for="minRating-biblioteca">Nota Mín.</label>
+                            <input type="text" inputmode="decimal" id="minRating-biblioteca" min="0" max="10">
+                        </div>
+                        <div class="filter-group">
+                            <label for="maxRating-biblioteca">Nota Máx.</label>
+                            <input type="text" inputmode="decimal" id="maxRating-biblioteca" min="0" max="10">
+                        </div>
+                        <div class="filter-group">
+                            <label for="minHours-biblioteca">Horas Mín.</label>
+                            <input type="number" id="minHours-biblioteca" min="0">
+                        </div>
+                        <div class="filter-group">
+                            <label for="maxHours-biblioteca">Horas Máx.</label>
+                            <input type="number" id="maxHours-biblioteca" min="0">
+                        </div>
+                        <div class="filter-group">
+                            <label for="minPrice-biblioteca">Preço Mín.</label>
+                            <input type="text" inputmode="decimal" id="minPrice-biblioteca" min="0">
+                        </div>
+                        <div class="filter-group">
+                            <label for="maxPrice-biblioteca">Preço Máx.</label>
+                            <input type="text" inputmode="decimal" id="maxPrice-biblioteca" min="0">
+                        </div>
+                        <div class="filter-group">
+                            <label for="minMetacritic-biblioteca">Metacritic Mín.</label>
+                            <input type="number" id="minMetacritic-biblioteca" min="0" max="100">
+                        </div>
+                        <div class="filter-group">
+                            <label for="maxMetacritic-biblioteca">Metacritic Máx.</label>
+                            <input type="number" id="maxMetacritic-biblioteca" min="0" max="100">
+                        </div>
                         <div class="filter-actions">
                             <button id="clearFiltersBtn-biblioteca" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
-                        </div>
-                        <div class="hidden-filters">
-                            <div class="filter-group">
-                                <label for="minRating-biblioteca">Nota Mín.</label>
-                                <input type="number" id="minRating-biblioteca" min="0" max="10" step="0.1">
-                            </div>
-                            <div class="filter-group">
-                                <label for="maxRating-biblioteca">Nota Máx.</label>
-                                <input type="number" id="maxRating-biblioteca" min="0" max="10" step="0.1">
-                            </div>
-                            <div class="filter-group">
-                                <label for="minHours-biblioteca">Horas Mín.</label>
-                                <input type="number" id="minHours-biblioteca" min="0">
-                            </div>
-                            <div class="filter-group">
-                                <label for="maxHours-biblioteca">Horas Máx.</label>
-                                <input type="number" id="maxHours-biblioteca" min="0">
-                            </div>
-                            <div class="filter-group">
-                                <label for="minPrice-biblioteca">Preço Mín.</label>
-                                <input type="number" id="minPrice-biblioteca" min="0">
-                            </div>
-                            <div class="filter-group">
-                                <label for="maxPrice-biblioteca">Preço Máx.</label>
-                                <input type="number" id="maxPrice-biblioteca" min="0">
-                            </div>
-                            <div class="filter-group">
-                                <label for="minMetacritic-biblioteca">Metacritic Mín.</label>
-                                <input type="number" id="minMetacritic-biblioteca" min="0" max="100">
-                            </div>
-                            <div class="filter-group">
-                                <label for="maxMetacritic-biblioteca">Metacritic Máx.</label>
-                                <input type="number" id="maxMetacritic-biblioteca" min="0" max="100">
-                            </div>
                         </div>
                     </section>
                 </div>
@@ -1705,7 +1670,7 @@
                 const gameMetacritic = parseInt(g.Metacritic) || 0;
                 const metacriticMatch = gameMetacritic >= minMetacritic && gameMetacritic <= maxMetacritic;
 
-                return gameNameMatch && statusMatch && styleMatch && yearMatch && ratingMatch && hoursMatch && priceMatch && metacacriticMatch;
+                return gameNameMatch && statusMatch && styleMatch && yearMatch && ratingMatch && hoursMatch && priceMatch && metacriticMatch;
             });
 
             if (suffix === '-graficos') {
@@ -1945,7 +1910,7 @@
             
             const gameRatingDetails = document.getElementById('gameRatingDetails');
             const gameRating = parseFloat(String(game.Nota).replace(',', '.'));
-            gameRatingDetails.textContent = game.Nota || 'N/A';
+            gameRatingDetails.textContent = String(game.Nota || 'N/A').replace('.', ',');
             gameRatingDetails.className = 'rating-score';
             if (!isNaN(gameRating)) {
                 if (gameRating >= 8) {
@@ -2095,9 +2060,6 @@
         updateSortIcons();
             
             const setupFilterListeners = (suffix) => {
-                // Remove o botão de filtros avançados, pois agora ele não é mais necessário
-                // e a lógica de toggleMainFilters já controla tudo
-                
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter', 'minRating', 'maxRating', 'minHours', 'maxHours', 'minPrice', 'maxPrice', 'minMetacritic', 'maxMetacritic'].forEach(id => {
                     setupListener(id + suffix, 'input', () => applyFilters(suffix));
                 });
@@ -2159,8 +2121,8 @@
                         let valB = b[currentSortKey] || '';
 
                         if (key === 'Nota' || key === 'Tempo de Jogo') {
-                            valA = parseFloat(valA) || 0;
-                            valB = parseFloat(valB) || 0;
+                            valA = parseFloat(String(valA).replace(',', '.')) || 0;
+                            valB = parseFloat(String(valB).replace(',', '.')) || 0;
                         }
 
                         if (typeof valA === 'string') valA = valA.toLowerCase();
