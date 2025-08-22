@@ -771,7 +771,7 @@
                         <p>Explore toda a sua coleção.</p>
                     </div>
                     <div class="header-actions">
-                        <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">grid_view</span></button>
+                        <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">view_list</span></button>
                         <button class="nav-button" id="addGameBtn" title="Adicionar Novo Jogo"><span class="material-symbols-outlined">add</span></button>
                     </div>
                 </div>
@@ -783,7 +783,7 @@
                     <div class="filter-group"><label for="yearFilter-biblioteca">Ano de Conclusão</label><select id="yearFilter-biblioteca"></select></div>
                     <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-biblioteca" class="clear-filters-btn" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button></div>
                 </section>
-                <div class="table-container">
+                <div class="table-container" style="display: none;">
                     <table class="games-table">
             <thead>
                 <tr>
@@ -799,7 +799,7 @@
                     </table>
                 </div>
                 <div id="no-results-message" class="no-results" style="display: none;"><p>Nenhum jogo encontrado.</p></div>
-                <div id="game-grid-container" class="games-grid" style="display: none;"></div>
+                <div id="game-grid-container" class="games-grid"></div>
             </section>
             
             <section id="desejos" class="page">
@@ -823,6 +823,10 @@
             <h2 id="gameModalTitle">Adicionar Novo Jogo</h2>
             <form id="addGameForm">
 <input type="hidden" id="editMode" value="">
+<input type="hidden" id="rawgIdInput" value="">
+<input type="hidden" id="gameMetacritic" value="">
+<input type="hidden" id="gameDescription" value="">
+
 
 <div class="form-group">
     <label for="gameName">Nome do Jogo</label>
@@ -861,7 +865,7 @@
     <input type="date" id="gameTermino">
 </div>
 
-<div class="form-group" style="display: none;">
+<div class="form-group">
     <label for="gameLink">Link da Capa (URL)</label>
     <input type="url" id="gameLink" placeholder="URL da imagem">
 </div>
@@ -881,15 +885,6 @@
     <input type="number" id="gameConquistas" min="0">
 </div>
 
-<div class="form-group" style="display: none;">
-    <label for="gameMetacritic">Metacritic</label>
-    <input type="number" id="gameMetacritic" min="0" max="100">
-</div>
-
-<div class="form-group" style="display: none;">
-    <label for="gameDescription">Descrição</label>
-    <textarea id="gameDescription" rows="5" placeholder="Descrição do jogo..."></textarea>
-</div>
 
 <button type="submit" id="gameModalSubmitBtn">Salvar Jogo</button>
             </form>
@@ -1287,7 +1282,16 @@
             }
         }
 
-        function openGameModalForAdd() { document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = ''; document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; document.getElementById('addGameModal').classList.add('active'); }
+        function openGameModalForAdd() { 
+            document.getElementById('addGameForm').reset(); 
+            document.getElementById('editMode').value = ''; 
+            document.getElementById('gameModalTitle').textContent = 'Adicionar Novo Jogo'; 
+            document.getElementById('gameModalSubmitBtn').textContent = 'Salvar Jogo'; 
+            document.getElementById('rawgIdInput').value = '';
+            document.getElementById('gameMetacritic').value = '';
+            document.getElementById('gameDescription').value = '';
+            document.getElementById('addGameModal').classList.add('active'); 
+        }
         
         function openGameModalForEdit(gameName) {
             const gameToEdit = fullData.biblioteca.find(g => g.Nome === gameName); if (!gameToEdit) { showToast("Jogo não encontrado.", true); return; }
@@ -1321,6 +1325,7 @@
                 Preço: parseFloat(priceValue) || 0,
                 "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
                 "Terminado em": document.getElementById('gameTermino').value || '',
+                RAWG_ID: document.getElementById('rawgIdInput').value || '',
                 Metacritic: document.getElementById('gameMetacritic').value || '',
                 Descricao: document.getElementById('gameDescription').value || ''
             };
@@ -1559,12 +1564,13 @@
                 const safeName = game.name.replace(/'/g, "\\'");
                 const safeStyles = game.styles.replace(/'/g, "\\'");
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectGame({ name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
+                return `<div class="search-result-item" onclick="selectGame({ rawg_id: '${game.id}', name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
 
         function selectGame(game) {
+            document.getElementById('rawgIdInput').value = game.rawg_id;
             document.getElementById('gameName').value = game.name;
             document.getElementById('gameLink').value = game.background_image;
             document.getElementById('gameStyle').value = game.styles;
