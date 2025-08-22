@@ -90,7 +90,6 @@
         .achievements-shortcut:hover { color: var(--rank-mestre); }
         .achievements-shortcut .material-symbols-outlined { font-size: 32px; }
         .level-progress { flex-grow: 1; }
-        .level-text { font-size: 24px; font-weight: 700; }
         .exp-bar-container { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; margin-top: 8px; }
         .exp-bar-progress { height: 100%; border-radius: 4px; width: 0%; transition: width 0.5s ease; }
         .exp-bar-progress.rank-Mestre { background-color: var(--rank-mestre); box-shadow: 0 0 10px var(--rank-mestre); }
@@ -367,8 +366,8 @@
         }
         .modal-content .tab-button.active { color: var(--primary-text); }
         .modal-content .tab-button.active::after {
-            content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
-            height: 2px; background-color: var(--accent-purple);
+            content: '', position: absolute; bottom: -1px, left: 0, right: 0,
+            height: 2px, background-color: var(--accent-purple),
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -1667,7 +1666,7 @@
                 const gameMetacritic = parseInt(g.Metacritic) || 0;
                 const metacriticMatch = gameMetacritic >= minMetacritic && gameMetacritic <= maxMetacritic;
 
-                return gameNameMatch && statusMatch && styleMatch && yearMatch && ratingMatch && hoursMatch && priceMatch && metacacriticMatch;
+                return gameNameMatch && statusMatch && styleMatch && yearMatch && ratingMatch && hoursMatch && priceMatch && metacriticMatch;
             });
 
             if (suffix === '-graficos') {
