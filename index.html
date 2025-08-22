@@ -768,13 +768,15 @@
             <button class="nav-button" onclick="openPage(event, 'graficos')" title="Gráficos"><span class="material-symbols-outlined">bar_chart</span></button>
             <button class="nav-button" onclick="openPage(event, 'biblioteca')" title="Lista de Jogos"><span class="material-symbols-outlined">list_alt</span></button>
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
+            <!-- Botão de Notificações -->
             <button class="nav-button" id="notificationsBtn" title="Notificações" onclick="openNotificationsModal()">
                 <span class="material-symbols-outlined">notifications</span>
                 <span class="notification-badge" id="unreadNotificationsBadge">0</span>
             </button>
         </div>
         <div class="sidebar-footer">
-<div class="profile-actions">
+<!--             <button class="nav-button" id="theme-toggle" title="Mudar Tema"><span class="material-symbols-outlined">light_mode</span></button> -->
+            <div class="profile-actions">
                 <button class="nav-button" id="shareProfileBtn" title="Compartilhar Perfil">
                      <span class="material-symbols-outlined">share</span>
                      </button>
@@ -1172,6 +1174,7 @@
         </div>
     </div>
 
+    <!-- Novo Modal de Notificações -->
     <div id="notificationsModal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-button" onclick="closeNotificationsModal()">&times;</span>
@@ -1193,7 +1196,8 @@
 // COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
 
         // --- VARIÁVEIS GLOBAIS ---
-        const API_URL = 'https://api-jogos-nrma.onrender.com/api';
+        // ATENÇÃO: SUBSTITUA 'https://api-jogos-nrma.onrender.com/api' PELA URL REAL DO SEU BACKEND NO RENDER
+        const API_URL = 'https://api-jogos-nrma.onrender.com/api'; 
         const chartColors = { purple: 'rgba(147, 112, 219, 0.8)', grey: 'rgba(125, 133, 144, 0.5)', lightBlue: 'rgba(56, 139, 253, 0.8)', cyan: 'rgba(0, 255, 255, 0.8)' };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let notificationsData = { unread: [], read: [] }; // Nova variável para notificações
@@ -1486,7 +1490,7 @@
                 const gameMetacritic = parseInt(g.Metacritic) || 0;
                 const metacriticMatch = gameMetacritic >= minMetacritic && gameMetacritic <= maxMetacritic;
 
-                return gameNameMatch && statusMatch && styleMatch && yearMatch && ratingMatch && hoursMatch && priceMatch && metacriticMatch;
+                return gameNameMatch && statusMatch && styleMatch && yearMatch && ratingMatch && hoursMatch && priceMatch && metacacriticMatch;
             });
 
             if (suffix === '-graficos') {
