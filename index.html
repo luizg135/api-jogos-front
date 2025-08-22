@@ -472,6 +472,15 @@
             display: flex;
             gap: 8px;
         }
+        
+        .filter-group input, .filter-group select, .filter-group label {
+            width: 100%; 
+            box-sizing: border-box;
+        }
+        
+        .filter-group label {
+            text-align: left;
+        }
 
         .games-grid {
             display: grid;
@@ -788,7 +797,28 @@
             color: var(--secondary-text);
             margin-top: 4px;
         }
-    
+        .hidden-filters {
+            display: none;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-color);
+            margin-top: 16px;
+        }
+        .hidden-filters.active {
+            display: grid;
+            grid-column: 1 / -1;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+        .hidden-filters .filter-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+        }
+        .hidden-filters .filter-group label {
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -877,10 +907,9 @@
                         <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
                         <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
                         <div class="filter-actions">
-                            <button id="toggleAdvancedFiltersBtn-graficos" class="filter-button" title="Filtros Avançados"><span class="material-symbols-outlined">tune</span></button>
                             <button id="clearFiltersBtn-graficos" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
                         </div>
-                        <div id="advancedFilters-graficos" class="advanced-filters">
+                        <div class="hidden-filters">
                             <div class="filter-group">
                                 <label for="minRating-graficos">Nota Mín.</label>
                                 <input type="number" id="minRating-graficos" min="0" max="10" step="0.1">
@@ -946,10 +975,9 @@
                         <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
                         <div class="filter-group"><label for="yearFilter-biblioteca">Ano de Conclusão</label><select id="yearFilter-biblioteca"></select></div>
                         <div class="filter-actions">
-                            <button id="toggleAdvancedFiltersBtn-biblioteca" class="filter-button" title="Filtros Avançados"><span class="material-symbols-outlined">tune</span></button>
                             <button id="clearFiltersBtn-biblioteca" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
                         </div>
-                        <div id="advancedFilters-biblioteca" class="advanced-filters">
+                        <div class="hidden-filters">
                             <div class="filter-group">
                                 <label for="minRating-biblioteca">Nota Mín.</label>
                                 <input type="number" id="minRating-biblioteca" min="0" max="10" step="0.1">
@@ -1050,7 +1078,7 @@
 
 <div class="form-group">
     <label for="gameRating">Nota</label>
-    <input type="number" id="gameRating" step="0.1" min="0" max="10">
+    <input type="text" inputmode="decimal" id="gameRating" min="0" max="10">
 </div>
 
 <div class="form-group">
@@ -1648,14 +1676,15 @@
             const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
             const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
 
-            const minRating = parseFloat(document.getElementById('minRating' + suffix)?.value) || 0;
-            const maxRating = parseFloat(document.getElementById('maxRating' + suffix)?.value) || 10;
-            const minHours = parseFloat(document.getElementById('minHours' + suffix)?.value) || 0;
-            const maxHours = parseFloat(document.getElementById('maxHours' + suffix)?.value) || Infinity;
-            const minPrice = parseFloat(document.getElementById('minPrice' + suffix)?.value) || 0;
-            const maxPrice = parseFloat(document.getElementById('maxPrice' + suffix)?.value) || Infinity;
-            const minMetacritic = parseFloat(document.getElementById('minMetacritic' + suffix)?.value) || 0;
-            const maxMetacritic = parseFloat(document.getElementById('maxMetacritic' + suffix)?.value) || 100;
+            // Garante que os valores de filtro numéricos sejam tratados com ponto decimal
+            const minRating = parseFloat((document.getElementById('minRating' + suffix)?.value || '0').replace(',', '.')) || 0;
+            const maxRating = parseFloat((document.getElementById('maxRating' + suffix)?.value || '10').replace(',', '.')) || 10;
+            const minHours = parseFloat((document.getElementById('minHours' + suffix)?.value || '0').replace(',', '.')) || 0;
+            const maxHours = parseFloat((document.getElementById('maxHours' + suffix)?.value || 'Infinity').replace(',', '.')) || Infinity;
+            const minPrice = parseFloat((document.getElementById('minPrice' + suffix)?.value || '0').replace(',', '.')) || 0;
+            const maxPrice = parseFloat((document.getElementById('maxPrice' + suffix)?.value || 'Infinity').replace(',', '.')) || Infinity;
+            const minMetacritic = parseFloat((document.getElementById('minMetacritic' + suffix)?.value || '0').replace(',', '.')) || 0;
+            const maxMetacritic = parseFloat((document.getElementById('maxMetacritic' + suffix)?.value || '100').replace(',', '.')) || 100;
 
             const filteredGames = (fullData.biblioteca || []).filter(g => {
                 const gameNameMatch = name ? g.Nome.toLowerCase().includes(name) : true;
@@ -1663,7 +1692,8 @@
                 const styleMatch = style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true;
                 const yearMatch = year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true;
 
-                const gameRating = parseFloat(g.Nota) || 0;
+                // Converte os valores do jogo para float, tratando a vírgula
+                const gameRating = parseFloat(String(g.Nota).replace(',', '.')) || 0;
                 const ratingMatch = gameRating >= minRating && gameRating <= maxRating;
                 
                 const gameHours = parseInt(g['Tempo de Jogo']) || 0;
@@ -1675,12 +1705,12 @@
                 const gameMetacritic = parseInt(g.Metacritic) || 0;
                 const metacriticMatch = gameMetacritic >= minMetacritic && gameMetacritic <= maxMetacritic;
 
-                return gameNameMatch && statusMatch && styleMatch && yearMatch && ratingMatch && hoursMatch && priceMatch && metacriticMatch;
+                return gameNameMatch && statusMatch && styleMatch && yearMatch && ratingMatch && hoursMatch && priceMatch && metacacriticMatch;
             });
 
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
+                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(String(a).replace(',','.'))+parseFloat(String(b).replace(',','.')), 0) / notas.length).toFixed(1) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
                 renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
             } else if (suffix === '-biblioteca') {
                 renderGameTable(filteredGames);
@@ -1695,7 +1725,7 @@
             document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = gameName;
             document.getElementById('gameModalTitle').textContent = `Editar ${gameToEdit.Nome}`; document.getElementById('gameModalSubmitBtn').textContent = 'Atualizar Jogo';
             document.getElementById('gameName').value = gameToEdit.Nome; document.getElementById('gamePlatform').value = gameToEdit.Plataforma || '';
-            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = gameToEdit.Nota || '';
+            document.getElementById('gameStatus').value = gameToEdit.Status || 'Na Fila'; document.getElementById('gameRating').value = String(gameToEdit.Nota || '').replace('.', ',');
             document.getElementById('gameHours').value = gameToEdit['Tempo de Jogo'] || ''; document.getElementById('gameLink').value = gameToEdit.Link || '';
             document.getElementById('gameStyle').value = gameToEdit.Estilo || ''; document.getElementById('gamePrice').value = String(gameToEdit.Preço || '').replace('.', ',');
             document.getElementById('gameConquistas').value = gameToEdit['Conquistas Obtidas'] || ''; document.getElementById('gameTermino').value = gameToEdit['Terminado em'] || '';
@@ -1709,12 +1739,16 @@
         async function handleGameFormSubmit(event) {
             event.preventDefault();
             const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
+            
+            // Corrige a formatação para números
             const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
+            const ratingValue = document.getElementById('gameRating').value.replace(',', '.');
+
             const gameData = {
                 Nome: document.getElementById('gameName').value,
                 Plataforma: document.getElementById('gamePlatform').value,
                 Status: document.getElementById('gameStatus').value,
-                Nota: parseFloat(document.getElementById('gameRating').value.replace(',', '.')) || null,
+                Nota: parseFloat(ratingValue) || null,
                 "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
                 Link: document.getElementById('gameLink').value,
                 Estilo: document.getElementById('gameStyle').value,
@@ -1785,8 +1819,15 @@
         async function handleWishFormSubmit(event) {
             event.preventDefault();
             const editModeValue = document.getElementById('editWishMode').value; const isEditing = editModeValue !== '';
+            
             const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
-            const wishData = { Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value, "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0 };
+            
+            const wishData = { 
+                Nome: document.getElementById('wishGameName').value, 
+                Link: document.getElementById('wishGameLink').value, 
+                "Data Lançamento": document.getElementById('wishGameRelease').value, 
+                Preço: parseFloat(priceValue) || 0 
+            };
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
             try {
@@ -1903,7 +1944,7 @@
             document.getElementById('gameStatusDetails').textContent = game.Status || 'Não informado';
             
             const gameRatingDetails = document.getElementById('gameRatingDetails');
-            const gameRating = parseFloat(game.Nota);
+            const gameRating = parseFloat(String(game.Nota).replace(',', '.'));
             gameRatingDetails.textContent = game.Nota || 'N/A';
             gameRatingDetails.className = 'rating-score';
             if (!isNaN(gameRating)) {
@@ -2054,11 +2095,9 @@
         updateSortIcons();
             
             const setupFilterListeners = (suffix) => {
-                const advancedFiltersContainer = document.getElementById('advancedFilters' + suffix);
-                setupListener('toggleAdvancedFiltersBtn' + suffix, 'click', () => {
-                    advancedFiltersContainer.classList.toggle('active');
-                });
-
+                // Remove o botão de filtros avançados, pois agora ele não é mais necessário
+                // e a lógica de toggleMainFilters já controla tudo
+                
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter', 'minRating', 'maxRating', 'minHours', 'maxHours', 'minPrice', 'maxPrice', 'minMetacritic', 'maxMetacritic'].forEach(id => {
                     setupListener(id + suffix, 'input', () => applyFilters(suffix));
                 });
