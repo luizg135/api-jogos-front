@@ -860,57 +860,62 @@
 
             <section id="graficos" class="page">
                 <header class="profile-header">
-                    <div class="profile-main">
+                    <div class="profile-main" style="justify-content: space-between;">
                         <div class="profile-info">
                             <h1 style="color: var(--accent-purple);">Análise Gráfica</h1>
                             <p>Visão detalhada sobre seus hábitos e conquistas.</p>
                         </div>
+                        <div class="header-actions">
+                            <button class="nav-button" id="toggleMainFiltersBtn-graficos" title="Filtros"><span class="material-symbols-outlined">filter_list</span></button>
+                        </div>
                     </div>
                 </header>
-                <section class="filter-bar">
-                    <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
-                    <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
-                    <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
-                    <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
-                    <div class="filter-actions">
-                        <button id="toggleAdvancedFiltersBtn-graficos" class="filter-button" title="Filtros Avançados"><span class="material-symbols-outlined">tune</span></button>
-                        <button id="clearFiltersBtn-graficos" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
-                    </div>
-                    <div id="advancedFilters-graficos" class="advanced-filters">
-                        <div class="filter-group">
-                            <label for="minRating-graficos">Nota Mín.</label>
-                            <input type="number" id="minRating-graficos" min="0" max="10" step="0.1">
+                <div id="filter-bar-container-graficos" style="display: none;">
+                    <section class="filter-bar">
+                        <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
+                        <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
+                        <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
+                        <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
+                        <div class="filter-actions">
+                            <button id="toggleAdvancedFiltersBtn-graficos" class="filter-button" title="Filtros Avançados"><span class="material-symbols-outlined">tune</span></button>
+                            <button id="clearFiltersBtn-graficos" class="filter-button" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button>
                         </div>
-                        <div class="filter-group">
-                            <label for="maxRating-graficos">Nota Máx.</label>
-                            <input type="number" id="maxRating-graficos" min="0" max="10" step="0.1">
+                        <div id="advancedFilters-graficos" class="advanced-filters">
+                            <div class="filter-group">
+                                <label for="minRating-graficos">Nota Mín.</label>
+                                <input type="number" id="minRating-graficos" min="0" max="10" step="0.1">
+                            </div>
+                            <div class="filter-group">
+                                <label for="maxRating-graficos">Nota Máx.</label>
+                                <input type="number" id="maxRating-graficos" min="0" max="10" step="0.1">
+                            </div>
+                            <div class="filter-group">
+                                <label for="minHours-graficos">Horas Mín.</label>
+                                <input type="number" id="minHours-graficos" min="0">
+                            </div>
+                            <div class="filter-group">
+                                <label for="maxHours-graficos">Horas Máx.</label>
+                                <input type="number" id="maxHours-graficos" min="0">
+                            </div>
+                            <div class="filter-group">
+                                <label for="minPrice-graficos">Preço Mín.</label>
+                                <input type="number" id="minPrice-graficos" min="0">
+                            </div>
+                            <div class="filter-group">
+                                <label for="maxPrice-graficos">Preço Máx.</label>
+                                <input type="number" id="maxPrice-graficos" min="0">
+                            </div>
+                            <div class="filter-group">
+                                <label for="minMetacritic-graficos">Metacritic Mín.</label>
+                                <input type="number" id="minMetacritic-graficos" min="0" max="100">
+                            </div>
+                            <div class="filter-group">
+                                <label for="maxMetacritic-graficos">Metacritic Máx.</label>
+                                <input type="number" id="maxMetacritic-graficos" min="0" max="100">
+                            </div>
                         </div>
-                        <div class="filter-group">
-                            <label for="minHours-graficos">Horas Mín.</label>
-                            <input type="number" id="minHours-graficos" min="0">
-                        </div>
-                        <div class="filter-group">
-                            <label for="maxHours-graficos">Horas Máx.</label>
-                            <input type="number" id="maxHours-graficos" min="0">
-                        </div>
-                        <div class="filter-group">
-                            <label for="minPrice-graficos">Preço Mín.</label>
-                            <input type="number" id="minPrice-graficos" min="0">
-                        </div>
-                        <div class="filter-group">
-                            <label for="maxPrice-graficos">Preço Máx.</label>
-                            <input type="number" id="maxPrice-graficos" min="0">
-                        </div>
-                        <div class="filter-group">
-                            <label for="minMetacritic-graficos">Metacritic Mín.</label>
-                            <input type="number" id="minMetacritic-graficos" min="0" max="100">
-                        </div>
-                        <div class="filter-group">
-                            <label for="maxMetacritic-graficos">Metacritic Máx.</label>
-                            <input type="number" id="maxMetacritic-graficos" min="0" max="100">
-                        </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
                 <div id="summary-graficos" class="summary-grid"></div>
                 <div id="charts-container" class="charts-grid">
                     <div class="chart-card"><h3>Jogos Platinados</h3><div class="chart-wrapper"><canvas id="platinadosChart"></canvas></div></div>
@@ -929,12 +934,12 @@
                         </div>
                         <div class="header-actions">
                             <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">view_list</span></button>
-                            <button class="nav-button" id="toggleMainFiltersBtn" title="Filtros"><span class="material-symbols-outlined">filter_list</span></button>
+                            <button class="nav-button" id="toggleMainFiltersBtn-biblioteca" title="Filtros"><span class="material-symbols-outlined">filter_list</span></button>
                             <button class="nav-button" id="addGameBtn" title="Adicionar Novo Jogo"><span class="material-symbols-outlined">add</span></button>
                         </div>
                     </div>
                 </header>
-                <div id="filter-bar-container" style="display: none;">
+                <div id="filter-bar-container-biblioteca" style="display: none;">
                     <section class="filter-bar">
                         <div class="filter-group"><label for="nameFilter-biblioteca">Buscar por Nome</label><input type="search" id="nameFilter-biblioteca" placeholder="Ex: Elden Ring"></div>
                         <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
@@ -1997,10 +2002,9 @@
             const tableContainer = document.querySelector('#biblioteca .table-container');
             const gridContainer = document.getElementById('game-grid-container');
             const toggleBtnIcon = document.querySelector('#toggleViewBtn .material-symbols-outlined');
+            const isGridViewActive = gridContainer.style.display !== 'none';
 
-            const isGridVisible = gridContainer.style.display !== 'none';
-
-            if (isGridVisible) {
+            if (isGridViewActive) {
                 gridContainer.style.display = 'none';
                 tableContainer.style.display = 'block';
                 toggleBtnIcon.textContent = 'grid_view';
@@ -2011,9 +2015,9 @@
             }
         }
         
-        function toggleMainFilters() {
-            const filterContainer = document.getElementById('filter-bar-container');
-            const isVisible = filterContainer.style.display === 'grid';
+        function toggleMainFilters(suffix) {
+            const filterContainer = document.getElementById('filter-bar-container' + suffix);
+            const isVisible = filterContainer.style.display !== 'none';
             filterContainer.style.display = isVisible ? 'none' : 'block';
         }
 
@@ -2032,7 +2036,8 @@
                 icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
             });
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
-            setupListener('toggleMainFiltersBtn', 'click', toggleMainFilters);
+            setupListener('toggleMainFiltersBtn-biblioteca', 'click', () => toggleMainFilters('-biblioteca'));
+            setupListener('toggleMainFiltersBtn-graficos', 'click', () => toggleMainFilters('-graficos'));
             setupListener('achievementsShortcut', 'click', openAchievementsModal);
             setupListener('notificationBtn', 'click', openNotificationModal);
             setupListener('gameDetailsModal', 'click', (event) => {
