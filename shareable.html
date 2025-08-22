@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil Gamer de Luiz Gabriel</title>
-    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap)" rel="stylesheet">
-    <link rel="stylesheet" href="[https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200](https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200)" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
         :root {
             --rank-bronze: #CD7F32; --rank-prata: #C0C0C0; --rank-ouro: #FFD700;
@@ -178,7 +178,7 @@
 <body>
     <div class="profile-card">
         <div class="profile-header">
-            <img src="[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)" alt="Avatar" class="profile-avatar" id="publicProfileAvatar">
+            <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="publicProfileAvatar">
             <div class="profile-info">
                 <h1 id="publicGamerName">Carregando...</h1>
                 <p id="publicProfileSubtitle">Resumo da jornada!</p>
@@ -229,7 +229,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const API_URL = '[https://api-jogos-nrma.onrender.com/api/games/public-profile](https://api-jogos-nrma.onrender.com/api/games/public-profile)';
+            const API_URL = 'https://api-jogos-nrma.onrender.com/api/games/public-profile';
 
             try {
                 const response = await fetch(API_URL);
@@ -244,7 +244,7 @@
 
                 const avatar = document.getElementById('publicProfileAvatar');
                 if (avatar) {
-                    avatar.src = profile.profileAvatar || '[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)';
+                    avatar.src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
                 }
 
                 const gamerNameElement = document.getElementById('publicGamerName');
@@ -273,34 +273,23 @@
                     expText.textContent = `${currentExp.toLocaleString('pt-BR')} / ${expForNextLevel.toLocaleString('pt-BR')} EXP`;
                 }
 
-                const totalGamesElement = document.getElementById('publicTotalJogos');
-                if (totalGamesElement) totalGamesElement.textContent = stats.total_jogos || 0;
-                
-                const totalHoursElement = document.getElementById('publicTotalHoras');
-                if (totalHoursElement) totalHoursElement.textContent = `${stats.total_horas_jogadas || 0}h`;
-                
-                const totalPlatinadosElement = document.getElementById('publicTotalPlatinados');
-                if (totalPlatinadosElement) totalPlatinadosElement.textContent = stats.total_platinados || 0;
-
-                const mediaNotasElement = document.getElementById('publicMediaNotas');
-                if (mediaNotasElement) mediaNotasElement.textContent = stats.media_notas || 'N/A';
-
-                const totalConquistasElement = document.getElementById('publicTotalConquistas');
-                if (totalConquistasElement) totalConquistasElement.textContent = stats.total_conquistas || 0;
+                document.getElementById('publicTotalJogos').textContent = stats.total_jogos || 0;
+                document.getElementById('publicTotalHoras').textContent = `${stats.total_horas_jogadas || 0}h`;
+                document.getElementById('publicTotalPlatinados').textContent = stats.total_platinados || 0;
+                document.getElementById('publicMediaNotas').textContent = stats.media_notas || 'N/A';
+                document.getElementById('publicTotalConquistas').textContent = stats.total_conquistas || 0;
                 
 
                 const platinumsContainer = document.getElementById('publicRecentPlatinums');
-                if (platinumsContainer) {
-                    if (recentPlatinums.length > 0) {
-                        platinumsContainer.innerHTML = recentPlatinums.map(game => `
-                            <div class="platinum-item">
-                                <img src="${game.Link || '[https://i.imgur.com/Z0ebi8o.png](https://i.imgur.com/Z0ebi8o.png)'}" alt="${game.Nome}">
-                                <div class="platinum-overlay">${game.Nome}</div>
-                            </div>
-                        `).join('');
-                    } else {
-                        platinumsContainer.innerHTML = '<p style="color: #7d8590; font-size: 14px;">Nenhum jogo platinado com imagem encontrada.</p>';
-                    }
+                if (recentPlatinums.length > 0) {
+                    platinumsContainer.innerHTML = recentPlatinums.map(game => `
+                        <div class="platinum-item">
+                            <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${game.Nome}">
+                            <div class="platinum-overlay">${game.Nome}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    platinumsContainer.innerHTML = '<p style="color: #7d8590; font-size: 14px;">Nenhum jogo platinado com imagem encontrada.</p>';
                 }
 
             } catch (error) {
