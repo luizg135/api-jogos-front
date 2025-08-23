@@ -640,6 +640,26 @@
             max-height: 200px;
             overflow-y: auto;
         }
+        /* Estilos para a barra de rolagem da descrição do jogo */
+        .game-details-description p::-webkit-scrollbar {
+            width: 8px; 
+        }
+
+        .game-details-description p::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+
+        .game-details-description p::-webkit-scrollbar-thumb {
+            background-color: var(--border-color); 
+            border-radius: 10px; 
+            border: 2px solid var(--bg-color); 
+        }
+
+        .game-details-description p {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--bg-color);
+        }
+
         .game-details-actions {
             grid-column: 1 / -1;
             display: flex;
@@ -726,11 +746,43 @@
             color: var(--primary-text);
             border-color: var(--primary-text);
         }
+
+        /* Loading Screen Styles */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000; /* Tela preta */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999; /* Garante que fique acima de tudo */
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #loading-screen img {
+            max-width: 80%; /* Ajusta o tamanho do GIF */
+            max-height: 80%;
+            object-fit: contain;
+        }
     
     </style>
 </head>
 
 <body class="dark-mode">
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <img src="https://github.com/luizg135/api-jogos-front/blob/main/Sif.gif?raw=true" alt="Loading GIF">
+    </div>
 
     <nav class="sidebar">
         <span class="material-symbols-outlined sidebar-logo">stadia_controller</span>
@@ -1145,6 +1197,9 @@
 
         async function fetchGameData() {
             try {
+                // Mostra a tela de carregamento antes de buscar os dados
+                document.getElementById('loading-screen').classList.remove('hidden');
+
                 const response = await fetch(`${API_URL}/games/data`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (response.status === 401) { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; return; }
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -1153,6 +1208,9 @@
             } catch (err) {
                 console.error('Erro ao buscar dados:', err);
                 document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
+            } finally {
+                // Esconde a tela de carregamento após a tentativa de buscar os dados
+                document.getElementById('loading-screen').classList.add('hidden');
             }
         }
         
