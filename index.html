@@ -965,7 +965,7 @@
             text-decoration: line-through; /* Menor preço riscado */
         }
 
-        .wish-card-platform-price .price-indicator {
+        .price-indicator {
             font-size: 10px;
             font-weight: 600;
             padding: 2px 6px;
@@ -987,6 +987,19 @@
         .price-indicator.bad {
             background-color: #dc3545; /* Vermelho para "Preço Alto" */
             color: white;
+        }
+
+        /* Ajuste para a largura dos cards da lista de desejos */
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Aumentado de 140px para 180px */
+            gap: 16px;
+        }
+
+        .wish-card {
+            /* Mantém os estilos existentes e a proporção, mas se adapta à nova largura mínima */
+            aspect-ratio: 3 / 4; /* Mantém a proporção */
+            /* Outros estilos existentes */
         }
     
     </style>
@@ -1673,10 +1686,12 @@
                     return 'bad'; // Mais de 20% acima
                 };
 
-                const psCurrentPrice = game['PS Preço Atual'] || 0;
-                const psLowestPrice = game['PS Menor Preço Histórico'] || 0;
-                const steamCurrentPrice = game['Steam Preço Atual'] || 0;
-                const steamLowestPrice = game['Steam Menor Preço Histórico'] || 0;
+                // --- CORREÇÃO AQUI: Garantir que os valores sejam numéricos antes de usar ---
+                const psCurrentPrice = parseFloat(game['PS Preço Atual']) || 0;
+                const psLowestPrice = parseFloat(game['PS Menor Preço Histórico']) || 0;
+                const steamCurrentPrice = parseFloat(game['Steam Preço Atual']) || 0;
+                const steamLowestPrice = parseFloat(game['Steam Menor Preço Histórico']) || 0;
+                // --- FIM CORREÇÃO ---
 
                 const psIndicator = getPriceIndicator(psCurrentPrice, psLowestPrice);
                 const steamIndicator = getPriceIndicator(steamCurrentPrice, steamLowestPrice);
