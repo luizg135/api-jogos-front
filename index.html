@@ -993,7 +993,7 @@
         /* Ajuste para a largura dos cards da lista de desejos */
         .wishlist-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Aumentado de 180px para 200px */
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Aumentado de 200px para 220px */
             gap: 16px;
         }
 
@@ -1642,7 +1642,7 @@
                 const plataforma = game.Plataforma || '-';
                 const tempoDeJogo = game['Tempo de Jogo'] || 0;
                 
-                const trophyIconHTML = game['Platinado?'] === 'Sim' 
+                const trophyIconHTML = game['Platinado?']'] === 'Sim' 
                     ? `<span class="material-symbols-outlined game-card-trophy">emoji_events</span>`
                     : '';
 
@@ -1704,7 +1704,7 @@
                         <h3 class="wish-card-title">${game.Nome}</h3>
                         <div class="wish-card-details">
                             <span>${game['Data Lançamento']}</span>
-                            <span class="wish-card-price">${formatCurrency(game.Preço)}</span>
+                            <!-- REMOVIDO: <span class="wish-card-price">${formatCurrency(game.Preço)}</span> -->
                         </div>
                         <div class="wish-card-prices">
                             ${psCurrentPrice > 0 ? `
@@ -1945,12 +1945,16 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                        const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
                         if (response.ok) {
                             showToast("Jogo deletado com sucesso!");
                             fetchGameData();
                         } else {
-                            showToast("Erro ao deletar jogo.", true);
+                            const error = await response.json();
+                            showToast(error.message || "Erro ao deletar o item.", true);
                         }
                     } catch(err) {
                         showToast("Erro de conexão.", true);
@@ -1963,7 +1967,7 @@
         function editGame(gameName) { openGameModalForEdit(gameName); }
         
         function openWishModal() {
-            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = '';
+            document.getElementById('addWishForm').reset(); document.getElementById('editMode').value = '';
             document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos'; document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
             document.getElementById('addWishModal').classList.add('active');
         }
