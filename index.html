@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil Gamer</title>
-    <!-- Favicon para evitar o erro 404 -->
-    <link rel="icon" href="https://www.google.com/s2/favicons?domain=netlify.app" type="image/x-icon">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -251,7 +249,6 @@
             border: 1px solid var(--border-color); overflow: hidden; border-bottom: 3px solid transparent;
             transition: all 0.2s ease;
             position: relative;
-            cursor: pointer; /* Adicionado cursor pointer para indicar clicável */
         }
         .wish-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .wish-card-img { width: 100%; height: 180px; object-fit: cover; display: block; background-color: #010409; }
@@ -399,7 +396,7 @@
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 20px;
         }
 
@@ -935,279 +932,6 @@
         .mark-all-read-btn:hover {
             background-color: #a884e9;
         }
-
-        /* Estilos para os preços na lista de desejos */
-        .wish-card-prices {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin-top: 8px;
-            font-size: 11px;
-            color: var(--secondary-text);
-        }
-
-        .wish-card-platform-price {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .wish-card-platform-price .platform-name {
-            font-weight: 500;
-            color: var(--primary-text);
-        }
-
-        .wish-card-platform-price .current-price {
-            font-weight: 600;
-            color: var(--accent-purple); /* Preço atual em roxo */
-        }
-
-        .wish-card-platform-price .lowest-price {
-            font-size: 10px;
-            color: var(--secondary-text);
-            text-decoration: line-through; /* Menor preço riscado */
-            margin-left: 5px; /* Espaçamento entre preço atual e menor preço */
-        }
-
-        .price-indicator {
-            font-size: 10px;
-            font-weight: 600;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 8px;
-            white-space: nowrap;
-        }
-
-        .price-indicator.good {
-            background-color: var(--accent-green); /* Verde para "Bom Preço" */
-            color: white;
-        }
-
-        .price-indicator.average {
-            background-color: #ffc107; /* Amarelo para "Preço Médio" */
-            color: #333;
-        }
-
-        .price-indicator.bad {
-            background-color: #dc3545; /* Vermelho para "Preço Alto" */
-            color: white;
-        }
-
-        /* Ajuste para a largura dos cards da lista de desejos */
-        .wishlist-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Aumentado de 220px para 250px */
-            gap: 16px;
-        }
-
-        .wish-card {
-            /* Mantém os estilos existentes e a proporção, mas se adapta à nova largura mínima */
-            aspect-ratio: 3 / 4; /* Mantém a proporção */
-            /* Outros estilos existentes */
-        }
-
-        /* Estilos para o novo modal de detalhes da Wishlist */
-        .wish-details-modal-content {
-            background-color: var(--surface-color);
-            padding: 0;
-            border-radius: 16px;
-            max-width: 600px; /* Largura para o modal de detalhes */
-            width: 90%;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transform: scale(0.95);
-            transition: transform 0.3s ease-out;
-        }
-        .modal-overlay.active .wish-details-modal-content {
-            transform: scale(1);
-        }
-        .wish-details-header {
-            position: relative;
-            height: 200px; /* Altura menor para a capa */
-            overflow: hidden;
-            border-radius: 16px 16px 0 0;
-        }
-        .wish-details-header img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.6);
-        }
-        .wish-details-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(16, 17, 22, 0.9) 20%, transparent);
-            padding: 16px;
-            display: flex;
-            align-items: flex-end;
-            gap: 16px;
-        }
-        .wish-details-info .wish-cover-art {
-            width: 80px; /* Capa menor no modal */
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            transform: translateY(24px); /* Levanta um pouco a capa */
-        }
-        .wish-details-info-text {
-            flex-grow: 1;
-        }
-        .wish-details-info-text h2 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-text);
-        }
-        .wish-details-info-text p {
-            margin: 4px 0 0 0;
-            font-size: 14px;
-            color: var(--secondary-text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .wish-details-body {
-            padding: 36px 24px 24px 24px; /* Ajustado padding-top para acomodar a capa */
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            color: var(--primary-text);
-        }
-        .wish-details-section {
-            background-color: var(--bg-color);
-            padding: 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        .wish-details-section h3 {
-            margin: 0 0 12px 0;
-            font-size: 16px;
-            color: var(--secondary-text);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-        }
-        .wish-details-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-            font-size: 13px;
-            border-bottom: 1px dashed rgba(var(--border-color-rgb), 0.5); /* Linha tracejada */
-        }
-        .wish-details-item:last-child {
-            border-bottom: none;
-        }
-        .wish-details-item span:first-child {
-            color: var(--secondary-text);
-            font-weight: 500;
-        }
-        .wish-details-item span:last-child {
-            font-weight: 600;
-        }
-        .wish-details-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            padding-top: 16px;
-        }
-        .wish-details-actions .action-button {
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: var(--secondary-text);
-            border: 1px solid var(--border-color);
-        }
-        .wish-details-actions .action-button:hover {
-            color: var(--primary-text);
-            background-color: var(--bg-color);
-        }
-        .wish-details-actions .delete-btn {
-            color: #cb2d3e;
-            border-color: #cb2d3e;
-        }
-        .wish-details-actions .delete-btn:hover {
-            background-color: #cb2d3e;
-            color: white;
-        }
-        .wish-details-actions .buy-btn {
-            color: var(--accent-green);
-            border-color: var(--accent-green);
-        }
-        .wish-details-actions .buy-btn:hover {
-            background-color: var(--accent-green);
-            color: white;
-        }
-
-        /* Filtros para a lista de desejos */
-        #wishlist-filters {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px;
-        }
-        #wishlist-filters .filter-group label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--secondary-text);
-            margin-bottom: 8px;
-        }
-        #wishlist-filters .filter-group input,
-        #wishlist-filters .filter-group select {
-            width: 100%;
-            background-color: var(--bg-color);
-            color: var(--primary-text);
-            border: 1px solid var(--border-color);
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        #wishlist-filters .filter-actions {
-            grid-column: 1 / -1; /* Ocupa todas as colunas */
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 16px;
-        }
-        #wishlist-filters .filter-actions button {
-            width: auto;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        #wishlist-filters .filter-actions .apply-btn {
-            background-color: var(--accent-purple);
-            color: white;
-            border: none;
-        }
-        #wishlist-filters .filter-actions .apply-btn:hover {
-            background-color: #a884e9;
-        }
-        #wishlist-filters .filter-actions .clear-btn {
-            background-color: transparent;
-            color: var(--secondary-text);
-            border: 1px solid var(--border-color);
-        }
-        #wishlist-filters .filter-actions .clear-btn:hover {
-            color: var(--primary-text);
-            border-color: var(--primary-text);
-        }
     
     </style>
 </head>
@@ -1354,26 +1078,9 @@
                             <h1 style="color: var(--accent-purple);">Lista de Desejos</h1>
                             <p>Seus próximos jogos e futuras aventuras.</p>
                         </div>
-                        <!-- Botão para abrir o modal de filtros avançados para a aba da lista de desejos -->
-                        <div class="header-actions">
-                            <button class="nav-button" id="openAdvancedFiltersBtn-desejos" title="Filtros Avançados">
-                                <span class="material-symbols-outlined">filter_alt</span>
-                            </button>
-                            <button class="nav-button" id="addWishBtn" title="Adicionar Jogo à Lista"><span class="material-symbols-outlined">add</span></button>
-                        </div>
+                        <button class="nav-button" id="addWishBtn" title="Adicionar Jogo à Lista"><span class="material-symbols-outlined">add</span></button>
                     </div>
                 </header>
-                <!-- Filtros para a lista de desejos -->
-                <div id="wishlist-filters">
-                    <div class="filter-group"><label for="wishNameFilter">Buscar por Nome</label><input type="search" id="wishNameFilter" placeholder="Ex: Elden Ring"></div>
-                    <div class="filter-group"><label for="wishReleaseDateFilter">Data Lançamento</label><input type="text" id="wishReleaseDateFilter" placeholder="DD/MM/AAAA"></div>
-                    <div class="filter-group"><label for="wishMinPriceFilter">Preço Mín. (R$)</label><input type="number" id="wishMinPriceFilter" step="0.01" min="0" placeholder="0,00"></div>
-                    <div class="filter-group"><label for="wishMaxPriceFilter">Preço Máx. (R$)</label><input type="number" id="wishMaxPriceFilter" step="0.01" min="0" placeholder="999,99"></div>
-                    <div class="filter-actions">
-                        <button class="clear-btn" onclick="clearWishFilters()">Limpar</button>
-                        <button class="apply-btn" onclick="applyWishFilters()">Aplicar</button>
-                    </div>
-                </div>
                 <div id="wishlist-container" class="wishlist-grid"></div>
             </section>
         </div>
@@ -1511,8 +1218,6 @@
             <h2 id="wishModalTitle">Adicionar à Lista de Desejos</h2>
             <form id="addWishForm">
             <input type="hidden" id="editWishMode" value="">
-            <!-- Novo campo para armazenar o nome original do desejo ao editar -->
-            <input type="hidden" id="originalWishName" value="">
 
             <div class="form-group">
                 <label for="wishGameName">Nome do Jogo</label>
@@ -1530,11 +1235,10 @@
                 <input type="text" id="wishGameRelease" placeholder="Ex: 2025, Em Breve">
             </div>
 
-            <!-- Removido o campo de preço do formulário de adicionar/editar desejos -->
-            <!-- <div class="form-group">
+            <div class="form-group">
                 <label for="wishGamePrice">Preço (R$)</label>
                 <input type="text" inputmode="decimal" id="wishGamePrice" placeholder="Ex: 59,90">
-            </div> -->
+            </div>
 
             <button type="submit" id="wishModalSubmitBtn">Adicionar à Lista</button>
                         </form>
@@ -1651,60 +1355,6 @@
             </div>
             <!-- Botão para marcar todas como lidas -->
             <button class="mark-all-read-btn" onclick="markAllNotificationsAsRead()">Marcar todas como lidas</button>
-        </div>
-    </div>
-
-    <!-- Novo Modal de Detalhes da Wishlist -->
-    <div id="wishDetailsModal" class="modal-overlay" onclick="if (event.target === this) closeWishDetailsModal()">
-        <div class="wish-details-modal-content">
-            <span class="close-button" onclick="closeWishDetailsModal()">&times;</span>
-            <div class="wish-details-header">
-                <img id="wishCoverBackground" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo">
-                <div class="wish-details-info">
-                    <img id="wishCoverArt" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo" class="wish-cover-art">
-                    <div class="wish-details-info-text">
-                        <h2 id="wishNameDetails">Nome do Jogo</h2>
-                        <p id="wishReleaseDetails">Data de Lançamento</p>
-                    </div>
-                </div>
-            </div>
-            <div class="wish-details-body">
-                <div class="wish-details-section">
-                    <h3>Preços na PSN</h3>
-                    <div class="wish-details-item">
-                        <span>Preço Atual:</span>
-                        <span id="wishPSNCurrPrice">N/A</span>
-                    </div>
-                    <div class="wish-details-item">
-                        <span>Menor Preço Histórico:</span>
-                        <span id="wishPSNLowestPrice">N/A</span>
-                    </div>
-                    <div class="wish-details-item">
-                        <span>Indicador:</span>
-                        <span id="wishPSNIndicator" class="price-indicator">N/A</span>
-                    </div>
-                </div>
-                <div class="wish-details-section">
-                    <h3>Preços na Steam</h3>
-                    <div class="wish-details-item">
-                        <span>Preço Atual:</span>
-                        <span id="wishSteamCurrPrice">N/A</span>
-                    </div>
-                    <div class="wish-details-item">
-                        <span>Menor Preço Histórico:</span>
-                        <span id="wishSteamLowestPrice">N/A</span>
-                    </div>
-                    <div class="wish-details-item">
-                        <span>Indicador:</span>
-                        <span id="wishSteamIndicator" class="price-indicator">N/A</span>
-                    </div>
-                </div>
-                <div class="wish-details-actions">
-                    <button class="action-button buy-btn" id="buyWishDetailsBtn"><span class="material-symbols-outlined">shopping_cart_checkout</span> Marcar como Comprado</button>
-                    <button class="action-button" id="editWishDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar</button>
-                    <button class="action-button delete-btn" id="deleteWishDetailsBtn"><span class="material-symbols-outlined">delete</span> Excluir</button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -1833,9 +1483,7 @@
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             const cards = [
                 { t: 'Total de Jogos', v: stats.total_jogos || 0, i: 'sports_esports' }, { t: 'Horas Jogadas', v: `${(stats.total_horas_jogadas || 0).toLocaleString('pt-BR')}h`, i: 'timer' },
-                { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' }, 
-                // --- CORREÇÃO AQUI: Garantir que media_notas é um número antes de chamar toFixed ---
-                { t: 'Média das Notas', v: typeof stats.media_notas === 'number' ? stats.media_notas.toFixed(2) : 'N/A', i: 'star' },
+                { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' }, { t: 'Média das Notas', v: stats.media_notas?.toFixed(2) || 'N/A', i: 'star' },
                 { t: 'Platinados', v: stats.total_platinados || 0, i: 'emoji_events' }, { t: 'Conquistas', v: stats.total_conquistas || 0, i: 'military_tech' }
             ];
             container.innerHTML = cards.map(c => `<div class="card"><div class="card-header"><span class="material-symbols-outlined">${c.i}</span><span>${c.t}</span></div><p class="card-content">${c.v}</p></div>`).join('');
@@ -1956,54 +1604,23 @@
                 container.innerHTML = `<p style="color: var(--secondary-text);">Sua lista de desejos está vazia.</p>`; 
                 return; 
             }
-            const formatCurrency = (val) => parseFloat(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             container.innerHTML = wishlist.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
-                
-                // Lógica para determinar o indicador de preço
-                const getPriceIndicator = (currentPrice, lowestPrice) => {
-                    if (currentPrice === 0 || lowestPrice === 0) return '';
-                    if (currentPrice <= lowestPrice * 1.05) return 'good'; // Até 5% acima do menor histórico
-                    if (currentPrice <= lowestPrice * 1.20) return 'average'; // Até 20% acima
-                    return 'bad'; // Mais de 20% acima
-                };
-
-                const psCurrentPrice = parseFloat(game['PS Preço Atual']) || 0;
-                const psLowestPrice = parseFloat(game['PS Menor Preço Histórico']) || 0;
-                const steamCurrentPrice = parseFloat(game['Steam Preço Atual']) || 0;
-                const steamLowestPrice = parseFloat(game['Steam Menor Preço Histórico']) || 0;
-
-                const psIndicator = getPriceIndicator(psCurrentPrice, psLowestPrice);
-                const steamIndicator = getPriceIndicator(steamCurrentPrice, steamLowestPrice);
-
                 return `
-                <div class="wish-card" onclick="openWishDetailsModal('${safeName}')">
-                    <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" class="wish-card-img" alt="${safeName}">
+                <div class="wish-card">
+                    <img src="${game.Link}" class="wish-card-img" alt="${safeName}">
                     <div class="wish-card-info">
                         <h3 class="wish-card-title">${game.Nome}</h3>
                         <div class="wish-card-details">
                             <span>${game['Data Lançamento']}</span>
+                            <span class="wish-card-price">${formatCurrency(game.Preço)}</span>
                         </div>
-                        <div class="wish-card-prices">
-                            ${psCurrentPrice > 0 ? `
-                                <div class="wish-card-platform-price">
-                                    <span class="platform-name">PSN:</span>
-                                    <div>
-                                        <span class="current-price">${formatCurrency(psCurrentPrice)}</span>
-                                        <span class="price-indicator ${psIndicator}">${psIndicator === 'good' ? 'BOM' : psIndicator === 'average' ? 'MÉDIO' : psnIndicator === 'bad' ? 'ALTO' : ''}</span>
-                                    </div>
-                                </div>
-                            ` : ''}
-                            ${steamCurrentPrice > 0 ? `
-                                <div class="wish-card-platform-price">
-                                    <span class="platform-name">Steam:</span>
-                                    <div>
-                                        <span class="current-price">${formatCurrency(steamCurrentPrice)}</span>
-                                        <span class="price-indicator ${steamIndicator}">${steamIndicator === 'good' ? 'BOM' : steamIndicator === 'average' ? 'MÉDIO' : steamIndicator === 'bad' ? 'ALTO' : ''}</span>
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
+                    </div>
+                    <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
+                        <button class="action-button" onclick="purchaseWish('${safeName}')" title="Marcar como Comprado"><span class="material-symbols-outlined" style="font-size: 18px;">shopping_cart_checkout</span></button>
+                        <button class="action-button" onclick="editWish('${safeName}')" title="Editar"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></button>
+                        <button class="action-button" onclick="deleteWish('${safeName}')" title="Excluir"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button>
                     </div>
                 </div>`;
             }).join('');
@@ -2018,9 +1635,9 @@
                 const progressPercent = ach.meta > 0 ? (ach.progresso_atual / ach.meta) * 100 : 100;
                 return `<div class="achievement-card ${isCompleted ? 'completed' : ''}"><div class="achievement-icon tier-${ach.Tier || 'default'}"><span class="material-symbols-outlined">${ach.Icone || 'star'}</span></div><div class="achievement-details"><h3>${ach.Nome}</h3><p>${ach.Descricao}</p>${isCompleted ? `<p class="exp-reward">+${ach.EXP} EXP</p>` : `<div class="achievement-progress-bar-container"><div class="achievement-progress-bar" style="width: ${progressPercent}%;"></div></div><p class="achievement-progress-text">${Math.floor(ach.progresso_atual)} / ${ach.meta}</p>`}</div></div>`;
             };
-            completedContainer.innerHTML = completed.length > 0 ? completed.map(createAchievementHTML).join('') : `<p>Nenhuma conquista concluída.</p>`;
-            pendingContainer.innerHTML = pending.length > 0 ? pending.map(createAchievementHTML).join('') : `<p>Todas as conquistas foram concluídas!</p>`;
-            mainContainer.innerHTML = completed.map(createAchievementHTML).join('');
+            completedContainer.innerHTML = completed.length > 0 ? completed.map(ach => createAchievementHTML(ach, true)).join('') : `<p>Nenhuma conquista concluída.</p>`;
+            pendingContainer.innerHTML = pending.length > 0 ? pending.map(ach => createAchievementHTML(ach, false)).join('') : `<p>Todas as conquistas foram concluídas!</p>`;
+            mainContainer.innerHTML = completed.map(ach => createAchievementHTML(ach, true)).join('');
         }
 
         function destroyCharts() { Object.values(createdCharts).forEach(chart => chart.destroy()); createdCharts = {}; }
@@ -2059,23 +1676,6 @@
                 populate('styleFilter' + suffix, styles); 
                 populate('yearFilter' + suffix, years);
             });
-            
-            // Popula filtros para a lista de desejos
-            const wishYears = [...new Set(fullData.desejos.map(w => {
-                const date = w['Data Lançamento'];
-                if (date && (date.includes('/') || date.includes('-'))) {
-                    try {
-                        const parsedDate = date.includes('/') ? new Date(date.split('/').reverse().join('-')) : new Date(date);
-                        return parsedDate.getFullYear();
-                    } catch (e) {
-                        console.warn("Invalid date format in wishlist:", date);
-                        return null;
-                    }
-                }
-                return null;
-            }).filter(Boolean))].sort((a,b) => b-a);
-            // Este filtro foi removido do HTML, então esta linha pode ser removida ou ignorada se não for mais usada.
-            // populate('wishReleaseYearFilter', wishYears); 
         }
         
         function applyFilters(suffix) {
@@ -2146,34 +1746,21 @@
         }
 
         // Função para limpar todos os filtros no modal
-function clearAllFilters(suffix) {
-    var el;
-    el = document.getElementById('nameFilter' + suffix);
-    if (el) el.value = '';
-    el = document.getElementById('statusFilter' + suffix);
-    if (el) el.value = 'all';
-    el = document.getElementById('styleFilter' + suffix);
-    if (el) el.value = 'all';
-    el = document.getElementById('yearFilter' + suffix);
-    if (el) el.value = 'all';
-    el = document.getElementById('minRating' + suffix);
-    if (el) el.value = '';
-    el = document.getElementById('maxRating' + suffix);
-    if (el) el.value = '';
-    el = document.getElementById('minMetacritic' + suffix);
-    if (el) el.value = '';
-    el = document.getElementById('maxMetacritic' + suffix);
-    if (el) el.value = '';
-    el = document.getElementById('minPrice' + suffix);
-    if (el) el.value = '';
-    el = document.getElementById('maxPrice' + suffix);
-    if (el) el.value = '';
-    el = document.getElementById('minHours' + suffix);
-    if (el) el.value = '';
-    el = document.getElementById('maxHours' + suffix);
-    if (el) el.value = '';
-    applyFilters(suffix); // Aplica os filtros limpos
-}
+        function clearAllFilters(suffix) {
+            document.getElementById('nameFilter' + suffix).value = '';
+            document.getElementById('statusFilter' + suffix).value = 'all';
+            document.getElementById('styleFilter' + suffix).value = 'all';
+            document.getElementById('yearFilter' + suffix).value = 'all';
+            document.getElementById('minRating' + suffix).value = '';
+            document.getElementById('maxRating' + suffix).value = '';
+            document.getElementById('minMetacritic' + suffix).value = '';
+            document.getElementById('maxMetacritic' + suffix).value = '';
+            document.getElementById('minPrice' + suffix).value = '';
+            document.getElementById('maxPrice' + suffix).value = '';
+            document.getElementById('minHours' + suffix).value = '';
+            document.getElementById('maxHours' + suffix).value = '';
+            applyFilters(suffix); // Aplica os filtros limpos
+        }
 
 
         function openGameModalForAdd() { 
@@ -2201,122 +1788,98 @@ function clearAllFilters(suffix) {
         }
 
         function closeGameModal() { document.getElementById('addGameModal').classList.remove('active'); }
-        
-        // Função para abrir o modal de adição/edição de desejos
-        function openWishModal() {
-            document.getElementById('addWishForm').reset();
-            document.getElementById('editWishMode').value = ''; // Limpa o modo de edição
-            document.getElementById('originalWishName').value = ''; // Limpa o nome original
-            document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos';
-            document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
-            document.getElementById('wishSearchResultsContainer').innerHTML = ''; // Limpa resultados de busca
-            document.getElementById('addWishModal').classList.add('active');
-        }
-
         function closeWishModal() { document.getElementById('addWishModal').classList.remove('active'); }
         
         async function handleGameFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editMode').value;
-            const isEditing = editModeValue !== '';
-            const gameName = document.getElementById('gameName').value;
-
+            const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
+            const priceValue = document.getElementById('gamePrice').value.replace(',', '.');
             const gameData = {
-                Nome: gameName,
+                Nome: document.getElementById('gameName').value,
                 Plataforma: document.getElementById('gamePlatform').value,
                 Status: document.getElementById('gameStatus').value,
-                Nota: document.getElementById('gameRating').value,
-                'Tempo de Jogo': document.getElementById('gameHours').value,
+                Nota: parseFloat(document.getElementById('gameRating').value.replace(',', '.')) || null,
+                "Tempo de Jogo": parseInt(document.getElementById('gameHours').value) || 0,
                 Link: document.getElementById('gameLink').value,
                 Estilo: document.getElementById('gameStyle').value,
-                Preço: document.getElementById('gamePrice').value.replace(',', '.'), // Substitui vírgula por ponto para parsear corretamente
-                'Conquistas Obtidas': document.getElementById('gameConquistas').value,
-                'Terminado em': document.getElementById('gameTermino').value,
-                RAWG_ID: document.getElementById('rawgIdInput').value,
-                Descricao: document.getElementById('gameDescription').value,
-                Metacritic: document.getElementById('gameMetacritic').value,
+                "Platinado?": document.getElementById('gameStatus').value === 'Platinado' ? 'Sim' : 'Não',
+                Preço: parseFloat(priceValue) || 0,
+                "Conquistas Obtidas": parseInt(document.getElementById('gameConquistas').value) || 0,
+                "Terminado em": document.getElementById('gameTermino').value || '',
+                RAWG_ID: document.getElementById('rawgIdInput').value || '',
+                Metacritic: document.getElementById('gameMetacritic').value || '',
+                Descricao: document.getElementById('gameDescription').value || ''
             };
-
-            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`;
-            let method = isEditing ? 'PUT' : 'POST';
+            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
-
-            try {
-                const response = await fetch(url, {
-                    method,
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(body)
-                });
-
-                if (response.ok) {
-                    showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`);
-                    closeGameModal();
-                    fetchGameData();
-                } else {
-                    const error = await response.json();
-                    showToast(`Erro: ${error.message || 'Falha na operação.'}`, true);
-                }
-            } catch (err) {
-                showToast(`Erro de conexão.`, true);
-            }
-        }
-        
-        async function handleWishFormSubmit(event) {
-            event.preventDefault();
-            const editModeValue = document.getElementById('editWishMode').value; 
-            const originalWishName = document.getElementById('originalWishName').value; // Usar o nome original para edição
-            const isEditing = editModeValue !== '';
-            
-            const wishData = { 
-                Nome: document.getElementById('wishGameName').value, 
-                Link: document.getElementById('wishGameLink').value, 
-                "Data Lançamento": document.getElementById('wishGameRelease').value, 
-                "Status": "Na Fila" // Garante que o status seja definido ao adicionar/editar
-                // Os campos de preço serão preenchidos/atualizados pelo backend
-            };
-
-            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; 
-            let method = isEditing ? 'PUT' : 'POST';
-            // Ao editar, passamos o nome original (`originalWishName`) para identificar o item na planilha
-            // e os `updated_data` com os novos valores, incluindo o novo `Nome` se ele foi alterado.
-            let body = isEditing ? { list_type: 'wishlist', item_name: originalWishName, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
-            
             try {
                 const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
-                if (response.ok) { 
-                    showToast(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); 
-                    closeWishModal(); 
-                    fetchGameData(); 
-                } else { 
-                    const error = await response.json(); 
-                    showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); 
-                }
+                if (response.ok) { showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeGameModal(); fetchGameData(); }
+                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
             } catch (err) { showToast(`Erro de conexão.`, true); }
         }
         
-        // Função para abrir o modal de edição de desejo
-        function editWish(wishName) {
-            const wishToEdit = fullData.desejos.find(w => w.Nome === wishName);
-            if (!wishToEdit) {
-                showToast("Desejo não encontrado.", true);
-                return;
-            }
-
-            document.getElementById('addWishForm').reset();
-            document.getElementById('editWishMode').value = 'true'; // Apenas para indicar que estamos em modo de edição
-            document.getElementById('originalWishName').value = wishName; // Armazena o nome original
-
-            document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`;
-            document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Desejo';
-
-            document.getElementById('wishGameName').value = wishToEdit.Nome;
-            document.getElementById('wishGameLink').value = wishToEdit.Link || '';
-            document.getElementById('wishGameRelease').value = wishToEdit['Data Lançamento'] || '';
-            
+        async function deleteGame(gameName) {
+            Swal.fire({
+                title: 'Deseja Excluir?',
+                text: `O jogo "${gameName}" será removido permanentemente da sua biblioteca.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar',
+                background: 'var(--surface-color)',
+                color: 'var(--primary-text)',
+                confirmButtonColor: '#cb2d3e'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                        if (response.ok) {
+                            showToast("Jogo deletado com sucesso!");
+                            fetchGameData();
+                        } else {
+                            showToast("Erro ao deletar jogo.", true);
+                        }
+                    } catch(err) {
+                        showToast("Erro de conexão.", true);
+                    }
+                }
+            });
+            closeGameDetailsModal();
+        }
+        
+        function editGame(gameName) { openGameModalForEdit(gameName); }
+        
+        function openWishModal() {
+            document.getElementById('addWishForm').reset(); document.getElementById('editMode').value = '';
+            document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos'; document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
             document.getElementById('addWishModal').classList.add('active');
-            closeWishDetailsModal(); // Fecha o modal de detalhes se estiver aberto
         }
 
+        function editWish(wishName) {
+            const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
+            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = wishName;
+            document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`; document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Item';
+            document.getElementById('wishGameName').value = wishToEdit.Nome;
+            document.getElementById('wishGameLink').value = wishToEdit.Link || '';
+            document.getElementById('wishGameRelease').value = wishToEdit["Data Lançamento"] || '';
+            document.getElementById('wishGamePrice').value = String(wishToEdit.Preço || '').replace('.', ',');
+            document.getElementById('addWishModal').classList.add('active');
+        }
+
+        async function handleWishFormSubmit(event) {
+            event.preventDefault();
+            const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
+            const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
+            const wishData = { Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value, "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0 };
+            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
+            let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
+            try {
+                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
+                if (response.ok) { showToast(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeWishModal(); fetchGameData(); }
+                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
+            } catch (err) { showToast(`Erro de conexão.`, true); }
+        }
 
         async function deleteWish(wishName) {
             Swal.fire({
@@ -2348,7 +1911,6 @@ function clearAllFilters(suffix) {
                     }
                 }
             });
-            closeWishDetailsModal(); // Fecha o modal de detalhes se estiver aberto
         }
         
         async function purchaseWish(wishName) {
@@ -2380,7 +1942,6 @@ function clearAllFilters(suffix) {
                     }
                 }
             });
-            closeWishDetailsModal(); // Fecha o modal de detalhes se estiver aberto
         }
         
         function openSettingsModal() {
@@ -2464,111 +2025,15 @@ function clearAllFilters(suffix) {
             document.getElementById('gameCoverBackground').src = coverArt;
 
             const safeName = game.Nome.replace(/'/g, "\\'");
-            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName); // Corrigido para chamar openGameModalForEdit
+            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName);
             document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(safeName);
 
             document.getElementById('gameDetailsModal').classList.add('active');
-        }
-        
-        // Função para editar um jogo existente na biblioteca (abrir modal)
-        function editGame(gameName) {
-            closeGameDetailsModal(); // Fecha o modal de detalhes se estiver aberto
-            openGameModalForEdit(gameName); // Abre o modal de adição/edição com os dados do jogo
-        }
-
-        // Função para deletar um jogo da biblioteca
-        async function deleteGame(gameName) {
-            Swal.fire({
-                title: 'Deseja Remover?',
-                text: `O jogo "${gameName}" será removido permanentemente da sua biblioteca.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sim, remover!',
-                cancelButtonText: 'Cancelar',
-                background: 'var(--surface-color)',
-                color: 'var(--primary-text)',
-                confirmButtonColor: '#cb2d3e'
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, {
-                            method: 'DELETE',
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
-                        if (response.ok) {
-                            showToast("Jogo deletado com sucesso!");
-                            fetchGameData();
-                        } else {
-                            const error = await response.json();
-                            showToast(error.message || "Erro ao deletar o jogo.", true);
-                        }
-                    } catch (err) {
-                        showToast("Erro de conexão.", true);
-                    }
-                }
-            });
-            closeGameDetailsModal();
         }
 
         function closeGameDetailsModal() {
             document.getElementById('gameDetailsModal').classList.remove('active');
         }
-
-        // --- NOVO: Funções para o Modal de Detalhes da Wishlist ---
-        function openWishDetailsModal(wishName) {
-            const game = fullData.desejos.find(g => g.Nome === wishName);
-            if (!game) {
-                showToast("Item da lista de desejos não encontrado.", true);
-                return;
-            }
-
-            const formatCurrency = (val) => parseFloat(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            const getPriceIndicator = (currentPrice, lowestPrice) => {
-                if (currentPrice === 0 || lowestPrice === 0) return '';
-                if (currentPrice <= lowestPrice * 1.05) return 'good';
-                if (currentPrice <= lowestPrice * 1.20) return 'average';
-                return 'bad';
-            };
-
-            document.getElementById('wishNameDetails').textContent = game.Nome;
-            document.getElementById('wishReleaseDetails').textContent = game['Data Lançamento'] || 'Não informado';
-            
-            const psCurrentPrice = parseFloat(game['PS Preço Atual']) || 0;
-            const psLowestPrice = parseFloat(game['PS Menor Preço Histórico']) || 0;
-            const steamCurrentPrice = parseFloat(game['Steam Preço Atual']) || 0;
-            const steamLowestPrice = parseFloat(game['Steam Menor Preço Histórico']) || 0;
-
-            document.getElementById('wishPSNCurrPrice').textContent = formatCurrency(psCurrentPrice);
-            document.getElementById('wishPSNLowestPrice').textContent = formatCurrency(psLowestPrice);
-            const psnIndicatorElement = document.getElementById('wishPSNIndicator');
-            const psnIndicator = getPriceIndicator(psCurrentPrice, psLowestPrice);
-            psnIndicatorElement.className = `price-indicator ${psnIndicator}`;
-            psnIndicatorElement.textContent = psnIndicator === 'good' ? 'BOM' : psnIndicator === 'average' ? 'MÉDIO' : psnIndicator === 'bad' ? 'ALTO' : 'N/A';
-
-            document.getElementById('wishSteamCurrPrice').textContent = formatCurrency(steamCurrentPrice);
-            document.getElementById('wishSteamLowestPrice').textContent = formatCurrency(steamLowestPrice);
-            const steamIndicatorElement = document.getElementById('wishSteamIndicator');
-            const steamIndicator = getPriceIndicator(steamCurrentPrice, steamLowestPrice);
-            steamIndicatorElement.className = `price-indicator ${steamIndicator}`;
-            steamIndicatorElement.textContent = steamIndicator === 'good' ? 'BOM' : steamIndicator === 'average' ? 'MÉDIO' : steamIndicator === 'bad' ? 'ALTO' : 'N/A';
-            
-            const coverArt = game.Link || 'https://i.imgur.com/Z0ebi8o.png';
-            document.getElementById('wishCoverArt').src = coverArt;
-            document.getElementById('wishCoverBackground').src = coverArt;
-
-            const safeName = game.Nome.replace(/'/g, "\\'");
-            document.getElementById('editWishDetailsBtn').onclick = () => editWish(safeName);
-            document.getElementById('deleteWishDetailsBtn').onclick = () => deleteWish(safeName);
-            document.getElementById('buyWishDetailsBtn').onclick = () => purchaseWish(safeName);
-
-            document.getElementById('wishDetailsModal').classList.add('active');
-        }
-
-        function closeWishDetailsModal() {
-            document.getElementById('wishDetailsModal').classList.remove('active');
-        }
-        // --- FIM NOVO ---
-
 
         async function handleSearch(query) {
             const resultsContainer = document.getElementById('searchResultsContainer');
@@ -2578,11 +2043,9 @@ function clearAllFilters(suffix) {
             if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
             const listHTML = games.map(game => {
                 const safeName = game.name.replace(/'/g, "\\'");
-                const safeStyles = (game.styles || '').replace(/'/g, "\\'"); // Escape styles too
-                const safeBackgroundImage = (game.background_image || '').replace(/'/g, "\\'"); // Escape background_image
-                const safeDescription = (game.description ? game.description.replace(/'/g, "\\'").replace(/\n/g, '\\n') : ''); // Ensure description is fully escaped
+                const safeStyles = game.styles.replace(/'/g, "\\'");
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectGame({ rawg_id: '${game.id}', name: '${safeName}', background_image: '${safeBackgroundImage}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}', metacritic: '${game.metacritic || ''}', description: '${safeDescription}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
+                return `<div class="search-result-item" onclick="selectGame({ rawg_id: '${game.id}', name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}', metacritic: '${game.metacritic || ''}', description: '${game.description ? game.description.replace(/'/g, "\\'").replace(/\n/g, '\\n') : ''}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
@@ -2605,9 +2068,8 @@ function clearAllFilters(suffix) {
             if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
             const listHTML = games.map(game => {
                 const safeName = game.name.replace(/'/g, "\\'");
-                const safeBackgroundImage = (game.background_image || '').replace(/'/g, "\\'"); // Escape background_image
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectWishGame({ name: '${safeName}', background_image: '${safeBackgroundImage}', released_for_input: '${game.released_for_input || ''}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
+                return `<div class="search-result-item" onclick="selectWishGame({ name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
@@ -2852,10 +2314,6 @@ function clearAllFilters(suffix) {
             setupListener('openAdvancedFiltersBtn-graficos', 'click', () => toggleAdvancedFiltersModal('-graficos'));
             setupListener('openAdvancedFiltersBtn-biblioteca', 'click', () => toggleAdvancedFiltersModal('-biblioteca'));
 
-            // --- NOVO: Listener para o botão de filtros da lista de desejos ---
-            setupListener('openAdvancedFiltersBtn-desejos', 'click', () => toggleAdvancedFiltersModal('-desejos'));
-            // --- FIM NOVO ---
-
 
             document.querySelectorAll('.sortable-header').forEach(header => {
             header.addEventListener('click', () => {
@@ -2957,45 +2415,11 @@ function clearAllFilters(suffix) {
                         }
                     });
                 }
-
-            // --- NOVO: Funções de filtro para a lista de desejos ---
-            function applyWishFilters() {
-                const name = document.getElementById('wishNameFilter')?.value.toLowerCase() || '';
-                const releaseDate = document.getElementById('wishReleaseDateFilter')?.value || '';
-                const minPrice = parseFloat(document.getElementById('wishMinPriceFilter')?.value) || 0;
-                const maxPrice = parseFloat(document.getElementById('wishMaxPriceFilter')?.value) || Infinity;
-
-                const filteredWishlist = (fullData.desejos || []).filter(wish => {
-                    const wishName = wish.Nome.toLowerCase();
-                    const wishReleaseDate = wish['Data Lançamento'] || '';
-                    const psCurrentPrice = parseFloat(wish['PS Preço Atual']) || 0;
-                    const steamCurrentPrice = parseFloat(wish['Steam Preço Atual']) || 0;
-
-                    const nameMatch = name ? wishName.includes(name) : true;
-                    const releaseDateMatch = releaseDate ? wishReleaseDate.includes(releaseDate) : true;
-                    
-                    const priceMatch = (psCurrentPrice >= minPrice && psCurrentPrice <= maxPrice) ||
-                                       (steamCurrentPrice >= minPrice && steamCurrentPrice <= maxPrice);
-                    
-                    return nameMatch && releaseDateMatch && priceMatch;
-                });
-                renderWishlist(filteredWishlist);
-            }
-
-            function clearWishFilters() {
-                document.getElementById('wishNameFilter').value = '';
-                document.getElementById('wishReleaseDateFilter').value = '';
-                document.getElementById('wishMinPriceFilter').value = '';
-                document.getElementById('wishMaxPriceFilter').value = '';
-                applyWishFilters(); // Aplica os filtros limpos
-            }
-            // --- FIM NOVO ---
             
             fetchGameData();
             // Inicia a busca periódica por notificações a cada 30 segundos
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
-        
 </script>
 </body>
 </html>
