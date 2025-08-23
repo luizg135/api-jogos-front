@@ -2201,6 +2201,18 @@ function clearAllFilters(suffix) {
         }
 
         function closeGameModal() { document.getElementById('addGameModal').classList.remove('active'); }
+        
+        // Função para abrir o modal de adição/edição de desejos
+        function openWishModal() {
+            document.getElementById('addWishForm').reset();
+            document.getElementById('editWishMode').value = ''; // Limpa o modo de edição
+            document.getElementById('originalWishName').value = ''; // Limpa o nome original
+            document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos';
+            document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
+            document.getElementById('wishSearchResultsContainer').innerHTML = ''; // Limpa resultados de busca
+            document.getElementById('addWishModal').classList.add('active');
+        }
+
         function closeWishModal() { document.getElementById('addWishModal').classList.remove('active'); }
         
         async function handleGameFormSubmit(event) {
