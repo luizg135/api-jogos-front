@@ -1687,12 +1687,10 @@
                     return 'bad'; // Mais de 20% acima
                 };
 
-                // --- CORREÇÃO AQUI: Garantir que os valores sejam numéricos antes de usar ---
                 const psCurrentPrice = parseFloat(game['PS Preço Atual']) || 0;
                 const psLowestPrice = parseFloat(game['PS Menor Preço Histórico']) || 0;
                 const steamCurrentPrice = parseFloat(game['Steam Preço Atual']) || 0;
                 const steamLowestPrice = parseFloat(game['Steam Menor Preço Histórico']) || 0;
-                // --- FIM CORREÇÃO ---
 
                 const psIndicator = getPriceIndicator(psCurrentPrice, psLowestPrice);
                 const steamIndicator = getPriceIndicator(steamCurrentPrice, steamLowestPrice);
