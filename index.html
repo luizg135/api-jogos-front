@@ -754,14 +754,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #000; /* Tela preta */
+            background: linear-gradient(135deg, #0d1117 0%, #301934 100%); /* Degradê preto/roxo */
+            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'), linear-gradient(135deg, #0d1117 0%, #301934 100%); /* Textura + Degradê */
             display: flex;
+            flex-direction: column; /* Para alinhar texto e GIF */
             align-items: center;
             justify-content: center;
-            z-index: 9999; /* Garante que fique acima de tudo */
+            z-index: 9999;
             opacity: 1;
             visibility: visible;
             transition: opacity 0.5s ease, visibility 0.5s ease;
+            color: var(--primary-text); /* Cor do texto */
+            font-size: 2em; /* Tamanho do texto de carregamento */
+            font-weight: 600;
         }
 
         #loading-screen.hidden {
@@ -769,10 +774,43 @@
             visibility: hidden;
         }
 
+        #loading-screen .loading-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #loading-screen .loading-text {
+            margin-bottom: 20px; /* Espaço entre o texto e o GIF */
+            text-shadow: 0 0 10px rgba(147, 112, 219, 0.7); /* Sombra no texto */
+        }
+
         #loading-screen img {
-            max-width: 80%; /* Ajusta o tamanho do GIF */
-            max-height: 80%;
+            position: absolute;
+            bottom: 20px; /* Canto inferior direito */
+            right: 20px;
+            max-width: 200px; /* Tamanho ajustado para o GIF */
+            max-height: 200px;
             object-fit: contain;
+            border-radius: 10px; /* Bordas arredondadas para o GIF */
+            box-shadow: 0 0 20px rgba(147, 112, 219, 0.5); /* Sombra roxa para o GIF */
+        }
+
+        /* Estilos para os cabeçalhos das abas com textura */
+        .profile-header {
+            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'), linear-gradient(135deg, #161b22 0%, #301934 100%); /* Textura + Degradê */
+            background-color: var(--surface-color); /* Fallback */
+            border: 1px solid var(--border-color);
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
     
     </style>
@@ -781,7 +819,10 @@
 <body class="dark-mode">
     <!-- Loading Screen -->
     <div id="loading-screen">
-        <img src="https://github.com/luizg135/api-jogos-front/blob/main/Sif.gif?raw=true" alt="Loading GIF">
+        <div class="loading-content">
+            <span class="loading-text">Carregando...</span>
+            <img src="https://github.com/luizg135/api-jogos-front/blob/main/Sif.gif?raw=true" alt="Loading GIF">
+        </div>
     </div>
 
     <nav class="sidebar">
