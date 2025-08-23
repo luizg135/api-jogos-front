@@ -963,6 +963,7 @@
             font-size: 10px;
             color: var(--secondary-text);
             text-decoration: line-through; /* Menor preço riscado */
+            margin-left: 5px; /* Espaçamento entre preço atual e menor preço */
         }
 
         .price-indicator {
@@ -992,7 +993,7 @@
         /* Ajuste para a largura dos cards da lista de desejos */
         .wishlist-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Aumentado de 140px para 180px */
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Aumentado de 180px para 200px */
             gap: 16px;
         }
 
@@ -1674,7 +1675,7 @@
                 container.innerHTML = `<p style="color: var(--secondary-text);">Sua lista de desejos está vazia.</p>`; 
                 return; 
             }
-            const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const formatCurrency = (val) => parseFloat(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             container.innerHTML = wishlist.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 
