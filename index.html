@@ -2257,7 +2257,7 @@
 
         function editWish(wishName) {
             const wishToEdit = fullData.desejos.find(g => g.Nome === wishName); 
-            if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
+            if (!wishToEdit) { showToast("Item da lista de desejos não encontrado.", true); return; }
             
             document.getElementById('addWishForm').reset(); 
             document.getElementById('editWishMode').value = wishName;
@@ -2441,7 +2441,7 @@
             document.getElementById('gameCoverBackground').src = coverArt;
 
             const safeName = game.Nome.replace(/'/g, "\\'");
-            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName);
+            document.getElementById('editGameDetailsBtn').onclick = () => editGame(safeName);
             document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(safeName);
 
             document.getElementById('gameDetailsModal').classList.add('active');
