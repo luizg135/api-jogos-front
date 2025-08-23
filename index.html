@@ -396,7 +396,7 @@
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 20px;
         }
 
@@ -932,6 +932,62 @@
         .mark-all-read-btn:hover {
             background-color: #a884e9;
         }
+
+        /* Estilos para os preços na lista de desejos */
+        .wish-card-prices {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--secondary-text);
+        }
+
+        .wish-card-platform-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wish-card-platform-price .platform-name {
+            font-weight: 500;
+            color: var(--primary-text);
+        }
+
+        .wish-card-platform-price .current-price {
+            font-weight: 600;
+            color: var(--accent-purple); /* Preço atual em roxo */
+        }
+
+        .wish-card-platform-price .lowest-price {
+            font-size: 10px;
+            color: var(--secondary-text);
+            text-decoration: line-through; /* Menor preço riscado */
+        }
+
+        .wish-card-platform-price .price-indicator {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+
+        .price-indicator.good {
+            background-color: var(--accent-green); /* Verde para "Bom Preço" */
+            color: white;
+        }
+
+        .price-indicator.average {
+            background-color: #ffc107; /* Amarelo para "Preço Médio" */
+            color: #333;
+        }
+
+        .price-indicator.bad {
+            background-color: #dc3545; /* Vermelho para "Preço Alto" */
+            color: white;
+        }
     
     </style>
 </head>
@@ -1235,10 +1291,11 @@
                 <input type="text" id="wishGameRelease" placeholder="Ex: 2025, Em Breve">
             </div>
 
-            <div class="form-group">
+            <!-- Removido o campo de preço do formulário de adicionar/editar desejos -->
+            <!-- <div class="form-group">
                 <label for="wishGamePrice">Preço (R$)</label>
                 <input type="text" inputmode="decimal" id="wishGamePrice" placeholder="Ex: 59,90">
-            </div>
+            </div> -->
 
             <button type="submit" id="wishModalSubmitBtn">Adicionar à Lista</button>
                         </form>
@@ -1607,14 +1664,53 @@
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             container.innerHTML = wishlist.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
+                
+                // Lógica para determinar o indicador de preço
+                const getPriceIndicator = (currentPrice, lowestPrice) => {
+                    if (currentPrice === 0 || lowestPrice === 0) return '';
+                    if (currentPrice <= lowestPrice * 1.05) return 'good'; // Até 5% acima do menor histórico
+                    if (currentPrice <= lowestPrice * 1.20) return 'average'; // Até 20% acima
+                    return 'bad'; // Mais de 20% acima
+                };
+
+                const psCurrentPrice = game['PS Preço Atual'] || 0;
+                const psLowestPrice = game['PS Menor Preço Histórico'] || 0;
+                const steamCurrentPrice = game['Steam Preço Atual'] || 0;
+                const steamLowestPrice = game['Steam Menor Preço Histórico'] || 0;
+
+                const psIndicator = getPriceIndicator(psCurrentPrice, psLowestPrice);
+                const steamIndicator = getPriceIndicator(steamCurrentPrice, steamLowestPrice);
+
                 return `
                 <div class="wish-card">
-                    <img src="${game.Link}" class="wish-card-img" alt="${safeName}">
+                    <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" class="wish-card-img" alt="${safeName}">
                     <div class="wish-card-info">
                         <h3 class="wish-card-title">${game.Nome}</h3>
                         <div class="wish-card-details">
                             <span>${game['Data Lançamento']}</span>
                             <span class="wish-card-price">${formatCurrency(game.Preço)}</span>
+                        </div>
+                        <div class="wish-card-prices">
+                            ${psCurrentPrice > 0 ? `
+                                <div class="wish-card-platform-price">
+                                    <span class="platform-name">PSN:</span>
+                                    <div>
+                                        <span class="current-price">${formatCurrency(psCurrentPrice)}</span>
+                                        ${psLowestPrice > 0 && psLowestPrice < psCurrentPrice ? `<span class="lowest-price">${formatCurrency(psLowestPrice)}</span>` : ''}
+                                        <span class="price-indicator ${psIndicator}">${psIndicator === 'good' ? 'BOM' : psIndicator === 'average' ? 'MÉDIO' : psIndicator === 'bad' ? 'ALTO' : ''}</span>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            ${steamCurrentPrice > 0 ? `
+                                <div class="wish-card-platform-price">
+                                    <span class="platform-name">Steam:</span>
+                                    <div>
+                                        <span class="current-price">${formatCurrency(steamCurrentPrice)}</span>
+                                        ${steamLowestPrice > 0 && steamLowestPrice < steamCurrentPrice ? `<span class="lowest-price">${formatCurrency(steamLowestPrice)}</span>` : ''}
+                                        <span class="price-indicator ${steamIndicator}">${steamIndicator === 'good' ? 'BOM' : steamIndicator === 'average' ? 'MÉDIO' : steamIndicator === 'bad' ? 'ALTO' : ''}</span>
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                     <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
@@ -1851,27 +1947,38 @@
         function editGame(gameName) { openGameModalForEdit(gameName); }
         
         function openWishModal() {
-            document.getElementById('addWishForm').reset(); document.getElementById('editMode').value = '';
+            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = '';
             document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos'; document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
             document.getElementById('addWishModal').classList.add('active');
         }
 
         function editWish(wishName) {
-            const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
+            const wishToEdit = fullData.desejos.find(g => g.Nome === wishName); if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
             document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = wishName;
             document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`; document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Item';
             document.getElementById('wishGameName').value = wishToEdit.Nome;
             document.getElementById('wishGameLink').value = wishToEdit.Link || '';
             document.getElementById('wishGameRelease').value = wishToEdit["Data Lançamento"] || '';
-            document.getElementById('wishGamePrice').value = String(wishToEdit.Preço || '').replace('.', ',');
+            // Removido o campo de preço do formulário de adicionar/editar desejos
+            // document.getElementById('wishGamePrice').value = String(wishToEdit.Preço || '').replace('.', ',');
             document.getElementById('addWishModal').classList.add('active');
         }
 
         async function handleWishFormSubmit(event) {
             event.preventDefault();
             const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
-            const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
-            const wishData = { Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value, "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0 };
+            // Removido o campo de preço do formulário de adicionar/editar desejos
+            // const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
+            const wishData = { 
+                Nome: document.getElementById('wishGameName').value, 
+                Link: document.getElementById('wishGameLink').value, 
+                "Data Lançamento": document.getElementById('wishGameRelease').value, 
+                Preço: 0, // Preço será buscado do catálogo pelo backend
+                "PS Preço Atual": 0,
+                "PS Menor Preço Histórico": 0,
+                "Steam Preço Atual": 0,
+                "Steam Menor Preço Histórico": 0
+            };
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
             try {
@@ -2420,6 +2527,7 @@
             // Inicia a busca periódica por notificações a cada 30 segundos
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
+        
 </script>
 </body>
 </html>
