@@ -1260,25 +1260,33 @@
         }
 
         async function fetchGameData() {
+            console.log('fetchGameData: Starting...'); // Log 1
             try {
-                // Mostra a tela de carregamento antes de buscar os dados
                 document.getElementById('loading-screen').classList.remove('hidden');
+                console.log('fetchGameData: Loading screen shown.'); // Log after showing
 
                 const response = await fetch(`${API_URL}/games/data`, { headers: { 'Authorization': `Bearer ${token}` } });
-                if (response.status === 401) { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; return; }
+                if (response.status === 401) {
+                    localStorage.removeItem('jwt_token');
+                    window.location.href = 'login.html';
+                    return;
+                }
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 fullData = await response.json();
+                console.log('fetchGameData: Data fetched successfully.'); // Log 2
                 renderAllPages();
+                console.log('fetchGameData: renderAllPages completed.'); // Log after rendering
             } catch (err) {
                 console.error('Erro ao buscar dados:', err);
                 document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
             } finally {
-                // Esconde a tela de carregamento após a tentativa de buscar os dados
                 document.getElementById('loading-screen').classList.add('hidden');
+                console.log('fetchGameData: Loading screen hidden.'); // Log 5
             }
         }
         
         function renderAllPages() {
+            console.log('renderAllPages: Starting...'); // Log 3
             loadProfileSettings(fullData.perfil);
             renderGamerCard(fullData.estatisticas);
             renderSummaryCards(fullData.estatisticas, 'summary');
@@ -1288,6 +1296,7 @@
             populateFilters();
             applyFilters('-graficos');
             applyFilters('-biblioteca');
+            console.log('renderAllPages: Finished.'); // Log 4
         }
 
         function openPage(evt, pageName) {
@@ -1477,7 +1486,7 @@
         function renderAllCharts(games = []) {
             destroyCharts();
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
-            const processMultiData = (key) => games.reduce((acc, game => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
+            const processMultiData = (key) => games.reduce((acc, game) => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
             const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
             const platformData = processData('Plataforma'); const statusData = processData('Status');
             const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
@@ -1672,7 +1681,7 @@
                             showToast("Erro ao deletar jogo.", true);
                         }
                     } catch(err) {
-                        showToast("Erro de conexão ao deletar.", true);
+                        showToast("Erro de conexão.", true);
                     }
                 }
             });
