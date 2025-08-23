@@ -806,13 +806,12 @@
             max-width: 200px; /* Tamanho ajustado para o GIF */
             max-height: 200px;
             object-fit: contain;
-            /* Removido border-radius e box-shadow */
         }
 
         /* Estilos para os cabeçalhos das abas com textura */
         .profile-header {
-            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'); /* Apenas textura */
-            background-color: var(--surface-color); /* Cor padrão do surface */
+            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'); /* Textura + Degradê: Roxo para Preto */
+            background-color: var(--surface-color); /* Fallback */
             border: 1px solid var(--border-color);
             padding: 32px;
             border-radius: 16px;
@@ -820,6 +819,100 @@
             position: relative;
             overflow: hidden;
             transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Estilos para o botão de notificações */
+        .notifications-button {
+            position: relative;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #e03131; /* Vermelho para o contador */
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 50%;
+            padding: 2px 6px;
+            min-width: 20px; /* Garante que o círculo seja visível mesmo com 1 dígito */
+            text-align: center;
+            line-height: 1.2;
+            display: none; /* Escondido por padrão */
+        }
+        .notification-count.visible {
+            display: block;
+        }
+
+        /* Estilos para o modal de notificações */
+        #notificationsModal .modal-content {
+            max-width: 600px;
+        }
+
+        .notifications-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px; /* Espaçamento para a barra de rolagem */
+        }
+
+        .notifications-list::-webkit-scrollbar {
+            width: 8px; 
+        }
+
+        .notifications-list::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+
+        .notifications-list::-webkit-scrollbar-thumb {
+            background-color: var(--border-color); 
+            border-radius: 10px; 
+            border: 2px solid var(--surface-color); 
+        }
+
+        .notifications-list {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--surface-color);
+        }
+
+        .notification-item {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background-color: rgba(147, 112, 219, 0.1); /* Leve destaque no hover */
+        }
+
+        .notification-item.read {
+            opacity: 0.7;
+            background-color: rgba(125, 133, 144, 0.1); /* Mais opaco se lida */
+        }
+
+        .notification-item strong {
+            color: var(--accent-purple);
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .notification-item span {
+            font-size: 13px;
+            color: var(--primary-text);
+        }
+
+        .notification-item small {
+            font-size: 10px;
+            color: var(--secondary-text);
+            margin-top: 8px;
+            align-self: flex-end; /* Alinha a data à direita */
         }
     
     </style>
@@ -841,6 +934,12 @@
             <button class="nav-button" onclick="openPage(event, 'graficos')" title="Gráficos"><span class="material-symbols-outlined">bar_chart</span></button>
             <button class="nav-button" onclick="openPage(event, 'biblioteca')" title="Lista de Jogos"><span class="material-symbols-outlined">list_alt</span></button>
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
+            
+            <!-- Botão de Notificações -->
+            <button class="nav-button notifications-button" id="notificationsBtn" title="Notificações">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="notification-count" id="notificationCount">0</span>
+            </button>
         </div>
         <div class="sidebar-footer">
             <!-- Botão de Compartilhar -->
@@ -1217,6 +1316,18 @@
         </div>
     </div>
 
+    <!-- Modal de Notificações -->
+    <div id="notificationsModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeNotificationsModal()">&times;</span>
+            <h2>Suas Notificações</h2>
+            <div id="notifications-list" class="notifications-list">
+                <!-- Notificações serão carregadas aqui -->
+                <p class="no-results">Nenhuma notificação por enquanto!</p>
+            </div>
+        </div>
+    </div>
+
 
 <script>
 // COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
@@ -1241,6 +1352,7 @@
 
         let searchTimeout;
         let wishSearchTimeout;
+        let notificationInterval; // Variável para armazenar o ID do intervalo das notificações
 
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
@@ -1292,6 +1404,7 @@
             populateFilters();
             applyFilters('-graficos');
             applyFilters('-biblioteca');
+            fetchNotifications(); // Busca as notificações ao carregar a página
             console.log('renderAllPages: Finished.'); // Log 4
         }
 
@@ -1941,6 +2054,98 @@
             }
         }
 
+        // --- NOVO: Funções de Notificação no Frontend ---
+        let currentNotifications = []; // Armazena as notificações atuais para evitar popups duplicados
+
+        async function fetchNotifications() {
+            try {
+                const response = await fetch(`${API_URL}/games/notifications`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (response.status === 401) { return; } // Token expirado, será tratado pelo fetchGameData
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const notifications = await response.json();
+                updateNotificationCount(notifications.length);
+                renderNotificationsInModal(notifications);
+
+                // Exibir popups para novas notificações
+                notifications.forEach(newNotif => {
+                    // Verifica se a notificação já foi exibida como popup nesta sessão
+                    if (!currentNotifications.some(n => n.ID === newNotif.ID)) {
+                        showToast(newNotif.Mensagem);
+                        currentNotifications.push(newNotif); // Adiciona à lista de notificações exibidas
+                    }
+                });
+
+            } catch (err) {
+                console.error('Erro ao buscar notificações:', err);
+            }
+        }
+
+        function updateNotificationCount(count) {
+            const notificationCountElement = document.getElementById('notificationCount');
+            if (notificationCountElement) {
+                notificationCountElement.textContent = count;
+                if (count > 0) {
+                    notificationCountElement.classList.add('visible');
+                } else {
+                    notificationCountElement.classList.remove('visible');
+                }
+            }
+        }
+
+        function renderNotificationsInModal(notifications) {
+            const notificationsList = document.getElementById('notifications-list');
+            if (!notificationsList) return;
+
+            if (notifications.length === 0) {
+                notificationsList.innerHTML = '<p class="no-results">Nenhuma notificação por enquanto!</p>';
+                return;
+            }
+
+            notificationsList.innerHTML = notifications.map(notif => {
+                const date = new Date(notif.Data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+                return `
+                    <div class="notification-item ${notif.Lida === 'Sim' ? 'read' : ''}" data-id="${notif.ID}" onclick="markNotificationAsReadAndRefresh(${notif.ID})">
+                        <strong>${notif.Tipo}</strong>
+                        <span>${notif.Mensagem}</span>
+                        <small>${date}</small>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function markNotificationAsReadAndRefresh(notificationId) {
+            try {
+                const response = await fetch(`${API_URL}/games/notifications/mark-read/${notificationId}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                showToast("Notificação marcada como lida!");
+                // Remove a notificação da lista de notificações atuais para não exibir popup novamente
+                currentNotifications = currentNotifications.filter(n => n.ID !== notificationId);
+                fetchNotifications(); // Atualiza a lista e o contador
+            } catch (err) {
+                console.error('Erro ao marcar notificação como lida:', err);
+                showToast("Erro ao marcar notificação como lida.", true);
+            }
+        }
+
+        function openNotificationsModal() {
+            document.getElementById('notificationsModal').classList.add('active');
+            // Ao abrir o modal, podemos optar por marcar todas como lidas ou apenas as que o usuário clicar.
+            // Por enquanto, vamos deixar que o clique individual as marque como lidas.
+        }
+
+        async function closeNotificationsModal() {
+            document.getElementById('notificationsModal').classList.remove('active');
+            // Opcional: Recarregar notificações para garantir que o contador esteja atualizado após fechar o modal
+            fetchNotifications(); 
+        }
+        // --- FIM NOVO ---
+
+
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
             
@@ -1951,13 +2156,6 @@
             setupListener('addWishBtn', 'click', openWishModal);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             
-            // Removido o listener do botão de tema
-            // setupListener('theme-toggle', 'click', () => {
-            //     const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
-            //     const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
-            //     icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
-            // });
-
             // Adicionado listener para o novo botão de compartilhar
             setupListener('shareBtn', 'click', () => {
                 const shareLink = 'https://perfil-gamer.netlify.app/shareable.html';
@@ -1969,6 +2167,10 @@
                 document.body.removeChild(tempInput);
                 showToast('Link copiado para a área de transferência!');
             });
+
+            // --- NOVO: Listener para o botão de notificações ---
+            setupListener('notificationsBtn', 'click', openNotificationsModal);
+            // --- FIM NOVO ---
 
 
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
@@ -2086,6 +2288,8 @@
                 }
             
             fetchGameData();
+            // Inicia a busca periódica por notificações a cada 30 segundos
+            notificationInterval = setInterval(fetchNotifications, 30000); 
         });
 </script>
 </body>
