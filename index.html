@@ -810,7 +810,7 @@
 
         /* Estilos para os cabeçalhos das abas com textura */
         .profile-header {
-            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'), linear-gradient(135deg, #301934 0%, #0d1117 100%); /* Textura + Degradê: Roxo para Preto */
+            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'); /* Textura + Degradê: Roxo para Preto */
             background-color: var(--surface-color); /* Fallback */
             border: 1px solid var(--border-color);
             padding: 32px;
@@ -1386,9 +1386,6 @@
         let isInitialLoad = true; // Flag para controlar a tela de carregamento inicial
         let allNotifications = []; // Armazena todas as notificações buscadas
 
-        // Variável para controlar se o scraper já foi executado na carga inicial
-        let hasScraperRunOnInitialLoad = false;
-
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
         function showToast(message, isError = false) {
@@ -1402,39 +1399,12 @@
             }).showToast();
         }
 
-        // Função para executar o scraper
-        async function runPriceScraper() {
-            try {
-                const response = await fetch(`${API_URL}/run-price-scraper`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` 
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data.message);
-                    showToast(data.message);
-                } else {
-                    const error = await response.json();
-                    console.error('Erro ao executar o scraper:', error.message);
-                    showToast(`Erro ao atualizar preços: ${error.message}`, true);
-                }
-            } catch (err) {
-                console.error('Erro de conexão ao executar o scraper:', err);
-                showToast('Erro de conexão ao atualizar preços.', true);
-            }
-        }
-
-        // Função fetchGameData modificada para chamar o scraper na carga inicial
         async function fetchGameData() {
-            console.log('fetchGameData: Starting...');
+            console.log('fetchGameData: Starting...'); // Log 1
             try {
-                if (isInitialLoad) {
+                if (isInitialLoad) { // Só mostra a tela de carregamento na carga inicial
                     document.getElementById('loading-screen').classList.remove('hidden');
-                    console.log('fetchGameData: Loading screen shown.');
+                    console.log('fetchGameData: Loading screen shown.'); // Log after showing
                 }
 
                 const response = await fetch(`${API_URL}/games/data`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -1445,23 +1415,11 @@
                 }
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 fullData = await response.json();
-                console.log('fetchGameData: Data fetched successfully.');
+                console.log('fetchGameData: Data fetched successfully.'); // Log 2
                 
-                // NOVO: Executa o scraper na carga inicial se ainda não foi executado
-                if (!hasScraperRunOnInitialLoad) {
-                    console.log('fetchGameData: Running price scraper for initial load...');
-                    await runPriceScraper();
-                    hasScraperRunOnInitialLoad = true; // Marca que o scraper já rodou
-                    // Após rodar o scraper, busque os dados novamente para refletir as atualizações
-                    const updatedResponse = await fetch(`${API_URL}/games/data`, { headers: { 'Authorization': `Bearer ${token}` } });
-                    if (!updatedResponse.ok) throw new Error(`HTTP error! status: ${updatedResponse.status}`);
-                    fullData = await updatedResponse.json();
-                    console.log('fetchGameData: Data re-fetched after scraper execution.');
-                }
-
                 try {
-                    await renderAllPages();
-                    console.log('fetchGameData: renderAllPages completed.');
+                    await renderAllPages(); // Await renderAllPages as it calls fetchNotifications (async)
+                    console.log('fetchGameData: renderAllPages completed.'); // Log after rendering
                 } catch (renderErr) {
                     console.error('Erro durante a renderização da página:', renderErr);
                     document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao renderizar os dados.</p>`;
@@ -1471,11 +1429,11 @@
                 console.error('Erro ao buscar dados da API:', err);
                 document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
             } finally {
-                console.log('fetchGameData: Entering finally block. isInitialLoad:', isInitialLoad);
-                if (isInitialLoad) {
+                console.log('fetchGameData: Entering finally block. isInitialLoad:', isInitialLoad); // New log
+                if (isInitialLoad) { // Só esconde a tela de carregamento na carga inicial
                     document.getElementById('loading-screen').classList.add('hidden');
-                    console.log('fetchGameData: Loading screen hidden.');
-                    isInitialLoad = false;
+                    console.log('fetchGameData: Loading screen hidden.'); // Log 5
+                    isInitialLoad = false; // Desativa a flag após o primeiro carregamento
                 }
             }
         }
@@ -1911,37 +1869,16 @@
 
         async function handleWishFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editMode').value;
-            const isEditing = editModeValue !== '';
+            const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
             const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
-            const wishData = { 
-                Nome: document.getElementById('wishGameName').value, 
-                Link: document.getElementById('wishGameLink').value, 
-                "Data Lançamento": document.getElementById('wishGameRelease').value, 
-                Preço: parseFloat(priceValue) || 0 
-            };
-            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`;
-            let method = isEditing ? 'PUT' : 'POST';
+            const wishData = { Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value, "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0 };
+            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
             try {
                 const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
-                if (response.ok) { 
-                    showToast(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); 
-                    closeWishModal(); 
-                    
-                    // NOVO: Executa o scraper após adicionar/atualizar um item na lista de desejos
-                    console.log('handleWishFormSubmit: Item added/updated, running price scraper...');
-                    await runPriceScraper();
-                    
-                    fetchGameData(); // Recarrega os dados após o scraper e a atualização
-                }
-                else { 
-                    const error = await response.json(); 
-                    showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); 
-                }
-            } catch (err) { 
-                showToast(`Erro de conexão.`, true); 
-            }
+                if (response.ok) { showToast(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeWishModal(); fetchGameData(); }
+                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
+            } catch (err) { showToast(`Erro de conexão.`, true); }
         }
 
         async function deleteWish(wishName) {
