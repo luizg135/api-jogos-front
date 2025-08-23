@@ -26,21 +26,7 @@
             --secondary-text: #7d8590; --border-color: #30363d; --accent-purple: #9370db;
             --accent-green: #238636;
         }
-        body.light-mode {
-            --bg-color: #F8F9FA;
-            --surface-color: #FFFFFF;
-            --primary-text: #212529;
-            --secondary-text: #6C757D;
-            --border-color: #DEE2E6;
-            --accent-purple: #6F42C1;
-            --accent-green: #28A745;
-            --rank-bronze: #A0522D;
-            --rank-prata: #B0C4DE;
-            --rank-ouro: #FFD700;
-            --rank-platina: #B0E0E6;
-            --rank-diamante: #40E0D0;
-            --rank-mestre: #8A2BE2;
-        }
+        /* Removido body.light-mode */
         *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif; background-color: var(--bg-color);
@@ -825,7 +811,7 @@
 
         /* Estilos para os cabeçalhos das abas com textura */
         .profile-header {
-            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'), linear-gradient(135deg, #301934 0%, #161b22 100%); /* Textura + Degradê: Roxo para Preto */
+            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'), linear-gradient(135deg, var(--accent-purple) 0%, var(--surface-color) 100%); /* Textura + Degradê: Roxo para Preto */
             background-color: var(--surface-color); /* Fallback */
             border: 1px solid var(--border-color);
             padding: 32px;
@@ -857,8 +843,8 @@
             <button class="nav-button" onclick="openPage(event, 'desejos')" title="Lista de Desejos"><span class="material-symbols-outlined">card_giftcard</span></button>
         </div>
         <div class="sidebar-footer">
-            <button class="nav-button" id="theme-toggle" title="Mudar Tema"><span class="material-symbols-outlined">light_mode</span></button>
-            <button class="nav-button" id="logoutBtn" title="Sair"><span class="material-symbols-outlined">logout</span></button>
+            <!-- Botão de Compartilhar -->
+            <button class="nav-button" id="shareBtn" title="Compartilhar Perfil"><span class="material-symbols-outlined">share</span></button>
         </div>
     </nav>
 
@@ -1953,11 +1939,27 @@
             setupListener('addGameBtn', 'click', openGameModalForAdd);
             setupListener('addWishBtn', 'click', openWishModal);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
-            setupListener('theme-toggle', 'click', () => {
-                const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
-                const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
-                icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
+            
+            // Removido o listener do botão de tema
+            // setupListener('theme-toggle', 'click', () => {
+            //     const body = document.body; body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
+            //     const icon = document.querySelector('#theme-toggle .material-symbols-outlined');
+            //     icon.textContent = body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
+            // });
+
+            // Adicionado listener para o novo botão de compartilhar
+            setupListener('shareBtn', 'click', () => {
+                const shareLink = 'https://perfil-gamer.netlify.app/shareable.html';
+                const tempInput = document.createElement('input');
+                document.body.appendChild(tempInput);
+                tempInput.value = shareLink;
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                showToast('Link copiado para a área de transferência!');
             });
+
+
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
             setupListener('achievementsShortcut', 'click', openAchievementsModal);
             setupListener('gameDetailsModal', 'click', (event) => {
