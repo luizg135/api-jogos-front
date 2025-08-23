@@ -396,7 +396,7 @@
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 20px;
         }
 
@@ -914,6 +914,24 @@
             margin-top: 8px;
             align-self: flex-end; /* Alinha a data à direita */
         }
+
+        /* Botão "Marcar todas como lidas" */
+        .mark-all-read-btn {
+            background-color: var(--accent-purple);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            transition: background-color 0.2s ease;
+        }
+        .mark-all-read-btn:hover {
+            background-color: #a884e9;
+        }
     
     </style>
 </head>
@@ -1335,6 +1353,8 @@
                     <p class="no-results">Nenhuma notificação lida por enquanto!</p>
                 </div>
             </div>
+            <!-- Botão para marcar todas como lidas -->
+            <button class="mark-all-read-btn" onclick="markAllNotificationsAsRead()">Marcar todas como lidas</button>
         </div>
     </div>
 
@@ -2199,6 +2219,31 @@
             } catch (err) {
                 console.error('Erro ao marcar notificação como lida:', err);
                 showToast("Erro ao marcar notificação como lida.", true);
+            }
+        }
+
+        async function markAllNotificationsAsRead() {
+            const unreadIds = allFetchedNotifications.filter(n => n.Lida === 'Não').map(n => n.ID);
+            if (unreadIds.length === 0) {
+                showToast("Nenhuma notificação não lida para marcar!", false);
+                return;
+            }
+
+            try {
+                // Itera sobre as notificações não lidas e marca cada uma como lida
+                for (const id of unreadIds) {
+                    await fetch(`${API_URL}/games/notifications/mark-read/${id}`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                }
+                showToast("Todas as notificações marcadas como lidas!");
+                currentNotifications = []; // Limpa os popups exibidos
+                fetchNotifications(); // Atualiza a lista e o contador
+                closeNotificationsModal(); // Fecha o modal após marcar todas
+            } catch (err) {
+                console.error('Erro ao marcar todas as notificações como lidas:', err);
+                showToast("Erro ao marcar todas as notificações como lidas.", true);
             }
         }
 
