@@ -77,7 +77,7 @@
         .level-progress { flex-grow: 1; }
         .level-text { font-size: 24px; font-weight: 700; }
         .exp-bar-container { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; margin-top: 8px; }
-        .exp-bar-progress { height: 100%; border-radius: 4px; width: 0%; transition: width 0.5s ease; }
+        .exp-bar-progress { height: 100%; border-radius: 44px; width: 0%; transition: width 0.5s ease; }
         .exp-bar-progress.rank-Mestre { background-color: var(--rank-mestre); box-shadow: 0 0 10px var(--rank-mestre); }
         .exp-bar-progress.rank-Diamante { background-color: var(--rank-diamante); box-shadow: 0 0 10px var(--rank-diamante); }
         .exp-bar-progress.rank-Platina { background-color: var(--rank-platina); box-shadow: 0 0 10px var(--rank-platina); }
@@ -243,19 +243,46 @@
         .trophy-icon { color: var(--accent-purple); font-size: 22px !important; filter: drop_shadow(0 0 8px var(--accent-purple)); }
         .nota-cell { font-weight: 600; color: var(--accent-purple); }
         .no-results { text-align: center; color: var(--secondary-text); padding: 48px; }
-        .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+        .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; } /* Aumentado minmax */
         .wish-card {
             background-color: var(--surface-color); border-radius: 12px;
             border: 1px solid var(--border-color); overflow: hidden; border-bottom: 3px solid transparent;
             transition: all 0.2s ease;
             position: relative;
+            height: 320px; /* Aumentado a altura do card */
+            cursor: pointer; /* Adicionado cursor pointer para indicar clicável */
         }
         .wish-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .wish-card-img { width: 100%; height: 180px; object-fit: cover; display: block; background-color: #010409; }
-        .wish-card-info { padding: 12px; }
+        .wish-card-info { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; }
         .wish-card-title { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 0 8px 0; }
-        .wish-card-details { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .wish-card-details { 
+            display: flex; 
+            flex-direction: column; /* Alterado para coluna para exibir mais informações */
+            gap: 4px;
+            font-size: 12px; 
+            margin-top: auto; /* Empurra para o final do card-info */
+        }
+        .wish-card-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .wish-card-price { font-weight: 600; color: var(--accent-purple); }
+
+        .price-status {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+        }
+        .price-status.bom { background-color: var(--accent-green); }
+        .price-status.normal { background-color: #f39c12; } /* Laranja */
+        .price-status.ruim { background-color: #cb2d3e; } /* Vermelho */
+
+
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center;
@@ -932,6 +959,20 @@
         .mark-all-read-btn:hover {
             background-color: #a884e9;
         }
+
+        /* NOVO: Estilos para a data de atualização no cabeçalho da wishlist */
+        .wishlist-header-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--secondary-text);
+            margin-left: auto; /* Alinha à direita */
+        }
+        .wishlist-header-info .material-symbols-outlined {
+            font-size: 16px;
+            color: var(--accent-purple);
+        }
     
     </style>
 </head>
@@ -1078,10 +1119,21 @@
                             <h1 style="color: var(--accent-purple);">Lista de Desejos</h1>
                             <p>Seus próximos jogos e futuras aventuras.</p>
                         </div>
-                        <button class="nav-button" id="addWishBtn" title="Adicionar Jogo à Lista"><span class="material-symbols-outlined">add</span></button>
+                        <div class="wishlist-header-info">
+                            <span class="material-symbols-outlined">update</span>
+                            <span id="lastWishlistUpdate">Última atualização: N/A</span>
+                        </div>
+                        <div class="header-actions">
+                            <button class="nav-button" id="openAdvancedFiltersBtn-desejos" title="Filtros Avançados">
+                                <span class="material-symbols-outlined">filter_alt</span>
+                            </button>
+                            <button class="nav-button" id="addWishBtn" title="Adicionar Jogo à Lista"><span class="material-symbols-outlined">add</span></button>
+                        </div>
                     </div>
                 </header>
                 <div id="wishlist-container" class="wishlist-grid"></div>
+                <div id="no-wishlist-results-message" class="no-results" style="display: none;"><p>Nenhum jogo na lista de desejos encontrado.</p></div>
+
             </section>
         </div>
     </main>
@@ -1235,15 +1287,71 @@
                 <input type="text" id="wishGameRelease" placeholder="Ex: 2025, Em Breve">
             </div>
 
-            <div class="form-group">
+            <!-- Removido o campo de Preço do formulário de adição/edição de desejos -->
+            <!-- <div class="form-group">
                 <label for="wishGamePrice">Preço (R$)</label>
                 <input type="text" inputmode="decimal" id="wishGamePrice" placeholder="Ex: 59,90">
-            </div>
+            </div> -->
 
             <button type="submit" id="wishModalSubmitBtn">Adicionar à Lista</button>
                         </form>
                     </div>
                 </div>
+
+    <!-- NOVO: Modal de Detalhes da Lista de Desejos -->
+    <div id="wishDetailsModal" class="modal-overlay" onclick="if (event.target === this) closeWishDetailsModal()">
+        <div class="game-details-modal-content">
+            <span class="close-button" onclick="closeWishDetailsModal()">&times;</span>
+            <div class="game-details-header">
+                <img id="wishCoverBackground" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo">
+                <div class="game-details-info">
+                    <img id="wishCoverArt" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo" class="game-cover-art">
+                    <div class="game-details-info-text">
+                        <h2 id="wishNameDetails">Nome do Jogo</h2>
+                        <p id="wishReleaseDetails">Data Lançamento</p>
+                    </div>
+                </div>
+            </div>
+            <div class="game-details-body">
+                <div class="game-details-stats">
+                    <div class="game-details-stats-item">
+                        <span>Steam Preço Atual:</span>
+                        <span id="wishSteamCurrentPrice">N/A</span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Steam Menor Preço:</span>
+                        <span id="wishSteamLowestPrice">N/A</span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>PSN Preço Atual:</span>
+                        <span id="wishPsnCurrentPrice">N/A</span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>PSN Menor Preço:</span>
+                        <span id="wishPsnLowestPrice">N/A</span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Última Atualização:</span>
+                        <span id="wishLastPriceUpdate">N/A</span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Status Preço:</span>
+                        <span id="wishPriceStatus" class="price-status">N/A</span>
+                    </div>
+                </div>
+                <div class="game-details-description">
+                    <h3>Descrição</h3>
+                    <p id="wishDescriptionDetails">Nenhuma descrição disponível.</p>
+                </div>
+                <div class="game-details-actions">
+                    <button class="action-button" id="purchaseWishDetailsBtn"><span class="material-symbols-outlined">shopping_cart_checkout</span> Marcar como Comprado</button>
+                    <button class="action-button" id="editWishDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar</button>
+                    <button class="action-button delete-btn" id="deleteWishDetailsBtn"><span class="material-symbols-outlined">delete</span> Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div id="settingsModal" class="modal-overlay">
         <div class="modal-content">
@@ -1333,6 +1441,34 @@
             </div>
         </div>
     </div>
+
+    <!-- NOVO: Modal de Filtros Avançados para Desejos -->
+    <div id="advancedFiltersModal-desejos" class="modal-overlay">
+        <div class="advanced-filters-modal-content">
+            <span class="close-button" onclick="toggleAdvancedFiltersModal('-desejos')">&times;</span>
+            <h2>Filtros da Lista de Desejos</h2>
+            <div class="advanced-filters-grid">
+                <div class="filter-group"><label for="nameFilter-desejos">Buscar por Nome</label><input type="search" id="nameFilter-desejos" placeholder="Ex: Hollow Knight Silksong"></div>
+                
+                <div class="filter-group"><label for="minWishPrice-desejos">Preço Mínimo (R$)</label><input type="number" id="minWishPrice-desejos" step="0.01" min="0" placeholder="0,00"></div>
+                <div class="filter-group"><label for="maxWishPrice-desejos">Preço Máximo (R$)</label><input type="number" id="maxWishPrice-desejos" step="0.01" min="0" placeholder="999,99"></div>
+
+                <div class="filter-group"><label for="minSteamPrice-desejos">Steam Preço Atual Mínimo (R$)</label><input type="number" id="minSteamPrice-desejos" step="0.01" min="0" placeholder="0,00"></div>
+                <div class="filter-group"><label for="maxSteamPrice-desejos">Steam Preço Atual Máximo (R$)</label><input type="number" id="maxSteamPrice-desejos" step="0.01" min="0" placeholder="999,99"></div>
+
+                <div class="filter-group"><label for="minPsnPrice-desejos">PSN Preço Atual Mínimo (R$)</label><input type="number" id="minPsnPrice-desejos" step="0.01" min="0" placeholder="0,00"></div>
+                <div class="filter-group"><label for="maxPsnPrice-desejos">PSN Preço Atual Máximo (R$)</label><input type="number" id="maxPsnPrice-desejos" step="0.01" min="0" placeholder="999,99"></div>
+
+                <div class="filter-group"><label for="releaseYearFilter-desejos">Ano de Lançamento</label><select id="releaseYearFilter-desejos"></select></div>
+
+            </div>
+            <div class="filter-modal-actions">
+                <button type="button" class="clear-all-filters-btn" onclick="clearAllFilters('-desejos')">Limpar Todos</button>
+                <button type="button" class="apply-filters-btn" onclick="applyFilters('-desejos'); toggleAdvancedFiltersModal('-desejos');">Aplicar Filtros</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Modal de Notificações -->
     <div id="notificationsModal" class="modal-overlay">
@@ -1450,6 +1586,8 @@
                 populateFilters();
                 applyFilters('-graficos');
                 applyFilters('-biblioteca');
+                applyFilters('-desejos'); // Aplicar filtros da lista de desejos
+                updateLastWishlistUpdate(fullData.desejos); // Atualizar data de última atualização
                 await fetchNotifications(); // Await fetchNotifications
                 console.log('renderAllPages: Finished.'); // Log 4
             } catch (renderError) {
@@ -1597,34 +1735,105 @@
             }).join('');
         }
 
+        function formatCurrency(val) {
+            const num = parseFloat(String(val).replace(',', '.')) || 0;
+            return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // NOVO: Função para determinar o status do preço
+        function getPriceStatus(steamCurrent, steamLowest, psnCurrent, psnLowest) {
+            const currentSteam = parseFloat(String(steamCurrent).replace(',', '.')) || Infinity;
+            const lowestSteam = parseFloat(String(steamLowest).replace(',', '.')) || Infinity;
+            const currentPsn = parseFloat(String(psnCurrent).replace(',', '.')) || Infinity;
+            const lowestPsn = parseFloat(String(psnLowest).replace(',', '.')) || Infinity;
+
+            const threshold = 0.15; // 15% acima do menor preço histórico
+
+            if (currentSteam <= lowestSteam || currentPsn <= lowestPsn) {
+                return { status: 'Bom', class: 'bom' };
+            } else if (currentSteam <= lowestSteam * (1 + threshold) || currentPsn <= lowestPsn * (1 + threshold)) {
+                return { status: 'Normal', class: 'normal' };
+            }
+            return { status: 'Ruim', class: 'ruim' };
+        }
+
         function renderWishlist(wishlist = []) {
             const container = document.getElementById('wishlist-container'); 
-            if (!container) return;
+            const noResults = document.getElementById('no-wishlist-results-message');
+            if (!container || !noResults) return;
+
             if (wishlist.length === 0) { 
-                container.innerHTML = `<p style="color: var(--secondary-text);">Sua lista de desejos está vazia.</p>`; 
+                container.innerHTML = ''; 
+                noResults.style.display = 'block';
                 return; 
             }
-            const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            noResults.style.display = 'none';
+
             container.innerHTML = wishlist.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
+                const steamCurrent = game['Steam Preco Atual'] || 'N/A';
+                const psnCurrent = game['PSN Preco Atual'] || 'N/A';
+                const steamLowest = game['Steam Menor Preco Historico'] || 'N/A';
+                const psnLowest = game['PSN Menor Preco Historico'] || 'N/A';
+
+                const priceStatus = getPriceStatus(steamCurrent, steamLowest, psnCurrent, psnLowest);
+
                 return `
-                <div class="wish-card">
-                    <img src="${game.Link}" class="wish-card-img" alt="${safeName}">
+                <div class="wish-card" onclick="openWishDetailsModal('${safeName}')">
+                    <img src="${game.Link || 'https://placehold.co/180x180/21262d/e6edf3?text=Sem+Capa'}" class="wish-card-img" alt="${safeName}">
                     <div class="wish-card-info">
                         <h3 class="wish-card-title">${game.Nome}</h3>
                         <div class="wish-card-details">
-                            <span>${game['Data Lançamento']}</span>
-                            <span class="wish-card-price">${formatCurrency(game.Preço)}</span>
+                            <div class="wish-card-price-row">
+                                <span>Steam:</span>
+                                <span class="wish-card-price">${formatCurrency(steamCurrent)}</span>
+                            </div>
+                            <div class="wish-card-price-row">
+                                <span>PSN:</span>
+                                <span class="wish-card-price">${formatCurrency(psnCurrent)}</span>
+                            </div>
+                            <div class="wish-card-price-row" style="margin-top: 8px;">
+                                <span>Status:</span>
+                                <span class="price-status ${priceStatus.class}">${priceStatus.status}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
-                        <button class="action-button" onclick="purchaseWish('${safeName}')" title="Marcar como Comprado"><span class="material-symbols-outlined" style="font-size: 18px;">shopping_cart_checkout</span></button>
-                        <button class="action-button" onclick="editWish('${safeName}')" title="Editar"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></button>
-                        <button class="action-button" onclick="deleteWish('${safeName}')" title="Excluir"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button>
                     </div>
                 </div>`;
             }).join('');
         }
+
+        // NOVO: Função para atualizar a data da última atualização da wishlist
+        function updateLastWishlistUpdate(wishlist = []) {
+            const lastUpdateElement = document.getElementById('lastWishlistUpdate');
+            if (!lastUpdateElement) return;
+
+            let latestDate = null;
+
+            wishlist.forEach(item => {
+                const updateDateStr = item['Ultima Atualizacao'];
+                if (updateDateStr) {
+                    try {
+                        const [datePart, timePart] = updateDateStr.split(' ');
+                        const [year, month, day] = datePart.split('-');
+                        const [hour, minute, second] = timePart.split(':');
+                        const itemDate = new Date(year, month - 1, day, hour, minute, second);
+                        
+                        if (!latestDate || itemDate > latestDate) {
+                            latestDate = itemDate;
+                        }
+                    } catch (e) {
+                        console.warn("Erro ao parsear data de atualização da wishlist:", updateDateStr, e);
+                    }
+                }
+            });
+
+            if (latestDate) {
+                lastUpdateElement.textContent = `Última atualização: ${latestDate.toLocaleDateString('pt-BR')} ${latestDate.toLocaleTimeString('pt-BR')}`;
+            } else {
+                lastUpdateElement.textContent = 'Última atualização: N/A';
+            }
+        }
+
 
         function renderAchievements(completed = [], pending = []) {
             const completedContainer = document.getElementById('completed-achievements-list');
@@ -1662,6 +1871,24 @@
             const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort();
             const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))].sort((a,b) => b-a);
             
+            const wishlist = fullData.desejos || [];
+            const wishYears = [...new Set(wishlist.map(w => {
+                const dateStr = w['Data Lançamento'];
+                if (!dateStr || dateStr.toLowerCase().includes('em breve')) return null;
+                // Tenta parsear DD/MM/YYYY
+                if (dateStr.includes('/')) {
+                    const parts = dateStr.split('/');
+                    if (parts.length === 3) return parseInt(parts[2]);
+                }
+                // Tenta parsear YYYY-MM-DD
+                if (dateStr.includes('-')) {
+                    const parts = dateStr.split('-');
+                    if (parts.length === 3) return parseInt(parts[0]);
+                }
+                return null;
+            }).filter(Boolean))].sort((a,b) => b-a);
+
+
             const populate = (elId, items) => { 
                 const select = document.getElementById(elId); 
                 if (!select) return; 
@@ -1669,72 +1896,118 @@
                 items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); 
             }
             
-            // Popula filtros para ambas as seções
-            const suffixes = ['-graficos', '-biblioteca'];
+            // Popula filtros para todas as seções
+            const suffixes = ['-graficos', '-biblioteca', '-desejos'];
             suffixes.forEach(suffix => {
-                populate('statusFilter' + suffix, statuses); 
-                populate('styleFilter' + suffix, styles); 
-                populate('yearFilter' + suffix, years);
+                // Filtros da biblioteca e gráficos
+                if (suffix !== '-desejos') {
+                    populate('statusFilter' + suffix, statuses); 
+                    populate('styleFilter' + suffix, styles); 
+                    populate('yearFilter' + suffix, years);
+                } else { // Filtros da lista de desejos
+                    populate('releaseYearFilter' + suffix, wishYears);
+                }
             });
         }
         
         function applyFilters(suffix) {
             const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || '';
-            const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
-            const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
-            const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
             
-            const minRating = parseFloat(document.getElementById('minRating' + suffix)?.value) || 0;
-            const maxRating = parseFloat(document.getElementById('maxRating' + suffix)?.value) || 100;
-            const minMetacritic = parseFloat(document.getElementById('minMetacritic' + suffix)?.value) || 0;
-            const maxMetacritic = parseFloat(document.getElementById('maxMetacritic' + suffix)?.value) || 100;
-            const minPrice = parseFloat(document.getElementById('minPrice' + suffix)?.value) || 0;
-            const maxPrice = parseFloat(document.getElementById('maxPrice' + suffix)?.value) || Infinity;
-            const minHours = parseFloat(document.getElementById('minHours' + suffix)?.value) || 0;
-            const maxHours = parseFloat(document.getElementById('maxHours' + suffix)?.value) || Infinity;
+            let filteredItems = [];
+
+            if (suffix === '-desejos') {
+                const minWishPrice = parseFloat(document.getElementById('minWishPrice' + suffix)?.value) || 0;
+                const maxWishPrice = parseFloat(document.getElementById('maxWishPrice' + suffix)?.value) || Infinity;
+                const minSteamPrice = parseFloat(document.getElementById('minSteamPrice' + suffix)?.value) || 0;
+                const maxSteamPrice = parseFloat(document.getElementById('maxSteamPrice' + suffix)?.value) || Infinity;
+                const minPsnPrice = parseFloat(document.getElementById('minPsnPrice' + suffix)?.value) || 0;
+                const maxPsnPrice = parseFloat(document.getElementById('maxPsnPrice' + suffix)?.value) || Infinity;
+                const releaseYear = document.getElementById('releaseYearFilter' + suffix)?.value || 'all';
 
 
-            const filteredGames = (fullData.biblioteca || []).filter(g => {
-                const gameName = g.Nome.toLowerCase();
-                const gameStatus = g.Status;
-                const gameStyles = g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : [];
-                const gameYear = g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null;
-                const gameRating = parseFloat(g.Nota) || 0;
-                const gameMetacritic = parseFloat(g.Metacritic) || 0;
-                const gamePrice = parseFloat(String(g.Preço).replace(',', '.')) || 0;
-                const gameHours = parseInt(g['Tempo de Jogo']) || 0;
+                filteredItems = (fullData.desejos || []).filter(w => {
+                    const wishName = w.Nome.toLowerCase();
+                    const wishPrice = parseFloat(String(w.Preço || '0').replace(',', '.')) || 0;
+                    const steamCurrentPrice = parseFloat(String(w['Steam Preco Atual'] || '0').replace(',', '.')) || 0;
+                    const psnCurrentPrice = parseFloat(String(w['PSN Preco Atual'] || '0').replace(',', '.')) || 0;
+                    const wishReleaseDateStr = w['Data Lançamento'];
+                    let wishReleaseYear = null;
+                    if (wishReleaseDateStr && !wishReleaseDateStr.toLowerCase().includes('em breve')) {
+                        if (wishReleaseDateStr.includes('/')) { // DD/MM/YYYY
+                            wishReleaseYear = parseInt(wishReleaseDateStr.split('/')[2]);
+                        } else if (wishReleaseDateStr.includes('-')) { // YYYY-MM-DD
+                            wishReleaseYear = parseInt(wishReleaseDateStr.split('-')[0]);
+                        }
+                    }
 
+                    const nameMatch = name ? wishName.includes(name) : true;
+                    const priceMatch = (wishPrice >= minWishPrice && wishPrice <= maxWishPrice);
+                    const steamPriceMatch = (steamCurrentPrice >= minSteamPrice && steamCurrentPrice <= maxSteamPrice);
+                    const psnPriceMatch = (psnCurrentPrice >= minPsnPrice && psnCurrentPrice <= maxPsnPrice);
+                    const releaseYearMatch = releaseYear !== 'all' ? wishReleaseYear == releaseYear : true;
 
-                const nameMatch = name ? gameName.includes(name) : true;
-                const statusMatch = status !== 'all' ? gameStatus === status : true;
-                const styleMatch = style !== 'all' ? gameStyles.includes(style) : true;
-                const yearMatch = year !== 'all' ? gameYear == year : true;
+                    return nameMatch && priceMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch;
+                });
+                renderWishlist(filteredItems);
+            } else { // Filtros para gráficos e biblioteca
+                const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
+                const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
+                const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
                 
-                const ratingMatch = (gameRating >= minRating && gameRating <= maxRating);
-                const metacriticMatch = (gameMetacritic >= minMetacritic && gameMetacritic <= maxMetacritic);
-                const priceMatch = (gamePrice >= minPrice && gamePrice <= maxPrice);
-                const hoursMatch = (gameHours >= minHours && gameHours <= maxHours);
+                const minRating = parseFloat(document.getElementById('minRating' + suffix)?.value) || 0;
+                const maxRating = parseFloat(document.getElementById('maxRating' + suffix)?.value) || 100;
+                const minMetacritic = parseFloat(document.getElementById('minMetacritic' + suffix)?.value) || 0;
+                const maxMetacritic = parseFloat(document.getElementById('maxMetacritic' + suffix)?.value) || 100;
+                const minPrice = parseFloat(document.getElementById('minPrice' + suffix)?.value) || 0;
+                const maxPrice = parseFloat(document.getElementById('maxPrice' + suffix)?.value) || Infinity;
+                const minHours = parseFloat(document.getElementById('minHours' + suffix)?.value) || 0;
+                const maxHours = parseFloat(document.getElementById('maxHours' + suffix)?.value) || Infinity;
 
-                return nameMatch && statusMatch && styleMatch && yearMatch &&
-                       ratingMatch && metacriticMatch && priceMatch && hoursMatch;
-            });
+
+                filteredItems = (fullData.biblioteca || []).filter(g => {
+                    const gameName = g.Nome.toLowerCase();
+                    const gameStatus = g.Status;
+                    const gameStyles = g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : [];
+                    const gameYear = g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null;
+                    const gameRating = parseFloat(g.Nota) || 0;
+                    const gameMetacritic = parseFloat(g.Metacritic) || 0;
+                    const gamePrice = parseFloat(String(g.Preço).replace(',', '.')) || 0;
+                    const gameHours = parseInt(g['Tempo de Jogo']) || 0;
+
+
+                    const nameMatch = name ? gameName.includes(name) : true;
+                    const statusMatch = status !== 'all' ? gameStatus === status : true;
+                    const styleMatch = style !== 'all' ? gameStyles.includes(style) : true;
+                    const yearMatch = year !== 'all' ? gameYear == year : true;
+                    
+                    const ratingMatch = (gameRating >= minRating && gameRating <= maxRating);
+                    const metacriticMatch = (gameMetacritic >= minMetacritic && gameMetacritic <= maxMetacritic);
+                    const priceMatch = (gamePrice >= minPrice && gamePrice <= maxPrice);
+                    const hoursMatch = (gameHours >= minHours && gameHours <= maxHours);
+
+                    return nameMatch && statusMatch && styleMatch && yearMatch &&
+                           ratingMatch && metacriticMatch && priceMatch && hoursMatch;
+                });
+            }
+
 
             if (suffix === '-graficos') {
-                const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
+                const notas = filteredItems.map(g => g.Nota).filter(n => n && !isNaN(n));
                 const stats = {
-                    total_jogos: filteredGames.length,
-                    total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0),
-                    custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0),
+                    total_jogos: filteredItems.length,
+                    total_horas_jogadas: filteredItems.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0),
+                    custo_total_biblioteca: filteredItems.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0),
                     media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length) : 'N/A',
-                    total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length,
-                    total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0)
+                    total_platinados: filteredItems.filter(g => g['Platinado?'] === 'Sim').length,
+                    total_conquistas: filteredItems.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0)
                 };
                 renderSummaryCards(stats, 'summary-graficos');
-                renderAllCharts(filteredGames);
+                renderAllCharts(filteredItems);
             } else if (suffix === '-biblioteca') {
-                renderGameTable(filteredGames);
-                renderGameGrid(filteredGames);
+                renderGameTable(filteredItems);
+                renderGameGrid(filteredItems);
             }
+            // A renderização da wishlist já está dentro do if (suffix === '-desejos')
         }
 
         // Função para alternar a visibilidade do modal de filtros avançados
@@ -1748,18 +2021,29 @@
         // Função para limpar todos os filtros no modal
         function clearAllFilters(suffix) {
             document.getElementById('nameFilter' + suffix).value = '';
-            document.getElementById('statusFilter' + suffix).value = 'all';
-            document.getElementById('styleFilter' + suffix).value = 'all';
-            document.getElementById('yearFilter' + suffix).value = 'all';
-            document.getElementById('minRating' + suffix).value = '';
-            document.getElementById('maxRating' + suffix).value = '';
-            document.getElementById('minMetacritic' + suffix).value = '';
-            document.getElementById('maxMetacritic' + suffix).value = '';
-            document.getElementById('minPrice' + suffix).value = '';
-            document.getElementById('maxPrice' + suffix).value = '';
-            document.getElementById('minHours' + suffix).value = '';
-            document.getElementById('maxHours' + suffix).value = '';
-            applyFilters(suffix); // Aplica os filtros limpos
+            
+            if (suffix === '-desejos') {
+                document.getElementById('minWishPrice' + suffix).value = '';
+                document.getElementById('maxWishPrice' + suffix).value = '';
+                document.getElementById('minSteamPrice' + suffix).value = '';
+                document.getElementById('maxSteamPrice' + suffix).value = '';
+                document.getElementById('minPsnPrice' + suffix).value = '';
+                document.getElementById('maxPsnPrice' + suffix).value = '';
+                document.getElementById('releaseYearFilter' + suffix).value = 'all';
+            } else { // Para gráficos e biblioteca
+                document.getElementById('statusFilter' + suffix).value = 'all';
+                document.getElementById('styleFilter' + suffix).value = 'all';
+                document.getElementById('yearFilter' + suffix).value = 'all';
+                document.getElementById('minRating' + suffix).value = '';
+                document.getElementById('maxRating' + suffix).value = '';
+                document.getElementById('minMetacritic' + suffix).value = '';
+                document.getElementById('maxMetacritic' + suffix).value = '';
+                document.getElementById('minPrice' + suffix).value = '';
+                document.getElementById('maxPrice' + suffix).value = '';
+                document.getElementById('minHours' + suffix).value = '';
+                document.getElementById('maxHours' + suffix).value = '';
+            }
+            // applyFilters(suffix); // Aplica os filtros limpos - será chamado pelo botão "Aplicar Filtros"
         }
 
 
@@ -1851,28 +2135,44 @@
         function editGame(gameName) { openGameModalForEdit(gameName); }
         
         function openWishModal() {
-            document.getElementById('addWishForm').reset(); document.getElementById('editMode').value = '';
+            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = '';
             document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos'; document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
             document.getElementById('addWishModal').classList.add('active');
         }
 
         function editWish(wishName) {
             const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
-            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = wishName;
+            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = wishName; // Corrigido para editWishMode
             document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`; document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Item';
             document.getElementById('wishGameName').value = wishToEdit.Nome;
             document.getElementById('wishGameLink').value = wishToEdit.Link || '';
             document.getElementById('wishGameRelease').value = wishToEdit["Data Lançamento"] || '';
-            document.getElementById('wishGamePrice').value = String(wishToEdit.Preço || '').replace('.', ',');
+            // Preço removido do formulário de adição/edição de desejos, então não preenchemos aqui
+            // document.getElementById('wishGamePrice').value = String(wishToEdit.Preço || '').replace('.', ',');
             document.getElementById('addWishModal').classList.add('active');
+            closeWishDetailsModal(); // Fecha o modal de detalhes se estiver aberto
         }
 
         async function handleWishFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
-            const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
-            const wishData = { Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value, "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0 };
-            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
+            const editModeValue = document.getElementById('editWishMode').value; // Corrigido para editWishMode
+            const isEditing = editModeValue !== '';
+            // Preço foi removido do formulário de adição/edição de desejos
+            // const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
+            const wishData = { 
+                Nome: document.getElementById('wishGameName').value, 
+                Link: document.getElementById('wishGameLink').value, 
+                "Data Lançamento": document.getElementById('wishGameRelease').value, 
+                // Preço será atualizado separadamente pela API externa ou manualmente
+                Preço: 0, // Valor padrão, pode ser atualizado depois
+                "Steam Preco Atual": 0,
+                "Steam Menor Preco Historico": 0,
+                "PSN Preco Atual": 0,
+                "PSN Menor Preco Historico": 0,
+                "Ultima Atualizacao": ""
+            };
+            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; 
+            let method = isEditing ? 'PUT' : 'POST';
             let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
             try {
                 const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
@@ -1911,6 +2211,7 @@
                     }
                 }
             });
+            closeWishDetailsModal();
         }
         
         async function purchaseWish(wishName) {
@@ -2034,6 +2335,49 @@
         function closeGameDetailsModal() {
             document.getElementById('gameDetailsModal').classList.remove('active');
         }
+
+        // NOVO: Funções para o modal de detalhes da lista de desejos
+        function openWishDetailsModal(wishName) {
+            const wish = fullData.desejos.find(w => w.Nome === wishName);
+            if (!wish) {
+                showToast("Item da lista de desejos não encontrado.", true);
+                return;
+            }
+
+            document.getElementById('wishNameDetails').textContent = wish.Nome;
+            document.getElementById('wishReleaseDetails').textContent = wish['Data Lançamento'] || 'N/A';
+            
+            const steamCurrent = wish['Steam Preco Atual'] || 'N/A';
+            const steamLowest = wish['Steam Menor Preco Historico'] || 'N/A';
+            const psnCurrent = wish['PSN Preco Atual'] || 'N/A';
+            const psnLowest = wish['PSN Menor Preco Historico'] || 'N/A';
+
+            document.getElementById('wishSteamCurrentPrice').textContent = formatCurrency(steamCurrent);
+            document.getElementById('wishSteamLowestPrice').textContent = formatCurrency(steamLowest);
+            document.getElementById('wishPsnCurrentPrice').textContent = formatCurrency(psnCurrent);
+            document.getElementById('wishPsnLowestPrice').textContent = formatCurrency(psnLowest);
+            document.getElementById('wishLastPriceUpdate').textContent = wish['Ultima Atualizacao'] ? new Date(wish['Ultima Atualizacao']).toLocaleString('pt-BR') : 'N/A';
+
+            const priceStatus = getPriceStatus(steamCurrent, steamLowest, psnCurrent, psnLowest);
+            const wishPriceStatusElement = document.getElementById('wishPriceStatus');
+            wishPriceStatusElement.textContent = priceStatus.status;
+            wishPriceStatusElement.className = `price-status ${priceStatus.class}`;
+
+            document.getElementById('wishCoverArt').src = wish.Link || 'https://placehold.co/120x160/21262d/e6edf3?text=Sem+Capa';
+            document.getElementById('wishCoverBackground').src = wish.Link || 'https://placehold.co/800x250/21262d/e6edf3?text=Sem+Capa';
+
+            const safeName = wish.Nome.replace(/'/g, "\\'");
+            document.getElementById('purchaseWishDetailsBtn').onclick = () => purchaseWish(safeName);
+            document.getElementById('editWishDetailsBtn').onclick = () => editWish(safeName);
+            document.getElementById('deleteWishDetailsBtn').onclick = () => deleteWish(safeName);
+
+            document.getElementById('wishDetailsModal').classList.add('active');
+        }
+
+        function closeWishDetailsModal() {
+            document.getElementById('wishDetailsModal').classList.remove('active');
+        }
+
 
         async function handleSearch(query) {
             const resultsContainer = document.getElementById('searchResultsContainer');
@@ -2313,6 +2657,7 @@
             // Adiciona listeners para os novos botões de filtro
             setupListener('openAdvancedFiltersBtn-graficos', 'click', () => toggleAdvancedFiltersModal('-graficos'));
             setupListener('openAdvancedFiltersBtn-biblioteca', 'click', () => toggleAdvancedFiltersModal('-biblioteca'));
+            setupListener('openAdvancedFiltersBtn-desejos', 'click', () => toggleAdvancedFiltersModal('-desejos'));
 
 
             document.querySelectorAll('.sortable-header').forEach(header => {
@@ -2326,23 +2671,19 @@
                 // Filtros simples que ainda podem existir no modal
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter',
                  'minRating', 'maxRating', 'minMetacritic', 'maxMetacritic',
-                 'minPrice', 'maxPrice', 'minHours', 'maxHours'].forEach(id => {
+                 'minPrice', 'maxPrice', 'minHours', 'maxHours', 
+                 'minWishPrice', 'maxWishPrice', 'minSteamPrice', 'maxSteamPrice',
+                 'minPsnPrice', 'maxPsnPrice', 'releaseYearFilter'].forEach(id => {
                     const element = document.getElementById(id + suffix);
                     if (element) {
-                        // Para inputs de texto/número e selects, o evento 'input' ou 'change' é mais apropriado
-                        element.addEventListener(element.tagName === 'SELECT' ? 'change' : 'input', () => {
-                            // A chamada de applyFilters agora será feita pelo botão "Aplicar Filtros" do modal
-                            // Mas mantemos este listener para feedback visual ou se o usuário quiser aplicar na hora
-                            // Por enquanto, vamos remover a chamada direta e deixar o botão fazer isso.
-                            // Para manter o comportamento antigo até o botão ser clicado, manteríamos applyFilters aqui.
-                            // Mas para o modal, a ideia é que só aplique ao clicar no botão.
-                            // Então, para os inputs dentro do modal, não vamos aplicar imediatamente.
-                        });
+                        // A chamada de applyFilters agora será feita pelo botão "Aplicar Filtros" do modal
+                        // Para os inputs dentro do modal, não vamos aplicar imediatamente.
                     }
                 });
             };
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
+            setupFilterListeners('-desejos'); // Configura listeners para filtros de desejos
             
             const gameNameInput = document.getElementById('gameName');
             if (gameNameInput) {
