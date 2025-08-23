@@ -396,7 +396,7 @@
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 20px;
         }
 
@@ -2089,33 +2089,44 @@
         let allFetchedNotifications = []; // Armazena todas as notificações buscadas (lidas e não lidas)
 
         async function fetchNotifications() {
+            console.log('fetchNotifications: Starting to fetch notifications.'); // New log
             try {
                 const response = await fetch(`${API_URL}/games/notifications`, { headers: { 'Authorization': `Bearer ${token}` } });
-                if (response.status === 401) { return; } // Token expirado, será tratado pelo fetchGameData
+                if (response.status === 401) { 
+                    console.log('fetchNotifications: Unauthorized, returning.'); // New log
+                    return; 
+                } // Token expirado, será tratado pelo fetchGameData
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
                 const notifications = await response.json();
+                console.log('fetchNotifications: Notifications fetched:', notifications.length); // New log
                 allFetchedNotifications = notifications; // Armazena todas as notificações
                 
                 const unreadNotifications = notifications.filter(n => n.Lida === 'Não');
                 updateNotificationCount(unreadNotifications.length);
+                console.log('fetchNotifications: Notification count updated.'); // New log
                 
                 // Renderiza as notificações na aba ativa atual
                 const activeTab = document.querySelector('#notificationsModal .tab-button.active');
                 if (activeTab) {
                     renderNotificationsInModal(activeTab.dataset.tab);
+                    console.log('fetchNotifications: renderNotificationsInModal called for active tab.'); // New log
                 } else {
                     renderNotificationsInModal('unread'); // Padrão para não lidas se nenhuma aba estiver ativa
+                    console.log('fetchNotifications: renderNotificationsInModal called for unread (default).'); // New log
                 }
 
                 // Exibir popups para novas notificações não lidas
+                console.log('fetchNotifications: Checking for new popups.'); // New log
                 unreadNotifications.forEach(newNotif => {
                     // Verifica se a notificação já foi exibida como popup nesta sessão
                     if (!currentNotifications.some(n => n.ID === newNotif.ID)) {
                         showToast(newNotif.Mensagem);
                         currentNotifications.push(newNotif); // Adiciona à lista de notificações exibidas
+                        console.log('fetchNotifications: Showing popup for ID:', newNotif.ID); // New log
                     }
                 });
+                console.log('fetchNotifications: Popup check completed.'); // New log
 
             } catch (err) {
                 console.error('Erro ao buscar notificações:', err);
@@ -2135,11 +2146,14 @@
         }
 
         function renderNotificationsInModal(tabName) {
+            console.log('renderNotificationsInModal: Rendering for tab:', tabName); // New log
             const unreadListContainer = document.getElementById('unread-notifications-list');
             const readListContainer = document.getElementById('read-notifications-list');
 
             const unreadNotifications = allFetchedNotifications.filter(n => n.Lida === 'Não');
             const readNotifications = allFetchedNotifications.filter(n => n.Lida === 'Sim');
+
+            console.log('renderNotificationsInModal: Unread count:', unreadNotifications.length, 'Read count:', readNotifications.length); // New log
 
             const createNotificationHtml = (notif) => {
                 const date = new Date(notif.Data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
@@ -2167,6 +2181,7 @@
                     readListContainer.innerHTML = readNotifications.map(createNotificationHtml).join('');
                 }
             }
+            console.log('renderNotificationsInModal: Finished rendering for tab:', tabName); // New log
         }
 
         async function markNotificationAsReadAndRefresh(notificationId) {
