@@ -830,7 +830,7 @@
             position: absolute;
             top: -5px;
             right: -5px;
-            background-color: #e03131; /* Vermelho para o contador */
+            background-color: var(--accent-purple); /* Roxo para o contador */
             color: white;
             font-size: 12px;
             font-weight: 700;
@@ -850,27 +850,27 @@
             max-width: 600px;
         }
 
-        .notifications-list {
+        .notifications-list-container { /* Novo contêiner para as listas de notificações */
             max-height: 400px;
             overflow-y: auto;
             padding-right: 10px; /* Espaçamento para a barra de rolagem */
         }
 
-        .notifications-list::-webkit-scrollbar {
+        .notifications-list-container::-webkit-scrollbar {
             width: 8px; 
         }
 
-        .notifications-list::-webkit-scrollbar-track {
+        .notifications-list-container::-webkit-scrollbar-track {
             background: transparent; 
         }
 
-        .notifications-list::-webkit-scrollbar-thumb {
+        .notifications-list-container::-webkit-scrollbar-thumb {
             background-color: var(--border-color); 
             border-radius: 10px; 
             border: 2px solid var(--surface-color); 
         }
 
-        .notifications-list {
+        .notifications-list-container {
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) var(--surface-color);
         }
@@ -1321,9 +1321,19 @@
         <div class="modal-content">
             <span class="close-button" onclick="closeNotificationsModal()">&times;</span>
             <h2>Suas Notificações</h2>
-            <div id="notifications-list" class="notifications-list">
-                <!-- Notificações serão carregadas aqui -->
-                <p class="no-results">Nenhuma notificação por enquanto!</p>
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchNotificationTab(event, 'unread')">Não Lidas</button>
+                <button class="tab-button" onclick="switchNotificationTab(event, 'read')">Lidas</button>
+            </div>
+            <div id="unread" class="tab-content active notifications-list-container">
+                <div id="unread-notifications-list">
+                    <p class="no-results">Nenhuma notificação não lida por enquanto!</p>
+                </div>
+            </div>
+            <div id="read" class="tab-content notifications-list-container">
+                <div id="read-notifications-list">
+                    <p class="no-results">Nenhuma notificação lida por enquanto!</p>
+                </div>
             </div>
         </div>
     </div>
@@ -1353,6 +1363,8 @@
         let searchTimeout;
         let wishSearchTimeout;
         let notificationInterval; // Variável para armazenar o ID do intervalo das notificações
+        let isInitialLoad = true; // Flag para controlar a tela de carregamento inicial
+        let allNotifications = []; // Armazena todas as notificações buscadas
 
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
@@ -1370,8 +1382,10 @@
         async function fetchGameData() {
             console.log('fetchGameData: Starting...'); // Log 1
             try {
-                document.getElementById('loading-screen').classList.remove('hidden');
-                console.log('fetchGameData: Loading screen shown.'); // Log after showing
+                if (isInitialLoad) { // Só mostra a tela de carregamento na carga inicial
+                    document.getElementById('loading-screen').classList.remove('hidden');
+                    console.log('fetchGameData: Loading screen shown.'); // Log after showing
+                }
 
                 const response = await fetch(`${API_URL}/games/data`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (response.status === 401) {
@@ -1388,8 +1402,11 @@
                 console.error('Erro ao buscar dados:', err);
                 document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
             } finally {
-                document.getElementById('loading-screen').classList.add('hidden');
-                console.log('fetchGameData: Loading screen hidden.'); // Log 5
+                if (isInitialLoad) { // Só esconde a tela de carregamento na carga inicial
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    console.log('fetchGameData: Loading screen hidden.'); // Log 5
+                    isInitialLoad = false; // Desativa a flag após o primeiro carregamento
+                }
             }
         }
         
@@ -1599,7 +1616,7 @@
             const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
             const platformData = processData('Plataforma'); const statusData = processData('Status');
             const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
-            if(document.getElementById('platinadosChart')) createdCharts.platinados = new Chart('platinadosChart', { type: 'pie', data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.grey], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
+            if(document.getElementById('platinadosChart')) createdCharts.platinados = new Chart('platinadosChart', { type: 'pie', data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
             if(document.getElementById('platformChart')) createdCharts.platform = new Chart('platformChart', { type: 'bar', data: { labels: Object.keys(platformData), datasets: [{ data: Object.values(platformData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }}}, plugins: { legend: { display: false }}} });
             // Usando as novas cores de roxo e cinza para o gráfico de status
             if(document.getElementById('statusChart')) createdCharts.status = new Chart('statusChart', { type: 'doughnut', data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
@@ -2056,6 +2073,7 @@
 
         // --- NOVO: Funções de Notificação no Frontend ---
         let currentNotifications = []; // Armazena as notificações atuais para evitar popups duplicados
+        let allFetchedNotifications = []; // Armazena todas as notificações buscadas (lidas e não lidas)
 
         async function fetchNotifications() {
             try {
@@ -2064,11 +2082,21 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
                 const notifications = await response.json();
-                updateNotificationCount(notifications.length);
-                renderNotificationsInModal(notifications);
+                allFetchedNotifications = notifications; // Armazena todas as notificações
+                
+                const unreadNotifications = notifications.filter(n => n.Lida === 'Não');
+                updateNotificationCount(unreadNotifications.length);
+                
+                // Renderiza as notificações na aba ativa atual
+                const activeTab = document.querySelector('#notificationsModal .tab-button.active');
+                if (activeTab) {
+                    renderNotificationsInModal(activeTab.dataset.tab);
+                } else {
+                    renderNotificationsInModal('unread'); // Padrão para não lidas se nenhuma aba estiver ativa
+                }
 
-                // Exibir popups para novas notificações
-                notifications.forEach(newNotif => {
+                // Exibir popups para novas notificações não lidas
+                unreadNotifications.forEach(newNotif => {
                     // Verifica se a notificação já foi exibida como popup nesta sessão
                     if (!currentNotifications.some(n => n.ID === newNotif.ID)) {
                         showToast(newNotif.Mensagem);
@@ -2093,16 +2121,14 @@
             }
         }
 
-        function renderNotificationsInModal(notifications) {
-            const notificationsList = document.getElementById('notifications-list');
-            if (!notificationsList) return;
+        function renderNotificationsInModal(tabName) {
+            const unreadList = document.getElementById('unread-notifications-list');
+            const readList = document.getElementById('read-notifications-list');
 
-            if (notifications.length === 0) {
-                notificationsList.innerHTML = '<p class="no-results">Nenhuma notificação por enquanto!</p>';
-                return;
-            }
+            const unreadNotifications = allFetchedNotifications.filter(n => n.Lida === 'Não');
+            const readNotifications = allFetchedNotifications.filter(n => n.Lida === 'Sim');
 
-            notificationsList.innerHTML = notifications.map(notif => {
+            const createNotificationHtml = (notif) => {
                 const date = new Date(notif.Data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
                 return `
                     <div class="notification-item ${notif.Lida === 'Sim' ? 'read' : ''}" data-id="${notif.ID}" onclick="markNotificationAsReadAndRefresh(${notif.ID})">
@@ -2111,7 +2137,23 @@
                         <small>${date}</small>
                     </div>
                 `;
-            }).join('');
+            };
+
+            if (unreadList) {
+                if (unreadNotifications.length === 0) {
+                    unreadList.innerHTML = '<p class="no-results">Nenhuma notificação não lida por enquanto!</p>';
+                } else {
+                    unreadList.innerHTML = unreadNotifications.map(createNotificationHtml).join('');
+                }
+            }
+
+            if (readList) {
+                if (readNotifications.length === 0) {
+                    readList.innerHTML = '<p class="no-results">Nenhuma notificação lida por enquanto!</p>';
+                } else {
+                    readList.innerHTML = readNotifications.map(createNotificationHtml).join('');
+                }
+            }
         }
 
         async function markNotificationAsReadAndRefresh(notificationId) {
@@ -2134,14 +2176,28 @@
 
         function openNotificationsModal() {
             document.getElementById('notificationsModal').classList.add('active');
-            // Ao abrir o modal, podemos optar por marcar todas como lidas ou apenas as que o usuário clicar.
-            // Por enquanto, vamos deixar que o clique individual as marque como lidas.
+            // Garante que a aba "Não Lidas" esteja ativa ao abrir o modal
+            switchNotificationTab(null, 'unread'); 
+            fetchNotifications(); // Busca as notificações para garantir que o modal esteja atualizado
         }
 
         async function closeNotificationsModal() {
             document.getElementById('notificationsModal').classList.remove('active');
-            // Opcional: Recarregar notificações para garantir que o contador esteja atualizado após fechar o modal
-            fetchNotifications(); 
+            fetchNotifications(); // Recarrega notificações para garantir que o contador esteja atualizado
+        }
+
+        function switchNotificationTab(event, tabName) {
+            document.querySelectorAll('#notificationsModal .tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('#notificationsModal .tab-button').forEach(tb => tb.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            
+            const targetButton = document.querySelector(`#notificationsModal .tab-button[data-tab="${tabName}"]`);
+            if (targetButton) {
+                targetButton.classList.add('active');
+            }
+            
+            renderNotificationsInModal(tabName); // Renderiza as notificações para a aba selecionada
         }
         // --- FIM NOVO ---
 
@@ -2291,6 +2347,3 @@
             // Inicia a busca periódica por notificações a cada 30 segundos
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
-</script>
-</body>
-</html>
