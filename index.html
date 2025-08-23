@@ -2143,21 +2143,34 @@
         }
 
         // Função para limpar todos os filtros no modal
-        function clearAllFilters(suffix) {
-            document.getElementById('nameFilter' + suffix)?.value = '';
-            document.getElementById('statusFilter' + suffix)?.value = 'all';
-            document.getElementById('styleFilter' + suffix)?.value = 'all';
-            document.getElementById('yearFilter' + suffix)?.value = 'all';
-            document.getElementById('minRating' + suffix)?.value = '';
-            document.getElementById('maxRating' + suffix)?.value = '';
-            document.getElementById('minMetacritic' + suffix)?.value = '';
-            document.getElementById('maxMetacritic' + suffix)?.value = '';
-            document.getElementById('minPrice' + suffix)?.value = '';
-            document.getElementById('maxPrice' + suffix)?.value = '';
-            document.getElementById('minHours' + suffix)?.value = '';
-            document.getElementById('maxHours' + suffix)?.value = '';
-            applyFilters(suffix); // Aplica os filtros limpos
-        }
+function clearAllFilters(suffix) {
+    var el;
+    el = document.getElementById('nameFilter' + suffix);
+    if (el) el.value = '';
+    el = document.getElementById('statusFilter' + suffix);
+    if (el) el.value = 'all';
+    el = document.getElementById('styleFilter' + suffix);
+    if (el) el.value = 'all';
+    el = document.getElementById('yearFilter' + suffix);
+    if (el) el.value = 'all';
+    el = document.getElementById('minRating' + suffix);
+    if (el) el.value = '';
+    el = document.getElementById('maxRating' + suffix);
+    if (el) el.value = '';
+    el = document.getElementById('minMetacritic' + suffix);
+    if (el) el.value = '';
+    el = document.getElementById('maxMetacritic' + suffix);
+    if (el) el.value = '';
+    el = document.getElementById('minPrice' + suffix);
+    if (el) el.value = '';
+    el = document.getElementById('maxPrice' + suffix);
+    if (el) el.value = '';
+    el = document.getElementById('minHours' + suffix);
+    if (el) el.value = '';
+    el = document.getElementById('maxHours' + suffix);
+    if (el) el.value = '';
+    applyFilters(suffix); // Aplica os filtros limpos
+}
 
 
         function openGameModalForAdd() { 
