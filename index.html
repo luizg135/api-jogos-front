@@ -1509,6 +1509,8 @@
             <h2 id="wishModalTitle">Adicionar à Lista de Desejos</h2>
             <form id="addWishForm">
             <input type="hidden" id="editWishMode" value="">
+            <!-- Novo campo para armazenar o nome original do desejo ao editar -->
+            <input type="hidden" id="originalWishName" value="">
 
             <div class="form-group">
                 <label for="wishGameName">Nome do Jogo</label>
@@ -2071,7 +2073,8 @@
                 return null;
             }).filter(Boolean))].sort((a,b) => b-a);
             // --- CORREÇÃO AQUI: Adicionar o 'wishReleaseYearFilter' ao populate ---
-            populate('wishReleaseYearFilter', wishYears);
+            // Este filtro foi removido do HTML, então esta linha pode ser removida ou ignorada se não for mais usada.
+            // populate('wishReleaseYearFilter', wishYears); 
             // --- FIM CORREÇÃO ---
         }
         
@@ -2200,29 +2203,108 @@ function clearAllFilters(suffix) {
         function closeGameModal() { document.getElementById('addGameModal').classList.remove('active'); }
         function closeWishModal() { document.getElementById('addWishModal').classList.remove('active'); }
         
+        async function handleGameFormSubmit(event) {
+            event.preventDefault();
+            const editModeValue = document.getElementById('editMode').value;
+            const isEditing = editModeValue !== '';
+            const gameName = document.getElementById('gameName').value;
+
+            const gameData = {
+                Nome: gameName,
+                Plataforma: document.getElementById('gamePlatform').value,
+                Status: document.getElementById('gameStatus').value,
+                Nota: document.getElementById('gameRating').value,
+                'Tempo de Jogo': document.getElementById('gameHours').value,
+                Link: document.getElementById('gameLink').value,
+                Estilo: document.getElementById('gameStyle').value,
+                Preço: document.getElementById('gamePrice').value.replace(',', '.'), // Substitui vírgula por ponto para parsear corretamente
+                'Conquistas Obtidas': document.getElementById('gameConquistas').value,
+                'Terminado em': document.getElementById('gameTermino').value,
+                RAWG_ID: document.getElementById('rawgIdInput').value,
+                Descricao: document.getElementById('gameDescription').value,
+                Metacritic: document.getElementById('gameMetacritic').value,
+            };
+
+            let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`;
+            let method = isEditing ? 'PUT' : 'POST';
+            let body = isEditing ? { list_type: 'games', item_name: editModeValue, updated_data: gameData } : { list_type: 'games', item_data: gameData };
+
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    showToast(`Jogo ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`);
+                    closeGameModal();
+                    fetchGameData();
+                } else {
+                    const error = await response.json();
+                    showToast(`Erro: ${error.message || 'Falha na operação.'}`, true);
+                }
+            } catch (err) {
+                showToast(`Erro de conexão.`, true);
+            }
+        }
+        
         async function handleWishFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
+            const editModeValue = document.getElementById('editWishMode').value; 
+            const originalWishName = document.getElementById('originalWishName').value; // Usar o nome original para edição
+            const isEditing = editModeValue !== '';
             
             const wishData = { 
                 Nome: document.getElementById('wishGameName').value, 
                 Link: document.getElementById('wishGameLink').value, 
                 "Data Lançamento": document.getElementById('wishGameRelease').value, 
-                // Os campos de preço serão preenchidos pelo backend
-                "PS Preço Atual": 0,
-                "PS Menor Preço Histórico": 0,
-                "Steam Preço Atual": 0,
-                "Steam Menor Preço Histórico": 0
+                "Status": "Na Fila" // Garante que o status seja definido ao adicionar/editar
+                // Os campos de preço serão preenchidos/atualizados pelo backend
             };
+
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; 
             let method = isEditing ? 'PUT' : 'POST';
-            let body = isEditing ? { list_type: 'wishlist', item_name: editModeValue, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
+            // Ao editar, passamos o nome original (`originalWishName`) para identificar o item na planilha
+            // e os `updated_data` com os novos valores, incluindo o novo `Nome` se ele foi alterado.
+            let body = isEditing ? { list_type: 'wishlist', item_name: originalWishName, updated_data: wishData } : { list_type: 'wishlist', item_data: wishData };
+            
             try {
                 const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(body) });
-                if (response.ok) { showToast(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); closeWishModal(); fetchGameData(); }
-                else { const error = await response.json(); showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); }
+                if (response.ok) { 
+                    showToast(`Item ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`); 
+                    closeWishModal(); 
+                    fetchGameData(); 
+                } else { 
+                    const error = await response.json(); 
+                    showToast(`Erro: ${error.message || 'Falha na operação.'}`, true); 
+                }
             } catch (err) { showToast(`Erro de conexão.`, true); }
         }
+        
+        // Função para abrir o modal de edição de desejo
+        function editWish(wishName) {
+            const wishToEdit = fullData.desejos.find(w => w.Nome === wishName);
+            if (!wishToEdit) {
+                showToast("Desejo não encontrado.", true);
+                return;
+            }
+
+            document.getElementById('addWishForm').reset();
+            document.getElementById('editWishMode').value = 'true'; // Apenas para indicar que estamos em modo de edição
+            document.getElementById('originalWishName').value = wishName; // Armazena o nome original
+
+            document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`;
+            document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Desejo';
+
+            document.getElementById('wishGameName').value = wishToEdit.Nome;
+            document.getElementById('wishGameLink').value = wishToEdit.Link || '';
+            document.getElementById('wishGameRelease').value = wishToEdit['Data Lançamento'] || '';
+            
+            document.getElementById('addWishModal').classList.add('active');
+            closeWishDetailsModal(); // Fecha o modal de detalhes se estiver aberto
+        }
+
 
         async function deleteWish(wishName) {
             Swal.fire({
@@ -2370,10 +2452,50 @@ function clearAllFilters(suffix) {
             document.getElementById('gameCoverBackground').src = coverArt;
 
             const safeName = game.Nome.replace(/'/g, "\\'");
-            document.getElementById('editGameDetailsBtn').onclick = () => editGame(safeName);
+            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName); // Corrigido para chamar openGameModalForEdit
             document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(safeName);
 
             document.getElementById('gameDetailsModal').classList.add('active');
+        }
+        
+        // Função para editar um jogo existente na biblioteca (abrir modal)
+        function editGame(gameName) {
+            closeGameDetailsModal(); // Fecha o modal de detalhes se estiver aberto
+            openGameModalForEdit(gameName); // Abre o modal de adição/edição com os dados do jogo
+        }
+
+        // Função para deletar um jogo da biblioteca
+        async function deleteGame(gameName) {
+            Swal.fire({
+                title: 'Deseja Remover?',
+                text: `O jogo "${gameName}" será removido permanentemente da sua biblioteca.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, remover!',
+                cancelButtonText: 'Cancelar',
+                background: 'var(--surface-color)',
+                color: 'var(--primary-text)',
+                confirmButtonColor: '#cb2d3e'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`${API_URL}/games/delete/games/${encodeURIComponent(gameName)}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (response.ok) {
+                            showToast("Jogo deletado com sucesso!");
+                            fetchGameData();
+                        } else {
+                            const error = await response.json();
+                            showToast(error.message || "Erro ao deletar o jogo.", true);
+                        }
+                    } catch (err) {
+                        showToast("Erro de conexão.", true);
+                    }
+                }
+            });
+            closeGameDetailsModal();
         }
 
         function closeGameDetailsModal() {
@@ -2683,12 +2805,42 @@ function clearAllFilters(suffix) {
             setupListener('addWishForm', 'submit', handleWishFormSubmit);
             setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
             setupListener('addGameBtn', 'click', openGameModalForAdd);
-            setupListener('addWishBtn', 'click', openWishModal);
+            setupListener('addWishBtn', 'click', ()To open the wishlist modal for adding new items, you need a function called `openWishModal`. Let's add that. Also, the `editWish` function will now call `openWishModal` but set the form fields with the existing wish details.
+
+```javascript
+        function openWishModal() {
+            document.getElementById('addWishForm').reset();
+            document.getElementById('editWishMode').value = ''; // Clear edit mode
+            document.getElementById('originalWishName').value = ''; // Clear original name
+            document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos';
+            document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
+            document.getElementById('wishSearchResultsContainer').innerHTML = ''; // Clear search results
+            document.getElementById('addWishModal').classList.add('active');
+        }
+```
+
+Now, the `setupListener` for `addWishBtn` should use this `openWishModal` function.
+
+```javascript
+            setupListener('addWishBtn', 'click', openWishModal); // Use the new openWishModal function
+```
+
+The `editGameDetailsBtn` in `openGameDetailsModal` should call `openGameModalForEdit` to open the game editing modal with the current game's data.
+
+```javascript
+            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName);
+```
+
+The `openGameModalForEdit` function is already defined to handle populating the form for editing games.
+
+With these changes, the `ReferenceError: handleGameFormSubmit is not defined` will be resolved as the function is now present. The duplication issue in the wishlist should also be resolved because `handleWishFormSubmit` now uses `originalWishName` to correctly identify the item to update, and `editWish` is properly setting this value.
+
+```javascript
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             
             // Adicionado listener para o novo botão de compartilhar
             setupListener('shareBtn', 'click', () => {
-                const shareLink = 'https://perfil-gamer.netlify.app/shareable.html';
+                const shareLink = '[https://perfil-gamer.netlify.app/shareable.html](https://perfil-gamer.netlify.app/shareable.html)';
                 const tempInput = document.createElement('input');
                 document.body.appendChild(tempInput);
                 tempInput.value = shareLink;
