@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil Gamer</title>
+    <!-- Favicon para evitar o erro 404 -->
+    <link rel="icon" href="https://www.google.com/s2/favicons?domain=netlify.app" type="image/x-icon">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1988,7 +1990,7 @@
                                     <span class="platform-name">PSN:</span>
                                     <div>
                                         <span class="current-price">${formatCurrency(psCurrentPrice)}</span>
-                                        <span class="price-indicator ${psIndicator}">${psIndicator === 'good' ? 'BOM' : psIndicator === 'average' ? 'MÉDIO' : psIndicator === 'bad' ? 'ALTO' : ''}</span>
+                                        <span class="price-indicator ${psIndicator}">${psIndicator === 'good' ? 'BOM' : psIndicator === 'average' ? 'MÉDIO' : psnIndicator === 'bad' ? 'ALTO' : ''}</span>
                                     </div>
                                 </div>
                             ` : ''}
@@ -2072,10 +2074,8 @@
                 }
                 return null;
             }).filter(Boolean))].sort((a,b) => b-a);
-            // --- CORREÇÃO AQUI: Adicionar o 'wishReleaseYearFilter' ao populate ---
             // Este filtro foi removido do HTML, então esta linha pode ser removida ou ignorada se não for mais usada.
             // populate('wishReleaseYearFilter', wishYears); 
-            // --- FIM CORREÇÃO ---
         }
         
         function applyFilters(suffix) {
@@ -2566,9 +2566,11 @@ function clearAllFilters(suffix) {
             if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
             const listHTML = games.map(game => {
                 const safeName = game.name.replace(/'/g, "\\'");
-                const safeStyles = game.styles.replace(/'/g, "\\'");
+                const safeStyles = (game.styles || '').replace(/'/g, "\\'"); // Escape styles too
+                const safeBackgroundImage = (game.background_image || '').replace(/'/g, "\\'"); // Escape background_image
+                const safeDescription = (game.description ? game.description.replace(/'/g, "\\'").replace(/\n/g, '\\n') : ''); // Ensure description is fully escaped
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectGame({ rawg_id: '${game.id}', name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}', metacritic: '${game.metacritic || ''}', description: '${game.description ? game.description.replace(/'/g, "\\'").replace(/\n/g, '\\n') : ''}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
+                return `<div class="search-result-item" onclick="selectGame({ rawg_id: '${game.id}', name: '${safeName}', background_image: '${safeBackgroundImage}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}', metacritic: '${game.metacritic || ''}', description: '${safeDescription}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
@@ -2591,8 +2593,9 @@ function clearAllFilters(suffix) {
             if (!games || games.length === 0) { resultsContainer.innerHTML = ''; return; }
             const listHTML = games.map(game => {
                 const safeName = game.name.replace(/'/g, "\\'");
+                const safeBackgroundImage = (game.background_image || '').replace(/'/g, "\\'"); // Escape background_image
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectWishGame({ name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
+                return `<div class="search-result-item" onclick="selectWishGame({ name: '${safeName}', background_image: '${safeBackgroundImage}', released_for_input: '${game.released_for_input || ''}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
@@ -2805,42 +2808,12 @@ function clearAllFilters(suffix) {
             setupListener('addWishForm', 'submit', handleWishFormSubmit);
             setupListener('settingsForm', 'submit', handleSettingsFormSubmit);
             setupListener('addGameBtn', 'click', openGameModalForAdd);
-            setupListener('addWishBtn', 'click', To open the wishlist modal for adding new items, you need a function called `openWishModal`. Let's add that. Also, the `editWish` function will now call `openWishModal` but set the form fields with the existing wish details.
-
-```javascript
-        function openWishModal() {
-            document.getElementById('addWishForm').reset();
-            document.getElementById('editWishMode').value = ''; // Clear edit mode
-            document.getElementById('originalWishName').value = ''; // Clear original name
-            document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos';
-            document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
-            document.getElementById('wishSearchResultsContainer').innerHTML = ''; // Clear search results
-            document.getElementById('addWishModal').classList.add('active');
-        }
-```
-
-Now, the `setupListener` for `addWishBtn` should use this `openWishModal` function.
-
-```javascript
-            setupListener('addWishBtn', 'click', openWishModal); // Use the new openWishModal function
-```
-
-The `editGameDetailsBtn` in `openGameDetailsModal` should call `openGameModalForEdit` to open the game editing modal with the current game's data.
-
-```javascript
-            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName);
-```
-
-The `openGameModalForEdit` function is already defined to handle populating the form for editing games.
-
-With these changes, the `ReferenceError: handleGameFormSubmit is not defined` will be resolved as the function is now present. The duplication issue in the wishlist should also be resolved because `handleWishFormSubmit` now uses `originalWishName` to correctly identify the item to update, and `editWish` is properly setting this value.
-
-```javascript
+            setupListener('addWishBtn', 'click', openWishModal);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             
             // Adicionado listener para o novo botão de compartilhar
             setupListener('shareBtn', 'click', () => {
-                const shareLink = '[https://perfil-gamer.netlify.app/shareable.html](https://perfil-gamer.netlify.app/shareable.html)';
+                const shareLink = 'https://perfil-gamer.netlify.app/shareable.html';
                 const tempInput = document.createElement('input');
                 document.body.appendChild(tempInput);
                 tempInput.value = shareLink;
