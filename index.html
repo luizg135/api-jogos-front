@@ -994,7 +994,7 @@
         /* Ajuste para a largura dos cards da lista de desejos */
         .wishlist-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Aumentado de 200px para 220px */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Aumentado de 220px para 250px */
             gap: 16px;
         }
 
@@ -2140,18 +2140,18 @@
 
         // Função para limpar todos os filtros no modal
         function clearAllFilters(suffix) {
-            document.getElementById('nameFilter' + suffix).value = '';
-            document.getElementById('statusFilter' + suffix).value = 'all';
-            document.getElementById('styleFilter' + suffix).value = 'all';
-            document.getElementById('yearFilter' + suffix).value = 'all';
-            document.getElementById('minRating' + suffix).value = '';
-            document.getElementById('maxRating' + suffix).value = '';
-            document.getElementById('minMetacritic' + suffix).value = '';
-            document.getElementById('maxMetacritic' + suffix).value = '';
-            document.getElementById('minPrice' + suffix).value = '';
-            document.getElementById('maxPrice' + suffix).value = '';
-            document.getElementById('minHours' + suffix).value = '';
-            document.getElementById('maxHours' + suffix).value = '';
+            document.getElementById('nameFilter' + suffix)?.value = '';
+            document.getElementById('statusFilter' + suffix)?.value = 'all';
+            document.getElementById('styleFilter' + suffix)?.value = 'all';
+            document.getElementById('yearFilter' + suffix)?.value = 'all';
+            document.getElementById('minRating' + suffix)?.value = '';
+            document.getElementById('maxRating' + suffix)?.value = '';
+            document.getElementById('minMetacritic' + suffix)?.value = '';
+            document.getElementById('maxMetacritic' + suffix)?.value = '';
+            document.getElementById('minPrice' + suffix)?.value = '';
+            document.getElementById('maxPrice' + suffix)?.value = '';
+            document.getElementById('minHours' + suffix)?.value = '';
+            document.getElementById('maxHours' + suffix)?.value = '';
             applyFilters(suffix); // Aplica os filtros limpos
         }
 
