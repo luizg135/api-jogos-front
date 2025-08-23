@@ -22,70 +22,80 @@
             font-family: 'Inter', sans-serif;
             color: var(--primary-text);
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: center; /* Centraliza verticalmente o contêiner */
+            justify-content: flex-start; /* Alinha o contêiner à esquerda */
             min-height: 100vh;
             margin: 0;
             position: relative;
             overflow: hidden;
-            background: #0d1117;
+            background: linear-gradient(135deg, #301934 0%, #0d1117 100%);
+            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'), linear-gradient(135deg, #301934 0%, #0d1117 100%);
         }
 
-        .background-image {
-            position: absolute;
+        .main-bg-image {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://img.freepik.com/fotos-premium/vibrante-fundo-de-evento-de-esportes-eletronicos-com-controladores-de-jogo-de-neon-e-elementos-de-design-abstrato_43969-52608.jpg');
+            background-image: url('https://us-a.tapas.io/sa/31/bb7d10de-96a5-4782-9ff4-82c2a257924a.png');
             background-size: cover;
             background-position: center;
-            filter: brightness(0.4) blur(3px);
-            z-index: -1;
+            /* Removido filter: brightness(0); para que a imagem seja revelada */
+            z-index: 0;
         }
 
         .login-container {
-            position: relative;
-            background-color: rgba(22, 27, 34, 0.8);
+            position: fixed; /* Fixa na tela */
+            left: 0; /* Alinha à esquerda */
+            top: 0;
+            bottom: 0;
+            width: 400px; /* Largura fixa para o contêiner */
+            max-width: 90%; /* Garante responsividade em telas menores */
+            background-color: var(--surface-color);
+            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png');
             backdrop-filter: blur(10px);
             padding: 48px;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 400px;
+            border-right: 1px solid var(--border-color); /* Borda apenas na direita */
+            border-radius: 0 16px 16px 0; /* Apenas cantos direitos arredondados */
             text-align: center;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
             animation: fadeIn 0.8s ease-out;
+            transition: transform 0.5s ease-out; /* Transição para o efeito de saída */
+            display: flex; /* Para alinhar o conteúdo internamente */
+            flex-direction: column;
+            justify-content: center; /* Centraliza o conteúdo verticalmente */
+            z-index: 10; /* Garante que o contêiner de login fique acima do fundo interativo */
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateX(-100%); /* Vem da esquerda */
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateX(0);
             }
+        }
+
+        .login-container.slide-out-left {
+            transform: translateX(-100%); /* Move para fora da tela à esquerda */
         }
 
         .login-header {
             margin-bottom: 32px;
+            position: relative;
         }
 
-        .login-header .material-symbols-outlined {
-            font-size: 64px;
-            color: var(--accent-purple);
-            margin-bottom: 8px;
-            filter: drop-shadow(0 0 8px var(--accent-purple));
+        .login-header h1 {
+            font-size: 2.5em; /* Tamanho ajustado para o título */
+            color: var(--primary-text);
+            text-shadow: 0 0 10px rgba(147, 112, 219, 0.7);
+            margin: 0;
+            white-space: nowrap;
         }
         
-        .login-header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin: 0;
-        }
-
         .form-group {
             margin-bottom: 20px;
             text-align: left;
@@ -145,13 +155,45 @@
             margin-top: 16px;
             min-height: 1.2em;
         }
+
+        /* Estilos para o fundo interativo de grade */
+        .interactive-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            z-index: 1; /* Fica acima da imagem de fundo, abaixo do contêiner de login */
+            pointer-events: none; /* Permite que eventos de mouse passem para os quadrados */
+        }
+
+        .interactive-background .grid-square {
+            background-color: var(--bg-color); /* Cor escura para obscurecer a imagem */
+            border: none; /* Sem bordas visíveis */
+            transition: background-color 0.2s ease-out, transform 0.2s ease-out, opacity 0.2s ease-out;
+            transform: scale(1); /* Estado inicial */
+            pointer-events: auto; /* Permite que os quadrados individuais capturem eventos de mouse */
+            opacity: 1; /* Totalmente opaco inicialmente */
+        }
+
+        .interactive-background .grid-square.active {
+            background-color: transparent; /* Torna o quadrado transparente para revelar a imagem */
+            transform: scale(0.9) rotate(5deg); /* Levemente menor e rotacionado para um efeito dinâmico */
+            opacity: 0.3; /* Mais transparente para a imagem aparecer */
+        }
     </style>
 </head>
 <body>
-    <div class="background-image"></div>
-    <div class="login-container">
+    <div class="main-bg-image"></div> <!-- Contêiner para a imagem de fundo principal -->
+
+    <div class="interactive-background" id="interactiveBackground">
+        <!-- Quadrados da grade serão gerados aqui pelo JavaScript -->
+    </div>
+
+    <div class="login-container" id="loginContainer">
         <div class="login-header">
-        <img src="https://raw.githubusercontent.com/luizg135/api-jogos-front/main/ArtoriAPI.gif" width="450">
+            <h1>Acessar Perfil</h1>
         </div>
         <form id="login-form">
             <div class="form-group">
@@ -170,10 +212,49 @@
     <script>
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
+        const loginContainer = document.getElementById('loginContainer');
+        const interactiveBackground = document.getElementById('interactiveBackground');
         
-        // A URL da sua API de login
-        // ATENÇÃO: Substitua 'https://api-jogos-luiz.onrender.com' pela URL real do seu backend no Render.
         const loginApiUrl = 'https://api-jogos-nrma.onrender.com/api/login';
+
+        let revealedSquares = []; // Armazena os quadrados atualmente revelados
+        const maxRevealedSquares = 12; // Limite de quadrados revelados (entre 10-15)
+        const fadeBackDelay = 800; // Tempo em ms para um quadrado voltar ao normal
+
+        // Lógica para gerar a grade interativa
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridSize = 10; // Número de quadrados por linha/coluna (ajustado para quadrados maiores)
+            const totalSquares = gridSize * gridSize;
+
+            interactiveBackground.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+            interactiveBackground.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+
+            for (let i = 0; i < totalSquares; i++) {
+                const square = document.createElement('div');
+                square.classList.add('grid-square');
+                
+                square.addEventListener('mouseover', () => {
+                    if (!square.classList.contains('active')) {
+                        square.classList.add('active');
+                        revealedSquares.push(square);
+
+                        // Se exceder o limite, remove o quadrado mais antigo
+                        if (revealedSquares.length > maxRevealedSquares) {
+                            const oldestSquare = revealedSquares.shift(); // Remove o mais antigo da frente
+                            setTimeout(() => {
+                                oldestSquare.classList.remove('active');
+                            }, fadeBackDelay);
+                        }
+                    }
+                });
+
+                // Não precisamos de um mouseout que remova imediatamente, a lógica acima cuida disso.
+                // O quadrado permanece ativo até ser o mais antigo e exceder o limite.
+
+                interactiveBackground.appendChild(square);
+            }
+        });
+
 
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -192,7 +273,15 @@
                 if (response.ok) {
                     const data = await response.json();
                     localStorage.setItem('jwt_token', data.access_token);
-                    window.location.href = 'index.html'; 
+                    
+                    // Adiciona a classe para iniciar a animação de saída
+                    loginContainer.classList.add('slide-out-left');
+
+                    // Redireciona após a animação (0.5s definido no CSS)
+                    setTimeout(() => {
+                        window.location.href = 'index.html'; 
+                    }, 500); // Deve corresponder à duração da transição CSS
+                    
                 } else {
                     const errorData = await response.json();
                     errorMessage.textContent = errorData.msg || 'Falha no login.';
