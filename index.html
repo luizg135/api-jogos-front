@@ -1340,7 +1340,7 @@
 
 
 <script>
-// COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
+    console.log("Script loaded and starting execution."); // Very early log
 
         // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
@@ -1409,6 +1409,7 @@
                 console.error('Erro ao buscar dados da API:', err);
                 document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
             } finally {
+                console.log('fetchGameData: Entering finally block. isInitialLoad:', isInitialLoad); // New log
                 if (isInitialLoad) { // Só esconde a tela de carregamento na carga inicial
                     document.getElementById('loading-screen').classList.add('hidden');
                     console.log('fetchGameData: Loading screen hidden.'); // Log 5
@@ -1419,17 +1420,22 @@
         
         async function renderAllPages() { // Make it async
             console.log('renderAllPages: Starting...'); // Log 3
-            loadProfileSettings(fullData.perfil);
-            renderGamerCard(fullData.estatisticas);
-            renderSummaryCards(fullData.estatisticas, 'summary');
-            renderRecentPlatinums(fullData.biblioteca);
-            renderWishlist(fullData.desejos);
-            renderAchievements(fullData.conquistas_concluidas, fullData.conquistas_pendentes);
-            populateFilters();
-            applyFilters('-graficos');
-            applyFilters('-biblioteca');
-            await fetchNotifications(); // Await fetchNotifications
-            console.log('renderAllPages: Finished.'); // Log 4
+            try { // Add try-catch here for rendering errors
+                loadProfileSettings(fullData.perfil);
+                renderGamerCard(fullData.estatisticas);
+                renderSummaryCards(fullData.estatisticas, 'summary');
+                renderRecentPlatinums(fullData.biblioteca);
+                renderWishlist(fullData.desejos);
+                renderAchievements(fullData.conquistas_concluidas, fullData.conquistas_pendentes);
+                populateFilters();
+                applyFilters('-graficos');
+                applyFilters('-biblioteca');
+                await fetchNotifications(); // Await fetchNotifications
+                console.log('renderAllPages: Finished.'); // Log 4
+            } catch (renderError) {
+                console.error('Erro dentro de renderAllPages:', renderError);
+                throw renderError; // Re-throw to be caught by fetchGameData's outer catch
+            }
         }
 
         function openPage(evt, pageName) {
@@ -1551,7 +1557,7 @@
 
                 return `
                     <div class="game-card-grid" onclick="openGameDetailsModal('${safeName}')" title="${safeName}">
-                        <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${safeName}">
+                        <img src="${game.Link}" alt="${safeName}">
                         ${trophyIconHTML}
                         <div class="game-card-content">
                             <div class="game-card-top-details">
@@ -1583,7 +1589,7 @@
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 return `
                 <div class="wish-card">
-                    <img src="${game.Link || 'https://i.imgur.com/Z0ebi8o.png'}" class="wish-card-img" alt="${safeName}">
+                    <img src="${game.Link}" class="wish-card-img" alt="${safeName}">
                     <div class="wish-card-info">
                         <h3 class="wish-card-title">${game.Nome}</h3>
                         <div class="wish-card-details">
@@ -1825,14 +1831,14 @@
         function editGame(gameName) { openGameModalForEdit(gameName); }
         
         function openWishModal() {
-            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = '';
+            document.getElementById('addWishForm').reset(); document.getElementById('editMode').value = '';
             document.getElementById('wishModalTitle').textContent = 'Adicionar à Lista de Desejos'; document.getElementById('wishModalSubmitBtn').textContent = 'Adicionar à Lista';
             document.getElementById('addWishModal').classList.add('active');
         }
 
         function editWish(wishName) {
             const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
-            document.getElementById('addWishForm').reset(); document.getElementById('editMode').value = wishName;
+            document.getElementById('addGameForm').reset(); document.getElementById('editMode').value = wishName;
             document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`; document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Item';
             document.getElementById('wishGameName').value = wishToEdit.Nome;
             document.getElementById('wishGameLink').value = wishToEdit.Link || '';
