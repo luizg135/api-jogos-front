@@ -41,7 +41,6 @@
             background-image: url('https://us-a.tapas.io/sa/31/bb7d10de-96a5-4782-9ff4-82c2a257924a.png');
             background-size: cover;
             background-position: center;
-            /* Removido filter: brightness(0); para que a imagem seja revelada */
             z-index: 0;
         }
 
@@ -65,6 +64,7 @@
             display: flex; /* Para alinhar o conteúdo internamente */
             flex-direction: column;
             justify-content: center; /* Centraliza o conteúdo verticalmente */
+            align-items: center; /* Centraliza o conteúdo horizontalmente */
             z-index: 10; /* Garante que o contêiner de login fique acima do fundo interativo */
         }
 
@@ -84,21 +84,23 @@
         }
 
         .login-header {
-            margin-bottom: 32px;
+            margin-bottom: 32px; /* Mantém o espaçamento abaixo do h1 "Acessar Perfil" */
             position: relative;
+            padding-top: 0; /* Removido padding-top */
         }
 
-        .login-header h1 {
-            font-size: 2.5em; /* Tamanho ajustado para o título */
-            color: var(--primary-text);
-            text-shadow: 0 0 10px rgba(147, 112, 219, 0.7);
+        .login-header h1 { /* Estilo para "Acessar Perfil" */
+            font-size: 1.5em; /* Diminuído o tamanho da fonte */
+            color: var(--secondary-text); /* Cor do texto "Usuário" e "Senha" */
+            text-shadow: none; /* Removido text-shadow para este h1 */
             margin: 0;
             white-space: nowrap;
         }
         
         .form-group {
             margin-bottom: 20px;
-            text-align: left;
+            text-align: left; /* Mantém o texto da label alinhado à esquerda dentro do form-group */
+            width: 100%; /* Garante que o form-group ocupe a largura total disponível */
         }
 
         label {
@@ -182,6 +184,36 @@
             transform: scale(0.9) rotate(5deg); /* Levemente menor e rotacionado para um efeito dinâmico */
             opacity: 0.3; /* Mais transparente para a imagem aparecer */
         }
+
+        /* Estilos para o rodapé do login */
+        .login-footer {
+            margin-top: auto; /* Empurra para o final do contêiner */
+            padding-top: 20px; /* Espaçamento acima do título */
+            text-align: center;
+        }
+
+        .login-footer .artoriapi-title {
+            font-family: 'Daydream', sans-serif;
+            font-size: 2.5em; /* Fonte menor */
+            line-height: 1;
+        }
+
+        .login-footer .artoriapi-title .artori {
+            color: var(--accent-purple);
+            text-shadow: 0 0 8px rgba(147, 112, 219, 0.5);
+        }
+
+        .login-footer .artoriapi-title .api {
+            color: var(--secondary-text);
+            text-shadow: 0 0 8px rgba(125, 133, 144, 0.3);
+        }
+
+        /* Ajuste para o formulário para controlar a largura */
+        #login-form {
+            width: 80%; /* Define a largura do formulário para 80% do contêiner */
+            max-width: 300px; /* Limita a largura máxima do formulário */
+            margin-top: 50px; /* Mantém o espaçamento superior */
+        }
     </style>
 </head>
 <body>
@@ -207,9 +239,21 @@
             <button type="submit">Entrar</button>
         </form>
         <p id="error-message"></p>
+
+        <!-- Removido o login-footer com o título ARTORIAPI -->
     </div>
 
     <script>
+        // Cores ajustadas para tons de roxo e cinza (adicionado aqui para ser usado no Daydream text)
+        const chartColors = {
+            purple: '#9370db',        // Roxo normal
+            darkPurple: '#6a4a9c',    // Roxo escuro
+            lightPurple: '#b89ceb',   // Roxo claro
+            grey: '#7d8590',          // Cinza normal
+            darkGrey: '#4a5057',      // Cinza escuro
+            lightGrey: '#a5acb4'      // Cinza claro
+        };
+
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
         const loginContainer = document.getElementById('loginContainer');
