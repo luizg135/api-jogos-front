@@ -187,7 +187,7 @@
         .platinum-trophy {
             font-size: 36px !important;
             color: var(--rank-platina);
-            filter: drop-shadow(0 0 8px var(--rank-platina));
+            filter: drop_shadow(0 0 8px var(--rank-platina));
         }
 
         .platinum-details {
@@ -1322,8 +1322,8 @@
             <span class="close-button" onclick="closeNotificationsModal()">&times;</span>
             <h2>Suas Notificações</h2>
             <div class="tabs">
-                <button class="tab-button active" onclick="switchNotificationTab(event, 'unread')">Não Lidas</button>
-                <button class="tab-button" onclick="switchNotificationTab(event, 'read')">Lidas</button>
+                <button class="tab-button active" data-tab="unread" onclick="switchNotificationTab(event, 'unread')">Não Lidas</button>
+                <button class="tab-button" data-tab="read" onclick="switchNotificationTab(event, 'read')">Lidas</button>
             </div>
             <div id="unread" class="tab-content active notifications-list-container">
                 <div id="unread-notifications-list">
@@ -1396,10 +1396,17 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 fullData = await response.json();
                 console.log('fetchGameData: Data fetched successfully.'); // Log 2
-                renderAllPages();
-                console.log('fetchGameData: renderAllPages completed.'); // Log after rendering
+                
+                try {
+                    await renderAllPages(); // Await renderAllPages as it calls fetchNotifications (async)
+                    console.log('fetchGameData: renderAllPages completed.'); // Log after rendering
+                } catch (renderErr) {
+                    console.error('Erro durante a renderização da página:', renderErr);
+                    document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao renderizar os dados.</p>`;
+                }
+
             } catch (err) {
-                console.error('Erro ao buscar dados:', err);
+                console.error('Erro ao buscar dados da API:', err);
                 document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
             } finally {
                 if (isInitialLoad) { // Só esconde a tela de carregamento na carga inicial
@@ -1410,7 +1417,7 @@
             }
         }
         
-        function renderAllPages() {
+        async function renderAllPages() { // Make it async
             console.log('renderAllPages: Starting...'); // Log 3
             loadProfileSettings(fullData.perfil);
             renderGamerCard(fullData.estatisticas);
@@ -1421,7 +1428,7 @@
             populateFilters();
             applyFilters('-graficos');
             applyFilters('-biblioteca');
-            fetchNotifications(); // Busca as notificações ao carregar a página
+            await fetchNotifications(); // Await fetchNotifications
             console.log('renderAllPages: Finished.'); // Log 4
         }
 
@@ -1825,7 +1832,7 @@
 
         function editWish(wishName) {
             const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
-            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = wishName;
+            document.getElementById('addWishForm').reset(); document.getElementById('editMode').value = wishName;
             document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`; document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Item';
             document.getElementById('wishGameName').value = wishToEdit.Nome;
             document.getElementById('wishGameLink').value = wishToEdit.Link || '';
@@ -1836,7 +1843,7 @@
 
         async function handleWishFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editWishMode').value; const isEditing = editModeValue !== '';
+            const editModeValue = document.getElementById('editMode').value; const isEditing = editModeValue !== '';
             const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
             const wishData = { Nome: document.getElementById('wishGameName').value, Link: document.getElementById('wishGameLink').value, "Data Lançamento": document.getElementById('wishGameRelease').value, Preço: parseFloat(priceValue) || 0 };
             let url = isEditing ? `${API_URL}/games/edit` : `${API_URL}/games/add`; let method = isEditing ? 'PUT' : 'POST';
@@ -2122,8 +2129,8 @@
         }
 
         function renderNotificationsInModal(tabName) {
-            const unreadList = document.getElementById('unread-notifications-list');
-            const readList = document.getElementById('read-notifications-list');
+            const unreadListContainer = document.getElementById('unread-notifications-list');
+            const readListContainer = document.getElementById('read-notifications-list');
 
             const unreadNotifications = allFetchedNotifications.filter(n => n.Lida === 'Não');
             const readNotifications = allFetchedNotifications.filter(n => n.Lida === 'Sim');
@@ -2139,19 +2146,19 @@
                 `;
             };
 
-            if (unreadList) {
+            if (unreadListContainer) {
                 if (unreadNotifications.length === 0) {
-                    unreadList.innerHTML = '<p class="no-results">Nenhuma notificação não lida por enquanto!</p>';
+                    unreadListContainer.innerHTML = '<p class="no-results">Nenhuma notificação não lida por enquanto!</p>';
                 } else {
-                    unreadList.innerHTML = unreadNotifications.map(createNotificationHtml).join('');
+                    unreadListContainer.innerHTML = unreadNotifications.map(createNotificationHtml).join('');
                 }
             }
 
-            if (readList) {
+            if (readListContainer) {
                 if (readNotifications.length === 0) {
-                    readList.innerHTML = '<p class="no-results">Nenhuma notificação lida por enquanto!</p>';
+                    readListContainer.innerHTML = '<p class="no-results">Nenhuma notificação lida por enquanto!</p>';
                 } else {
-                    readList.innerHTML = readNotifications.map(createNotificationHtml).join('');
+                    readListContainer.innerHTML = readNotifications.map(createNotificationHtml).join('');
                 }
             }
         }
