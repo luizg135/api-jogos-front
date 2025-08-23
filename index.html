@@ -254,7 +254,7 @@
         .games-table tbody tr.platinado-row { background: linear-gradient(90deg, rgba(147, 112, 219, 0.15) 0%, rgba(147, 112, 219, 0) 60%); }
         .games-table tbody tr:not(.platinado-row):hover { background-color: rgba(255, 255, 255, 0.03); }
         .game-name-cell { display: flex; align-items: center; gap: 16px; font-weight: 500; }
-        .trophy-icon { color: var(--accent-purple); font-size: 22px !important; filter: drop-shadow(0 0 8px var(--accent-purple)); }
+        .trophy-icon { color: var(--accent-purple); font-size: 22px !important; filter: drop_shadow(0 0 8px var(--accent-purple)); }
         .nota-cell { font-weight: 600; color: var(--accent-purple); }
         .no-results { text-align: center; color: var(--secondary-text); padding: 48px; }
         .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
@@ -405,11 +405,7 @@
         .header-actions {
             display: flex;
             gap: 8px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
+            margin-left: auto; /* Adicionado para empurrar os botões para a direita */
         }
 
         .games-grid {
@@ -490,7 +486,7 @@
             background-color: rgba(0,0,0,0.5);
             border-radius: 50%;
             padding: 4px;
-            filter: drop-shadow(0 0 5px var(--accent-purple));
+            filter: drop_shadow(0 0 5px var(--accent-purple));
         }
 
         .sortable-header {
@@ -580,6 +576,9 @@
             margin: 4px 0 0 0;
             font-size: 16px;
             color: var(--secondary-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .game-details-body {
             padding: 56px 24px 24px 24px;
@@ -673,6 +672,60 @@
             background-color: #cb2d3e;
             color: white;
         }
+
+        /* Novas regras para o modal de filtros avançados */
+        .advanced-filters-modal-content {
+            background-color: var(--surface-color);
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 600px; /* Aumentado para acomodar mais filtros */
+            width: 90%;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
+            transition: transform 0.3s ease-out;
+        }
+        .modal-overlay.active .advanced-filters-modal-content {
+            transform: scale(1);
+        }
+        .advanced-filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .filter-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .filter-modal-actions button {
+            width: auto;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .filter-modal-actions .apply-filters-btn {
+            background-color: var(--accent-purple);
+            color: white;
+            border: none;
+        }
+        .filter-modal-actions .apply-filters-btn:hover {
+            background-color: #a884e9;
+        }
+        .filter-modal-actions .clear-all-filters-btn {
+            background-color: transparent;
+            color: var(--secondary-text);
+            border: 1px solid var(--border-color);
+        }
+        .filter-modal-actions .clear-all-filters-btn:hover {
+            color: var(--primary-text);
+            border-color: var(--primary-text);
+        }
     
     </style>
 </head>
@@ -742,15 +795,15 @@
                             <h1 style="color: var(--accent-purple);">Análise Gráfica</h1>
                             <p>Visão detalhada sobre seus hábitos e conquistas.</p>
                         </div>
+                        <!-- Botão para abrir o modal de filtros avançados para a aba de gráficos -->
+                        <div class="header-actions">
+                            <button class="nav-button" id="openAdvancedFiltersBtn-graficos" title="Filtros Avançados">
+                                <span class="material-symbols-outlined">filter_alt</span>
+                            </button>
+                        </div>
                     </div>
                 </header>
-                <section class="filter-bar">
-                    <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
-                    <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
-                    <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
-                    <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
-                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-graficos" class="clear-filters-btn" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button></div>
-                </section>
+                <!-- Removendo a filter-bar antiga para ser substituída pelo modal -->
                 <div id="summary-graficos" class="summary-grid"></div>
                 <div id="charts-container" class="charts-grid">
                     <div class="chart-card"><h3>Jogos Platinados</h3><div class="chart-wrapper"><canvas id="platinadosChart"></canvas></div></div>
@@ -769,17 +822,15 @@
                     </div>
                     <div class="header-actions">
                         <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">view_list</span></button>
+                        <!-- Botão para abrir o modal de filtros avançados para a aba da biblioteca -->
+                        <button class="nav-button" id="openAdvancedFiltersBtn-biblioteca" title="Filtros Avançados">
+                            <span class="material-symbols-outlined">filter_alt</span>
+                        </button>
                         <button class="nav-button" id="addGameBtn" title="Adicionar Novo Jogo"><span class="material-symbols-outlined">add</span></button>
                     </div>
                 </div>
             </header>
-                <section class="filter-bar">
-                    <div class="filter-group"><label for="nameFilter-biblioteca">Buscar por Nome</label><input type="search" id="nameFilter-biblioteca" placeholder="Ex: Elden Ring"></div>
-                    <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
-                    <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
-                    <div class="filter-group"><label for="yearFilter-biblioteca">Ano de Conclusão</label><select id="yearFilter-biblioteca"></select></div>
-                    <div class="filter-group"><label>&nbsp;</label><button id="clearFiltersBtn-biblioteca" class="clear-filters-btn" title="Limpar Filtros"><span class="material-symbols-outlined">delete_sweep</span></button></div>
-                </section>
+                <!-- Removendo a filter-bar antiga para ser substituída pelo modal -->
                 <div class="table-container" style="display: none;">
                     <table class="games-table">
             <thead>
@@ -1002,6 +1053,66 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de Filtros Avançados para Gráficos e Biblioteca -->
+    <div id="advancedFiltersModal-graficos" class="modal-overlay">
+        <div class="advanced-filters-modal-content">
+            <span class="close-button" onclick="toggleAdvancedFiltersModal('-graficos')">&times;</span>
+            <h2>Filtros de Gráficos</h2>
+            <div class="advanced-filters-grid">
+                <div class="filter-group"><label for="nameFilter-graficos">Buscar por Nome</label><input type="search" id="nameFilter-graficos" placeholder="Ex: Elden Ring"></div>
+                <div class="filter-group"><label for="statusFilter-graficos">Status</label><select id="statusFilter-graficos"></select></div>
+                <div class="filter-group"><label for="styleFilter-graficos">Categoria</label><select id="styleFilter-graficos"></select></div>
+                <div class="filter-group"><label for="yearFilter-graficos">Ano de Conclusão</label><select id="yearFilter-graficos"></select></div>
+                
+                <div class="filter-group"><label for="minRating-graficos">Nota Mínima</label><input type="number" id="minRating-graficos" min="0" max="100" placeholder="0"></div>
+                <div class="filter-group"><label for="maxRating-graficos">Nota Máxima</label><input type="number" id="maxRating-graficos" min="0" max="100" placeholder="100"></div>
+
+                <div class="filter-group"><label for="minMetacritic-graficos">Metacritic Mínimo</label><input type="number" id="minMetacritic-graficos" min="0" max="100" placeholder="0"></div>
+                <div class="filter-group"><label for="maxMetacritic-graficos">Metacritic Máximo</label><input type="number" id="maxMetacritic-graficos" min="0" max="100" placeholder="100"></div>
+
+                <div class="filter-group"><label for="minPrice-graficos">Preço Mínimo (R$)</label><input type="number" id="minPrice-graficos" step="0.01" min="0" placeholder="0,00"></div>
+                <div class="filter-group"><label for="maxPrice-graficos">Preço Máximo (R$)</label><input type="number" id="maxPrice-graficos" step="0.01" min="0" placeholder="999,99"></div>
+
+                <div class="filter-group"><label for="minHours-graficos">Horas de Jogo Mínimas</label><input type="number" id="minHours-graficos" min="0" placeholder="0"></div>
+                <div class="filter-group"><label for="maxHours-graficos">Horas de Jogo Máximas</label><input type="number" id="maxHours-graficos" min="0" placeholder="9999"></div>
+            </div>
+            <div class="filter-modal-actions">
+                <button type="button" class="clear-all-filters-btn" onclick="clearAllFilters('-graficos')">Limpar Todos</button>
+                <button type="button" class="apply-filters-btn" onclick="applyFilters('-graficos'); toggleAdvancedFiltersModal('-graficos');">Aplicar Filtros</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="advancedFiltersModal-biblioteca" class="modal-overlay">
+        <div class="advanced-filters-modal-content">
+            <span class="close-button" onclick="toggleAdvancedFiltersModal('-biblioteca')">&times;</span>
+            <h2>Filtros da Biblioteca</h2>
+            <div class="advanced-filters-grid">
+                <div class="filter-group"><label for="nameFilter-biblioteca">Buscar por Nome</label><input type="search" id="nameFilter-biblioteca" placeholder="Ex: The Witcher 3"></div>
+                <div class="filter-group"><label for="statusFilter-biblioteca">Status</label><select id="statusFilter-biblioteca"></select></div>
+                <div class="filter-group"><label for="styleFilter-biblioteca">Categoria</label><select id="styleFilter-biblioteca"></select></div>
+                <div class="filter-group"><label for="yearFilter-biblioteca">Ano de Conclusão</label><select id="yearFilter-biblioteca"></select></div>
+                
+                <div class="filter-group"><label for="minRating-biblioteca">Nota Mínima</label><input type="number" id="minRating-biblioteca" min="0" max="100" placeholder="0"></div>
+                <div class="filter-group"><label for="maxRating-biblioteca">Nota Máxima</label><input type="number" id="maxRating-biblioteca" min="0" max="100" placeholder="100"></div>
+
+                <div class="filter-group"><label for="minMetacritic-biblioteca">Metacritic Mínimo</label><input type="number" id="minMetacritic-biblioteca" min="0" max="100" placeholder="0"></div>
+                <div class="filter-group"><label for="maxMetacritic-biblioteca">Metacritic Máximo</label><input type="number" id="maxMetacritic-biblioteca" min="0" max="100" placeholder="100"></div>
+
+                <div class="filter-group"><label for="minPrice-biblioteca">Preço Mínimo (R$)</label><input type="number" id="minPrice-biblioteca" step="0.01" min="0" placeholder="0,00"></div>
+                <div class="filter-group"><label for="maxPrice-biblioteca">Preço Máximo (R$)</label><input type="number" id="maxPrice-biblioteca" step="0.01" min="0" placeholder="999,99"></div>
+
+                <div class="filter-group"><label for="minHours-biblioteca">Horas de Jogo Mínimas</label><input type="number" id="minHours-biblioteca" min="0" placeholder="0"></div>
+                <div class="filter-group"><label for="maxHours-biblioteca">Horas de Jogo Máximas</label><input type="number" id="maxHours-biblioteca" min="0" placeholder="9999"></div>
+            </div>
+            <div class="filter-modal-actions">
+                <button type="button" class="clear-all-filters-btn" onclick="clearAllFilters('-biblioteca')">Limpar Todos</button>
+                <button type="button" class="apply-filters-btn" onclick="applyFilters('-biblioteca'); toggleAdvancedFiltersModal('-biblioteca');">Aplicar Filtros</button>
+            </div>
+        </div>
+    </div>
+
 
 <script>
 // COLE ESTE CÓDIGO COMPLETO DENTRO DA SUA TAG <script>
@@ -1259,25 +1370,107 @@
             const statuses = [...new Set(library.map(g => g.Status).filter(Boolean))].sort();
             const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort();
             const years = [...new Set(library.map(g => g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null).filter(Boolean))].sort((a,b) => b-a);
-            const populate = (elId, items) => { const select = document.getElementById(elId); if (!select) return; select.innerHTML = '<option value="all">Todos</option>'; items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); }
-            ['', '-biblioteca', '-graficos'].forEach(suffix => {
-                populate('statusFilter' + suffix, statuses); populate('styleFilter' + suffix, styles); populate('yearFilter' + suffix, years);
+            
+            const populate = (elId, items) => { 
+                const select = document.getElementById(elId); 
+                if (!select) return; 
+                select.innerHTML = '<option value="all">Todos</option>'; 
+                items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); 
+            }
+            
+            // Popula filtros para ambas as seções
+            const suffixes = ['-graficos', '-biblioteca'];
+            suffixes.forEach(suffix => {
+                populate('statusFilter' + suffix, statuses); 
+                populate('styleFilter' + suffix, styles); 
+                populate('yearFilter' + suffix, years);
             });
         }
         
         function applyFilters(suffix) {
-            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || ''; const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
-            const style = document.getElementById('styleFilter' + suffix)?.value || 'all'; const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
-            const filteredGames = (fullData.biblioteca || []).filter(g => (name ? g.Nome.toLowerCase().includes(name) : true) && (status !== 'all' ? g.Status === status : true) && (style !== 'all' ? (g.Estilo && g.Estilo.split(',').map(s=>s.trim()).includes(style)) : true) && (year !== 'all' ? (g['Terminado em'] && new Date(g['Terminado em']).getFullYear() == year) : true));
+            const name = document.getElementById('nameFilter' + suffix)?.value.toLowerCase() || '';
+            const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
+            const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
+            const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
+            
+            const minRating = parseFloat(document.getElementById('minRating' + suffix)?.value) || 0;
+            const maxRating = parseFloat(document.getElementById('maxRating' + suffix)?.value) || 100;
+            const minMetacritic = parseFloat(document.getElementById('minMetacritic' + suffix)?.value) || 0;
+            const maxMetacritic = parseFloat(document.getElementById('maxMetacritic' + suffix)?.value) || 100;
+            const minPrice = parseFloat(document.getElementById('minPrice' + suffix)?.value) || 0;
+            const maxPrice = parseFloat(document.getElementById('maxPrice' + suffix)?.value) || Infinity;
+            const minHours = parseFloat(document.getElementById('minHours' + suffix)?.value) || 0;
+            const maxHours = parseFloat(document.getElementById('maxHours' + suffix)?.value) || Infinity;
+
+
+            const filteredGames = (fullData.biblioteca || []).filter(g => {
+                const gameName = g.Nome.toLowerCase();
+                const gameStatus = g.Status;
+                const gameStyles = g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : [];
+                const gameYear = g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null;
+                const gameRating = parseFloat(g.Nota) || 0;
+                const gameMetacritic = parseFloat(g.Metacritic) || 0;
+                const gamePrice = parseFloat(String(g.Preço).replace(',', '.')) || 0;
+                const gameHours = parseInt(g['Tempo de Jogo']) || 0;
+
+
+                const nameMatch = name ? gameName.includes(name) : true;
+                const statusMatch = status !== 'all' ? gameStatus === status : true;
+                const styleMatch = style !== 'all' ? gameStyles.includes(style) : true;
+                const yearMatch = year !== 'all' ? gameYear == year : true;
+                
+                const ratingMatch = (gameRating >= minRating && gameRating <= maxRating);
+                const metacriticMatch = (gameMetacritic >= minMetacritic && gameMetacritic <= maxMetacritic);
+                const priceMatch = (gamePrice >= minPrice && gamePrice <= maxPrice);
+                const hoursMatch = (gameHours >= minHours && gameHours <= maxHours);
+
+                return nameMatch && statusMatch && styleMatch && yearMatch &&
+                       ratingMatch && metacriticMatch && priceMatch && hoursMatch;
+            });
+
             if (suffix === '-graficos') {
                 const notas = filteredGames.map(g => g.Nota).filter(n => n && !isNaN(n));
-                const stats = { total_jogos: filteredGames.length, total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0), custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0), media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length) : 'N/A', total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length, total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0) };
-                renderSummaryCards(stats, 'summary-graficos'); renderAllCharts(filteredGames);
+                const stats = {
+                    total_jogos: filteredGames.length,
+                    total_horas_jogadas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0),
+                    custo_total_biblioteca: filteredGames.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0),
+                    media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length) : 'N/A',
+                    total_platinados: filteredGames.filter(g => g['Platinado?'] === 'Sim').length,
+                    total_conquistas: filteredGames.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0)
+                };
+                renderSummaryCards(stats, 'summary-graficos');
+                renderAllCharts(filteredGames);
             } else if (suffix === '-biblioteca') {
                 renderGameTable(filteredGames);
                 renderGameGrid(filteredGames);
             }
         }
+
+        // Função para alternar a visibilidade do modal de filtros avançados
+        function toggleAdvancedFiltersModal(suffix) {
+            const modal = document.getElementById('advancedFiltersModal' + suffix);
+            if (modal) {
+                modal.classList.toggle('active');
+            }
+        }
+
+        // Função para limpar todos os filtros no modal
+        function clearAllFilters(suffix) {
+            document.getElementById('nameFilter' + suffix).value = '';
+            document.getElementById('statusFilter' + suffix).value = 'all';
+            document.getElementById('styleFilter' + suffix).value = 'all';
+            document.getElementById('yearFilter' + suffix).value = 'all';
+            document.getElementById('minRating' + suffix).value = '';
+            document.getElementById('maxRating' + suffix).value = '';
+            document.getElementById('minMetacritic' + suffix).value = '';
+            document.getElementById('maxMetacritic' + suffix).value = '';
+            document.getElementById('minPrice' + suffix).value = '';
+            document.getElementById('maxPrice' + suffix).value = '';
+            document.getElementById('minHours' + suffix).value = '';
+            document.getElementById('maxHours' + suffix).value = '';
+            applyFilters(suffix); // Aplica os filtros limpos
+        }
+
 
         function openGameModalForAdd() { 
             document.getElementById('addGameForm').reset(); 
@@ -1561,7 +1754,7 @@
                 const safeName = game.name.replace(/'/g, "\\'");
                 const safeStyles = game.styles.replace(/'/g, "\\'");
                 const year = game.released_for_input ? new Date(game.released_for_input).getFullYear() : 'N/A';
-                return `<div class="search-result-item" onclick="selectGame({ rawg_id: '${game.id}', name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
+                return `<div class="search-result-item" onclick="selectGame({ rawg_id: '${game.id}', name: '${safeName}', background_image: '${game.background_image || ''}', released_for_input: '${game.released_for_input || ''}', styles: '${safeStyles}', metacritic: '${game.metacritic || ''}', description: '${game.description ? game.description.replace(/'/g, "\\'").replace(/\n/g, '\\n') : ''}' })"><img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="Capa"><div class="search-result-info"><span>${game.name}</span><small>Lançamento: ${year}</small></div></div>`;
             }).join('');
             resultsContainer.innerHTML = `<div class="search-results-list">${listHTML}</div>`;
         }
@@ -1571,6 +1764,8 @@
             document.getElementById('gameName').value = game.name;
             document.getElementById('gameLink').value = game.background_image;
             document.getElementById('gameStyle').value = game.styles;
+            document.getElementById('gameMetacritic').value = game.metacritic;
+            document.getElementById('gameDescription').value = game.description;
             document.getElementById('searchResultsContainer').innerHTML = '';
         }
 
@@ -1640,6 +1835,11 @@
                 }
             });
 
+            // Adiciona listeners para os novos botões de filtro
+            setupListener('openAdvancedFiltersBtn-graficos', 'click', () => toggleAdvancedFiltersModal('-graficos'));
+            setupListener('openAdvancedFiltersBtn-biblioteca', 'click', () => toggleAdvancedFiltersModal('-biblioteca'));
+
+
             document.querySelectorAll('.sortable-header').forEach(header => {
             header.addEventListener('click', () => {
                 handleSort(header.dataset.sortKey);
@@ -1648,9 +1848,23 @@
         updateSortIcons();
             
             const setupFilterListeners = (suffix) => {
-                ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => setupListener(id + suffix, 'input', () => applyFilters(suffix)));
-                const clearBtn = document.getElementById('clearFiltersBtn' + suffix);
-                if (clearBtn) { clearBtn.addEventListener('click', () => { ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter'].forEach(id => { const el = document.getElementById(id + suffix); if(el) el.value = el.tagName === 'SELECT' ? 'all' : ''; }); applyFilters(suffix); }); }
+                // Filtros simples que ainda podem existir no modal
+                ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter',
+                 'minRating', 'maxRating', 'minMetacritic', 'maxMetacritic',
+                 'minPrice', 'maxPrice', 'minHours', 'maxHours'].forEach(id => {
+                    const element = document.getElementById(id + suffix);
+                    if (element) {
+                        // Para inputs de texto/número e selects, o evento 'input' ou 'change' é mais apropriado
+                        element.addEventListener(element.tagName === 'SELECT' ? 'change' : 'input', () => {
+                            // A chamada de applyFilters agora será feita pelo botão "Aplicar Filtros" do modal
+                            // Mas mantemos este listener para feedback visual ou se o usuário quiser aplicar na hora
+                            // Por enquanto, vamos remover a chamada direta e deixar o botão fazer isso.
+                            // Para manter o comportamento antigo até o botão ser clicado, manteríamos applyFilters aqui.
+                            // Mas para o modal, a ideia é que só aplique ao clicar no botão.
+                            // Então, para os inputs dentro do modal, não vamos aplicar imediatamente.
+                        });
+                    }
+                });
             };
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
