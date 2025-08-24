@@ -1333,10 +1333,11 @@
                         <span id="wishPriceStatus" class="price-status">N/A</span>
                     </div>
                 </div>
-                <div class="game-details-description">
+                <!-- REMOVIDO: Div de descrição -->
+                <!-- <div class="game-details-description">
                     <h3>Descrição</h3>
                     <p id="wishDescriptionDetails">Nenhuma descrição disponível.</p>
-                </div>
+                </div> -->
                 <div class="game-details-actions">
                     <button class="action-button" id="purchaseWishDetailsBtn"><span class="material-symbols-outlined">shopping_cart_checkout</span> Marcar como Comprado</button>
                     <button class="action-button" id="editWishDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar</button>
@@ -1933,7 +1934,6 @@
                 const maxPsnPrice = parseFloat(document.getElementById('maxPsnPrice' + suffix)?.value) || Infinity;
                 const releaseYear = document.getElementById('releaseYearFilter' + suffix)?.value || 'all';
 
-
                 filteredItems = (fullData.desejos || []).filter(w => {
                     const wishName = w.Nome.toLowerCase();
                     const wishPrice = parseFloat(String(w.Preço || '0').replace(',', '.')) || 0;
@@ -1954,6 +1954,14 @@
                     const steamPriceMatch = (steamCurrentPrice >= minSteamPrice && steamCurrentPrice <= maxSteamPrice);
                     const psnPriceMatch = (psnCurrentPrice >= minPsnPrice && psnCurrentPrice <= maxPsnPrice);
                     const releaseYearMatch = releaseYear !== 'all' ? wishReleaseYear == releaseYear : true;
+
+                    // DEBUGGING LOGS for wishlist filters
+                    console.log('Filtering Wishlist Item:', w.Nome);
+                    console.log('  Filter Values:', { name, minWishPrice, maxWishPrice, minSteamPrice, maxSteamPrice, minPsnPrice, maxPsnPrice, releaseYear });
+                    console.log('  Item Values:', { wishName, wishPrice, steamCurrentPrice, psnCurrentPrice, wishReleaseYear });
+                    console.log('  Matches:', { nameMatch, priceMatch, steamPriceMatch, psnPriceMatch, releaseYearMatch });
+                    console.log('  Overall Match:', nameMatch && priceMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch);
+
 
                     return nameMatch && priceMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch;
                 });
@@ -2053,7 +2061,7 @@
                 document.getElementById('minHours' + suffix).value = '';
                 document.getElementById('maxHours' + suffix).value = '';
             }
-            // applyFilters(suffix); // Aplica os filtros limpos - será chamado pelo botão "Aplicar Filtros"
+            applyFilters(suffix); // Aplica os filtros limpos imediatamente
         }
 
 
