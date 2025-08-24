@@ -967,6 +967,38 @@
             font-size: 16px;
             color: var(--accent-purple);
         }
+
+        /* Ajustes para o modal de detalhes da wishlist */
+        #wishDetailsModal .game-details-body {
+            grid-template-columns: 1fr; /* Altera para uma única coluna */
+            padding: 24px; /* Ajusta o padding */
+        }
+
+        #wishDetailsModal .game-details-stats {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px; /* Adiciona espaço abaixo das estatísticas */
+        }
+
+        #wishDetailsModal .game-details-stats-item {
+            padding: 10px 0; /* Aumenta o padding vertical */
+            font-size: 16px; /* Aumenta o tamanho da fonte */
+        }
+
+        #wishDetailsModal .game-details-stats-item span:first-child {
+            font-size: 14px; /* Ajusta o tamanho da label */
+        }
+
+        #wishDetailsModal .game-details-stats-item span:last-child {
+            font-size: 16px; /* Ajusta o tamanho do valor */
+        }
+
+        #wishDetailsModal .game-details-actions {
+            justify-content: center; /* Centraliza os botões */
+            padding-top: 0; /* Remove padding superior extra */
+        }
     
     </style>
 </head>
@@ -1333,11 +1365,6 @@
                         <span id="wishPriceStatus" class="price-status">N/A</span>
                     </div>
                 </div>
-                <!-- REMOVIDO: Div de descrição -->
-                <!-- <div class="game-details-description">
-                    <h3>Descrição</h3>
-                    <p id="wishDescriptionDetails">Nenhuma descrição disponível.</p>
-                </div> -->
                 <div class="game-details-actions">
                     <button class="action-button" id="purchaseWishDetailsBtn"><span class="material-symbols-outlined">shopping_cart_checkout</span> Marcar como Comprado</button>
                     <button class="action-button" id="editWishDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar</button>
@@ -1445,8 +1472,9 @@
             <div class="advanced-filters-grid">
                 <div class="filter-group"><label for="nameFilter-desejos">Buscar por Nome</label><input type="search" id="nameFilter-desejos" placeholder="Ex: Hollow Knight Silksong"></div>
                 
-                <div class="filter-group"><label for="minWishPrice-desejos">Preço Mínimo (R$)</label><input type="number" id="minWishPrice-desejos" step="0.01" min="0" placeholder="0,00"></div>
-                <div class="filter-group"><label for="maxWishPrice-desejos">Preço Máximo (R$)</label><input type="number" id="maxWishPrice-desejos" step="0.01" min="0" placeholder="999,99"></div>
+                <!-- REMOVIDO: Filtros de Preço Mínimo e Máximo (geral) da Wishlist -->
+                <!-- <div class="filter-group"><label for="minWishPrice-desejos">Preço Mínimo (R$)</label><input type="number" id="minWishPrice-desejos" step="0.01" min="0" placeholder="0,00"></div>
+                <div class="filter-group"><label for="maxWishPrice-desejos">Preço Máximo (R$)</label><input type="number" id="maxWishPrice-desejos" step="0.01" min="0" placeholder="999,99"></div> -->
 
                 <div class="filter-group"><label for="minSteamPrice-desejos">Steam Preço Atual Mínimo (R$)</label><input type="number" id="minSteamPrice-desejos" step="0.01" min="0" placeholder="0,00"></div>
                 <div class="filter-group"><label for="maxSteamPrice-desejos">Steam Preço Atual Máximo (R$)</label><input type="number" id="maxSteamPrice-desejos" step="0.01" min="0" placeholder="999,99"></div>
@@ -1926,8 +1954,7 @@
             let filteredItems = [];
 
             if (suffix === '-desejos') {
-                const minWishPrice = parseFloat(document.getElementById('minWishPrice' + suffix)?.value) || 0;
-                const maxWishPrice = parseFloat(document.getElementById('maxWishPrice' + suffix)?.value) || Infinity;
+                // REMOVIDO: minWishPrice e maxWishPrice
                 const minSteamPrice = parseFloat(document.getElementById('minSteamPrice' + suffix)?.value) || 0;
                 const maxSteamPrice = parseFloat(document.getElementById('maxSteamPrice' + suffix)?.value) || Infinity;
                 const minPsnPrice = parseFloat(document.getElementById('minPsnPrice' + suffix)?.value) || 0;
@@ -1936,7 +1963,7 @@
 
                 filteredItems = (fullData.desejos || []).filter(w => {
                     const wishName = w.Nome.toLowerCase();
-                    const wishPrice = parseFloat(String(w.Preço || '0').replace(',', '.')) || 0;
+                    // REMOVIDO: wishPrice
                     const steamCurrentPrice = parseFloat(String(w['Steam Preco Atual'] || '0').replace(',', '.')) || 0;
                     const psnCurrentPrice = parseFloat(String(w['PSN Preco Atual'] || '0').replace(',', '.')) || 0;
                     const wishReleaseDateStr = w['Data Lançamento'];
@@ -1950,20 +1977,20 @@
                     }
 
                     const nameMatch = name ? wishName.includes(name) : true;
-                    const priceMatch = (wishPrice >= minWishPrice && wishPrice <= maxWishPrice);
+                    // REMOVIDO: priceMatch
                     const steamPriceMatch = (steamCurrentPrice >= minSteamPrice && steamCurrentPrice <= maxSteamPrice);
                     const psnPriceMatch = (psnCurrentPrice >= minPsnPrice && psnCurrentPrice <= maxPsnPrice);
                     const releaseYearMatch = releaseYear !== 'all' ? wishReleaseYear == releaseYear : true;
 
                     // DEBUGGING LOGS for wishlist filters
                     console.log('Filtering Wishlist Item:', w.Nome);
-                    console.log('  Filter Values:', { name, minWishPrice, maxWishPrice, minSteamPrice, maxSteamPrice, minPsnPrice, maxPsnPrice, releaseYear });
-                    console.log('  Item Values:', { wishName, wishPrice, steamCurrentPrice, psnCurrentPrice, wishReleaseYear });
-                    console.log('  Matches:', { nameMatch, priceMatch, steamPriceMatch, psnPriceMatch, releaseYearMatch });
-                    console.log('  Overall Match:', nameMatch && priceMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch);
+                    console.log('  Filter Values:', { name, minSteamPrice, maxSteamPrice, minPsnPrice, maxPsnPrice, releaseYear });
+                    console.log('  Item Values:', { wishName, steamCurrentPrice, psnCurrentPrice, wishReleaseYear });
+                    console.log('  Matches:', { nameMatch, steamPriceMatch, psnPriceMatch, releaseYearMatch });
+                    console.log('  Overall Match:', nameMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch);
 
 
-                    return nameMatch && priceMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch;
+                    return nameMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch; // Ajustado para remover priceMatch
                 });
                 renderWishlist(filteredItems);
             } else { // Filtros para gráficos e biblioteca
@@ -2041,8 +2068,9 @@
             document.getElementById('nameFilter' + suffix).value = '';
             
             if (suffix === '-desejos') {
-                document.getElementById('minWishPrice' + suffix).value = '';
-                document.getElementById('maxWishPrice' + suffix).value = '';
+                // REMOVIDO: minWishPrice e maxWishPrice
+                // document.getElementById('minWishPrice' + suffix).value = '';
+                // document.getElementById('maxWishPrice' + suffix).value = '';
                 document.getElementById('minSteamPrice' + suffix).value = '';
                 document.getElementById('maxSteamPrice' + suffix).value = '';
                 document.getElementById('minPsnPrice' + suffix).value = '';
