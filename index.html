@@ -1013,7 +1013,7 @@
             <section id="perfil" class="page active">
                 <header class="profile-header">
                     <div class="profile-main">
-                        <img src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" id="profileAvatar" onclick="openSettingsModal()">
+                        <img id="profileAvatar" src="https://i.imgur.com/Z0ebi8o.png" alt="Avatar" class="profile-avatar" onclick="openSettingsModal()">
                         <div class="profile-info">
                             <h1 id="gamerName">Carregando...</h1>
                             <p id="profileSubtitle">Resumo da jornada!</p>
@@ -1553,6 +1553,7 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 fullData = await response.json();
                 console.log('fetchGameData: Data fetched successfully.'); // Log 2
+                console.log('fullData after fetch:', fullData); // <--- ADDED LOG
                 
                 try {
                     await renderAllPages(); // Await renderAllPages as it calls fetchNotifications (async)
