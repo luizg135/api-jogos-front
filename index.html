@@ -1538,8 +1538,9 @@
         async function fetchGameData() {
             console.log('fetchGameData: Starting...'); // Log 1
             try {
-                if (isInitialLoad) { // Só mostra a tela de carregamento na carga inicial
-                    document.getElementById('loading-screen').classList.remove('hidden');
+                const loadingScreen = document.getElementById('loading-screen');
+                if (isInitialLoad && loadingScreen) { // Só mostra a tela de carregamento na carga inicial
+                    loadingScreen.classList.remove('hidden');
                     console.log('fetchGameData: Loading screen shown.'); // Log after showing
                 }
 
@@ -1566,8 +1567,9 @@
                 document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
             } finally {
                 console.log('fetchGameData: Entering finally block. isInitialLoad:', isInitialLoad); // New log
-                if (isInitialLoad) { // Só esconde a tela de carregamento na carga inicial
-                    document.getElementById('loading-screen').classList.add('hidden');
+                const loadingScreen = document.getElementById('loading-screen');
+                if (isInitialLoad && loadingScreen) { // Só esconde a tela de carregamento na carga inicial
+                    loadingScreen.classList.add('hidden');
                     console.log('fetchGameData: Loading screen hidden.'); // Log 5
                     isInitialLoad = false; // Desativa a flag após o primeiro carregamento
                 }
@@ -1621,7 +1623,9 @@
             const formatCurrency = (val) => (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             const cards = [
                 { t: 'Total de Jogos', v: stats.total_jogos || 0, i: 'sports_esports' }, { t: 'Horas Jogadas', v: `${(stats.total_horas_jogadas || 0).toLocaleString('pt-BR')}h`, i: 'timer' },
-                { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' }, { t: 'Média das Notas', v: stats.media_notas?.toFixed(2) || 'N/A', i: 'star' },
+                { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' }, 
+                // Correção: Garante que media_notas seja um número antes de chamar toFixed
+                { t: 'Média das Notas', v: typeof stats.media_notas === 'number' ? stats.media_notas.toFixed(2) : 'N/A', i: 'star' },
                 { t: 'Platinados', v: stats.total_platinados || 0, i: 'emoji_events' }, { t: 'Conquistas', v: stats.total_conquistas || 0, i: 'military_tech' }
             ];
             container.innerHTML = cards.map(c => `<div class="card"><div class="card-header"><span class="material-symbols-outlined">${c.i}</span><span>${c.t}</span></div><p class="card-content">${c.v}</p></div>`).join('');
@@ -1772,9 +1776,9 @@
             container.innerHTML = wishlist.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
                 const steamCurrent = game['Steam Preco Atual'] || 'N/A';
-                const psnCurrent = game['PSN Preco Atual'] || 'N/A';
+                const psnCurrent = game.get('PSN Preco Atual') || 'N/A'; // Use .get() for safety
                 const steamLowest = game['Steam Menor Preco Historico'] || 'N/A';
-                const psnLowest = game['PSN Menor Preco Historico'] || 'N/A';
+                const psnLowest = game.get('PSN Menor Preco Historico') || 'N/A'; // Use .get() for safety
 
                 const priceStatus = getPriceStatus(steamCurrent, steamLowest, psnCurrent, psnLowest);
 
@@ -1813,10 +1817,19 @@
                 const updateDateStr = item['Ultima Atualizacao'];
                 if (updateDateStr) {
                     try {
-                        const [datePart, timePart] = updateDateStr.split(' ');
-                        const [year, month, day] = datePart.split('-');
-                        const [hour, minute, second] = timePart.split(':');
-                        const itemDate = new Date(year, month - 1, day, hour, minute, second);
+                        // Verifica se a string de data contém 'T' (formato ISO) ou ' ' (formato customizado)
+                        let itemDate;
+                        if (updateDateStr.includes('T')) { // Ex: "2025-08-23T20:58:44"
+                            itemDate = new Date(updateDateStr);
+                        } else if (updateDateStr.includes(' ')) { // Ex: "2025-08-23 20:58:44"
+                            const [datePart, timePart] = updateDateStr.split(' ');
+                            const [year, month, day] = datePart.split('-');
+                            const [hour, minute, second] = timePart.split(':');
+                            itemDate = new Date(year, month - 1, day, hour, minute, second);
+                        } else {
+                            // Se não for nenhum dos formatos esperados, tenta como data simples
+                            itemDate = new Date(updateDateStr);
+                        }
                         
                         if (!latestDate || itemDate > latestDate) {
                             latestDate = itemDate;
@@ -1827,7 +1840,7 @@
                 }
             });
 
-            if (latestDate) {
+            if (latestDate && !isNaN(latestDate)) { // Verifica se a data é válida
                 lastUpdateElement.textContent = `Última atualização: ${latestDate.toLocaleDateString('pt-BR')} ${latestDate.toLocaleTimeString('pt-BR')}`;
             } else {
                 lastUpdateElement.textContent = 'Última atualização: N/A';
@@ -1997,7 +2010,8 @@
                     total_jogos: filteredItems.length,
                     total_horas_jogadas: filteredItems.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0),
                     custo_total_biblioteca: filteredItems.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0),
-                    media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length) : 'N/A',
+                    // Correção: Garante que media_notas seja um número
+                    media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length) : 0,
                     total_platinados: filteredItems.filter(g => g['Platinado?'] === 'Sim').length,
                     total_conquistas: filteredItems.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0)
                 };
