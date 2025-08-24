@@ -469,12 +469,6 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .game-card-top-details .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
         .game-card-top-details .material-symbols-outlined {
             font-size: 14px;
         }
@@ -1548,7 +1542,7 @@
                 if (response.status === 401) {
                     localStorage.removeItem('jwt_token');
                     window.location.href = 'login.html';
-                    return; // Stop execution if unauthorized
+                    return;
                 }
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 fullData = await response.json();
@@ -1776,10 +1770,11 @@
 
             container.innerHTML = wishlist.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
+                // Acessa as propriedades diretamente, sem .get()
                 const steamCurrent = game['Steam Preco Atual'] || 'N/A';
-                const psnCurrent = game.get('PSN Preco Atual') || 'N/A'; // Use .get() for safety
+                const psnCurrent = game['PSN Preco Atual'] || 'N/A'; 
                 const steamLowest = game['Steam Menor Preco Historico'] || 'N/A';
-                const psnLowest = game.get('PSN Menor Preco Historico') || 'N/A'; // Use .get() for safety
+                const psnLowest = game['PSN Menor Preco Historico'] || 'N/A'; 
 
                 const priceStatus = getPriceStatus(steamCurrent, steamLowest, psnCurrent, psnLowest);
 
@@ -1815,7 +1810,7 @@
             let latestDate = null;
 
             wishlist.forEach(item => {
-                const updateDateStr = item['Ultima Atualizacao'];
+                const updateDateStr = item['Ultima Atualizacao']; // Acessa diretamente
                 if (updateDateStr) {
                     try {
                         // Verifica se a string de data contém 'T' (formato ISO) ou ' ' (formato customizado)
@@ -1868,7 +1863,7 @@
         function renderAllCharts(games = []) {
             destroyCharts();
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
-            const processMultiData = (key) => games.reduce((acc, game) => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
+            const processMultiData = (key) => games.reduce((acc, game => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
             const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
             const platformData = processData('Plataforma'); const statusData = processData('Status');
             const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
