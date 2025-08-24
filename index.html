@@ -1548,7 +1548,7 @@
                 if (response.status === 401) {
                     localStorage.removeItem('jwt_token');
                     window.location.href = 'login.html';
-                    return;
+                    return; // Stop execution if unauthorized
                 }
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 fullData = await response.json();
@@ -2473,6 +2473,8 @@
                 const response = await fetch(`${API_URL}/games/notifications`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (response.status === 401) { 
                     console.log('fetchNotifications: Unauthorized, returning.'); // New log
+                    localStorage.removeItem('jwt_token'); // Clear invalid token
+                    window.location.href = 'login.html'; // Redirect to login
                     return; 
                 } // Token expirado, será tratado pelo fetchGameData
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
