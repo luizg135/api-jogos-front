@@ -1751,10 +1751,11 @@
             }
             return { status: 'Ruim', class: 'ruim' };
         }
-        function renderWishlist(wishlist = []) {
+function renderWishlist(wishlist = []) {
             const container = document.getElementById('wishlist-container'); 
             const noResults = document.getElementById('no-wishlist-results-message');
             if (!container || !noResults) return;
+
             if (wishlist.length === 0) { 
                 container.innerHTML = ''; 
                 noResults.style.display = 'block';
@@ -1767,7 +1768,19 @@
                 const psnCurrent = game['PSN Preco Atual'] || 'N/A'; 
                 const steamLowest = game['Steam Menor Preco Historico'] || 'N/A';
                 const psnLowest = game['PSN Menor Preco Historico'] || 'N/A'; 
-                const priceStatus = getPriceStatus(steamCurrent, steamLowest, psnCurrent, psnLowest);
+                
+                // Lógica para determinar um status geral para o card
+                const steamStatus = getPriceStatusForPlatform(steamCurrent, steamLowest);
+                const psnStatus = getPriceStatusForPlatform(psnCurrent, psnLowest);
+                let generalPriceStatus = { status: 'N/A', class: 'normal' };
+                if (steamStatus.status === 'Bom' || psnStatus.status === 'Bom') {
+                    generalPriceStatus = { status: 'Bom', class: 'bom' };
+                } else if (steamStatus.status === 'Normal' || psnStatus.status === 'Normal') {
+                    generalPriceStatus = { status: 'Normal', class: 'normal' };
+                } else if (steamStatus.status === 'Ruim' || psnStatus.status === 'Ruim') {
+                     generalPriceStatus = { status: 'Ruim', class: 'ruim' };
+                }
+
                 return `
                 <div class="wish-card" onclick="openWishDetailsModal('${safeName}')">
                     <img src="${game.Link || 'https://placehold.co/180x180/21262d/e6edf3?text=Sem+Capa'}" class="wish-card-img" alt="${safeName}">
@@ -1784,7 +1797,7 @@
                             </div>
                             <div class="wish-card-price-row" style="margin-top: 8px;">
                                 <span>Status:</span>
-                                <span class="price-status ${priceStatus.class}">${priceStatus.status}</span>
+                                <span class="price-status ${generalPriceStatus.class}">${generalPriceStatus.status}</span>
                             </div>
                         </div>
                     </div>
