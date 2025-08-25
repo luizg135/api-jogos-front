@@ -1449,6 +1449,9 @@
             darkGrey: '#4a5057',     // Cinza escuro
             lightGrey: '#a5acb4'     // Cinza claro
         };
+
+        Chart.defaults.color = chartColors.grey;
+    
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
         let currentSortKey = 'Nome';
