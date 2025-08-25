@@ -2364,14 +2364,14 @@
                             x: {
                                 type: 'time', // Usa escala de tempo para datas
                                 time: {
-                                    parser: 'yyyy-MM-dd', // Adicionado parser explícito para o formato de data
-                                    unit: 'day', // Unidade de exibição
-                                    tooltipFormat: 'DD/MM/YYYY', // Formato da dica de ferramenta (com 'DD' e 'YYYY' maiúsculos)
+                                    parser: 'YYYY-MM-DD', // <-- CORREÇÃO APLICADA AQUI
+                                    unit: 'day', 
+                                    tooltipFormat: 'DD/MM/YYYY', 
                                     displayFormats: {
-                                        day: 'DD/MM' // Formato de exibição no eixo (com 'DD' maiúsculo)
+                                        day: 'DD/MM'
                                     }
                                 },
-                                title: {
+                                                title: {
                                     display: false,
                                     text: 'Data'
                                 },
