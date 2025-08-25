@@ -941,6 +941,42 @@
             max-height: 100%;
             max-width: 100%;
         }
+
+        /* Estilos para o novo layout do modal de desejos */
+        .price-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .platform-price-block {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .platform-title {
+            margin: 0 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent-purple);
+            text-align: center;
+        }
+        .wish-footer-details {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-size: 12px;
+            color: var(--secondary-text);
+            margin-top: 24px;
+        }
+        #wishDetailsModal .game-details-body {
+            display: block; /* Mudar para block para empilhar os elementos */
+        }
+        #wishDetailsModal .game-details-actions {
+            margin-top: 16px; /* Adicionar margem acima dos botões */
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -1244,33 +1280,57 @@
                     </div>
                 </div>
             </div>
-            <div class="game-details-body">
-                <div class="game-details-stats">
-                    <div class="game-details-stats-item">
-                        <span>Preço Atual da Steam:</span>
-                        <span id="wishSteamCurrentPrice">N/A</span>
+<div class="game-details-body">
+                <div class="price-details-grid">
+                    <div class="platform-price-block">
+                        <h3 class="platform-title">STEAM</h3>
+                        <div class="game-details-stats-item">
+                            <span>Preço Atual:</span>
+                            <span id="wishSteamCurrentPrice">N/A</span>
+                        </div>
+                        <div class="game-details-stats-item">
+                            <span>Menor Preço:</span>
+                            <span id="wishSteamLowestPrice">N/A</span>
+                        </div>
+                        <div class="game-details-stats-item">
+                            <span>Status:</span>
+                            <span id="wishSteamPriceStatus" class="price-status">N/A</span>
+                        </div>
                     </div>
-                    <div class="game-details-stats-item">
-                        <span>Menor Preço da Steam:</span>
-                        <span id="wishSteamLowestPrice">N/A</span>
-                    </div>
-                    <div class="game-details-stats-item">
-                        <span>Preço Atual da PSN:</span>
-                        <span id="wishPsnCurrentPrice">N/A</span>
-                    </div>
-                    <div class="game-details-stats-item">
-                        <span>Menor Preço da PSN:</span>
-                        <span id="wishPsnLowestPrice">N/A</span>
-                    </div>
-                    <div class="game-details-stats-item">
-                        <span>Última Atualização:</span>
-                        <span id="wishLastPriceUpdate">N/A</span>
-                    </div>
-                    <div class="game-details-stats-item">
-                        <span>Status:</span>
-                        <span id="wishPriceStatus" class="price-status">N/A</span>
+                    <div class="platform-price-block">
+                        <h3 class="platform-title">PSN</h3>
+                        <div class="game-details-stats-item">
+                            <span>Preço Atual:</span>
+                            <span id="wishPsnCurrentPrice">N/A</span>
+                        </div>
+                        <div class="game-details-stats-item">
+                            <span>Menor Preço:</span>
+                            <span id="wishPsnLowestPrice">N/A</span>
+                        </div>
+                         <div class="game-details-stats-item">
+                            <span>Status:</span>
+                            <span id="wishPsnPriceStatus" class="price-status">N/A</span>
+                        </div>
                     </div>
                 </div>
+
+                <div class="price-history-chart-container">
+                    <h3>Histórico de Preços</h3>
+                    <div class="price-history-chart-wrapper">
+                        <canvas id="priceHistoryChart"></canvas>
+                    </div>
+                    <p id="noPriceHistoryMessage" style="color: var(--secondary-text); font-size: 12px; margin-top: 10px; display: none;">Nenhum histórico de preço disponível.</p>
+                </div>
+                
+                <div class="wish-footer-details">
+                    <span>Última Atualização em: <strong id="wishLastPriceUpdate">N/A</strong></span>
+                </div>
+                <div class="game-details-actions">
+                    <button class="action-button" id="purchaseWishDetailsBtn"><span class="material-symbols-outlined">shopping_cart_checkout</span> Marcar como Comprado</button>
+                    <button class="action-button" id="editWishDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar</button>
+                    <button class="action-button delete-btn" id="deleteWishDetailsBtn"><span class="material-symbols-outlined">delete</span> Excluir</button>
+                </div>
+            </div>
                 <!-- NOVO CONTAINER PARA O GRÁFICO DE HISTÓRICO DE PREÇOS -->
                 <div class="price-history-chart-container">
                     <h3>Histórico de Preços</h3>
@@ -1674,15 +1734,19 @@
             const num = parseFloat(String(val).replace(',', '.')) || 0;
             return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
-        function getPriceStatus(steamCurrent, steamLowest, psnCurrent, psnLowest) {
-            const currentSteam = parseFloat(String(steamCurrent).replace(',', '.')) || Infinity;
-            const lowestSteam = parseFloat(String(steamLowest).replace(',', '.')) || Infinity;
-            const currentPsn = parseFloat(String(psnCurrent).replace(',', '.')) || Infinity;
-            const lowestPsn = parseFloat(String(psnLowest).replace(',', '.')) || Infinity;
-            const threshold = 0.15; 
-            if (currentSteam <= lowestSteam || currentPsn <= lowestPsn) {
+        function getPriceStatusForPlatform(currentPrice, lowestPrice) {
+            const current = parseFloat(String(currentPrice).replace(',', '.')) || Infinity;
+            const lowest = parseFloat(String(lowestPrice).replace(',', '.')) || Infinity;
+            const threshold = 0.15;
+        
+            // Se não houver preço ou for gratuito, não há status
+            if (current === Infinity || lowest === Infinity || lowest === 0) {
+                return { status: 'N/A', class: 'normal' };
+            }
+            if (current <= lowest) {
                 return { status: 'Bom', class: 'bom' };
-            } else if (currentSteam <= lowestSteam * (1 + threshold) || currentPsn <= lowestPsn * (1 + threshold)) {
+            }
+            if (current <= lowest * (1 + threshold)) {
                 return { status: 'Normal', class: 'normal' };
             }
             return { status: 'Ruim', class: 'ruim' };
@@ -2232,40 +2296,56 @@
             document.getElementById('gameDetailsModal').classList.remove('active');
         }
 
-        async function openWishDetailsModal(wishName) {
-            const wish = fullData.desejos.find(w => w.Nome === wishName);
-            if (!wish) {
-                showToast("Item da lista de desejos não encontrado.", true);
-                return;
-            }
-            document.getElementById('wishNameDetails').textContent = wish.Nome;
-            document.getElementById('wishReleaseDetails').textContent = wish['Data Lançamento'] || 'N/A';
-            
-            const steamCurrent = wish['Steam Preco Atual'] || 'N/A';
-            const steamLowest = wish['Steam Menor Preco Historico'] || 'N/A';
-            const psnCurrent = wish['PSN Preco Atual'] || 'N/A';
-            const psnLowest = wish['PSN Menor Preco Historico'] || 'N/A';
-            document.getElementById('wishSteamCurrentPrice').textContent = formatCurrency(steamCurrent);
-            document.getElementById('wishSteamLowestPrice').textContent = formatCurrency(steamLowest);
-            document.getElementById('wishPsnCurrentPrice').textContent = formatCurrency(psnCurrent);
-            document.getElementById('wishPsnLowestPrice').textContent = formatCurrency(psnLowest);
-            document.getElementById('wishLastPriceUpdate').textContent = wish['Ultima Atualizacao'] ? new Date(wish['Ultima Atualizacao']).toLocaleString('pt-BR') : 'N/A';
-            const priceStatus = getPriceStatus(steamCurrent, steamLowest, psnCurrent, psnLowest);
-            const wishPriceStatusElement = document.getElementById('wishPriceStatus');
-            wishPriceStatusElement.textContent = priceStatus.status;
-            wishPriceStatusElement.className = `price-status ${priceStatus.class}`;
-            document.getElementById('wishCoverArt').src = wish.Link || 'https://placehold.co/120x160/21262d/e6edf3?text=Sem+Capa';
-            document.getElementById('wishCoverBackground').src = wish.Link || 'https://placehold.co/800x250/21262d/e6edf3?text=Sem+Capa';
-            const safeName = wish.Nome.replace(/'/g, "\\'");
-            document.getElementById('purchaseWishDetailsBtn').onclick = () => purchaseWish(safeName);
-            document.getElementById('editWishDetailsBtn').onclick = () => editWish(safeName);
-            document.getElementById('deleteWishDetailsBtn').onclick = () => deleteWish(safeName);
-            
-            // --- NOVO: Carregar e renderizar o gráfico de histórico de preços ---
-            await renderPriceHistoryChart(wishName);
+async function openWishDetailsModal(wishName) {
+    const wish = fullData.desejos.find(w => w.Nome === wishName);
+    if (!wish) {
+        showToast("Item da lista de desejos não encontrado.", true);
+        return;
+    }
 
-            document.getElementById('wishDetailsModal').classList.add('active');
-        }
+    // Preenche informações básicas do cabeçalho
+    document.getElementById('wishNameDetails').textContent = wish.Nome;
+    document.getElementById('wishReleaseDetails').textContent = wish['Data Lançamento'] || 'N/A';
+    document.getElementById('wishCoverArt').src = wish.Link || 'https://placehold.co/120x160/21262d/e6edf3?text=Sem+Capa';
+    document.getElementById('wishCoverBackground').src = wish.Link || 'https://placehold.co/800x250/21262d/e6edf3?text=Sem+Capa';
+
+    // Prepara os dados de preço
+    const steamCurrent = wish['Steam Preco Atual'] || 'N/A';
+    const steamLowest = wish['Steam Menor Preco Historico'] || 'N/A';
+    const psnCurrent = wish['PSN Preco Atual'] || 'N/A';
+    const psnLowest = wish['PSN Menor Preco Historico'] || 'N/A';
+
+    // Preenche os preços
+    document.getElementById('wishSteamCurrentPrice').textContent = formatCurrency(steamCurrent);
+    document.getElementById('wishSteamLowestPrice').textContent = formatCurrency(steamLowest);
+    document.getElementById('wishPsnCurrentPrice').textContent = formatCurrency(psnCurrent);
+    document.getElementById('wishPsnLowestPrice').textContent = formatCurrency(psnLowest);
+
+    // Calcula e define o status para a Steam
+    const steamStatus = getPriceStatusForPlatform(steamCurrent, steamLowest);
+    const steamStatusElement = document.getElementById('wishSteamPriceStatus');
+    steamStatusElement.textContent = steamStatus.status;
+    steamStatusElement.className = `price-status ${steamStatus.class}`;
+
+    // Calcula e define o status para a PSN
+    const psnStatus = getPriceStatusForPlatform(psnCurrent, psnLowest);
+    const psnStatusElement = document.getElementById('wishPsnPriceStatus');
+    psnStatusElement.textContent = psnStatus.status;
+    psnStatusElement.className = `price-status ${psnStatus.class}`;
+
+    // Preenche a data da última atualização
+    document.getElementById('wishLastPriceUpdate').textContent = wish['Ultima Atualizacao'] ? new Date(wish['Ultima Atualizacao']).toLocaleString('pt-BR') : 'N/A';
+
+    // Configura os botões de ação
+    const safeName = wish.Nome.replace(/'/g, "\\'");
+    document.getElementById('purchaseWishDetailsBtn').onclick = () => purchaseWish(safeName);
+    document.getElementById('editWishDetailsBtn').onclick = () => editWish(safeName);
+    document.getElementById('deleteWishDetailsBtn').onclick = () => deleteWish(safeName);
+
+    // Renderiza o gráfico e abre o modal
+    await renderPriceHistoryChart(wishName);
+    document.getElementById('wishDetailsModal').classList.add('active');
+}
         function closeWishDetailsModal() {
             document.getElementById('wishDetailsModal').classList.remove('active');
             if (priceHistoryChartInstance) {
