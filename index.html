@@ -2316,7 +2316,7 @@
                 const ctx = chartCanvas.getContext('2d');
                 priceHistoryChartInstance = new Chart(ctx, {
                     type: 'line',
-                    data: {
+data: {
                         labels: dates,
                         datasets: [
                             {
@@ -2324,6 +2324,8 @@
                                 data: steamPrices,
                                 borderColor: chartColors.darkPurple,
                                 backgroundColor: 'rgba(106, 74, 156, 0.2)',
+                                pointBackgroundColor: chartColors.darkPurple, // <-- ADICIONE ESTA LINHA
+                                pointBorderColor: chartColors.darkPurple,     // <-- ADICIONE ESTA LINHA
                                 fill: false,
                                 tension: 0.1,
                                 spanGaps: true
@@ -2333,6 +2335,8 @@
                                 data: psnPrices,
                                 borderColor: chartColors.lightPurple,
                                 backgroundColor: 'rgba(184, 156, 235, 0.2)',
+                                pointBackgroundColor: chartColors.lightPurple, // <-- ADICIONE ESTA LINHA
+                                pointBorderColor: chartColors.lightPurple,     // <-- ADICIONE ESTA LINHA
                                 fill: false,
                                 tension: 0.1,
                                 spanGaps: true
