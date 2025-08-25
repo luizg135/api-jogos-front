@@ -1896,7 +1896,7 @@
                     const styleMatch = style !== 'all' ? gameStyles.includes(style) : true;
                     const yearMatch = year !== 'all' ? gameYear == year : true;
                     
-                    const ratingMatch = (gameRating >= minRating && gameRating >= maxRating);
+                    const ratingMatch = (gameRating >= minRating && gameRating <= maxRating);
                     const metacriticMatch = (gameMetacritic >= minMetacritic && gameMetacritic <= maxMetacritic);
                     const priceMatch = (gamePrice >= minPrice && gamePrice <= maxPrice);
                     const hoursMatch = (gameHours >= minHours && gameHours <= maxHours);
