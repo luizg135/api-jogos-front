@@ -2317,16 +2317,16 @@
                             {
                                 label: 'Steam',
                                 data: steamPrices,
-                                borderColor: chartColors.purple,
-                                backgroundColor: 'rgba(147, 112, 219, 0.2)',
+                                borderColor: chartColors.darkPurple, // <-- ALTERADO PARA ROXO ESCURO
+                                backgroundColor: 'rgba(106, 74, 156, 0.2)', // Opcional: ajustar a área para combinar
                                 fill: false,
                                 tension: 0.1,
-                                spanGaps: true // Permite que a linha continue mesmo com dados nulos
+                                spanGaps: true
                             },
                             {
                                 label: 'PSN',
                                 data: psnPrices,
-                                borderColor: chartColors.lightPurple,
+                                borderColor: chartColors.lightPurple, // <-- MANTIDO ROXO CLARO
                                 backgroundColor: 'rgba(184, 156, 235, 0.2)',
                                 fill: false,
                                 tension: 0.1,
@@ -2342,23 +2342,34 @@
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: 'var(--primary-text)'
+                                    color: 'var(--secondary-text)' // <-- ALTERADO PARA CINZA CLARO
                                 }
                             },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.y !== null) {
-                                            label += formatCurrency(context.parsed.y);
-                                        }
-                                        return label;
-                                    }
-                                }
+// ... (código do tooltip)
+                        },
+                        scales: {
+                            x: {
+// ... (código do eixo X)
+                                ticks: {
+                                    color: 'var(--secondary-text)' // <-- MANTIDO CINZA CLARO
+                                },
+// ...
+                            },
+                            y: {
+// ... (código do eixo Y)
+                                title: {
+                                    display: true,
+                                    text: 'Preço (R$)',
+                                    color: 'var(--secondary-text)' // <-- MANTIDO CINZA CLARO
+                                },
+                                ticks: {
+// ...
+                                    color: 'var(--secondary-text)' // <-- MANTIDO CINZA CLARO
+                                },
+// ...
                             }
+                        }
+                    }
                         },
                         scales: {
                             x: {
