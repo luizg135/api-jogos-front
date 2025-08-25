@@ -2274,7 +2274,6 @@
             const noHistoryMessage = document.getElementById('noPriceHistoryMessage');
             if (!chartCanvas || !noHistoryMessage) return;
 
-            // Destrói qualquer instância de gráfico existente antes de criar uma nova
             if (priceHistoryChartInstance) {
                 priceHistoryChartInstance.destroy();
                 priceHistoryChartInstance = null;
@@ -2290,14 +2289,14 @@
                 if (historyData.length === 0) {
                     chartCanvas.style.display = 'none';
                     noHistoryMessage.style.display = 'block';
-                    noHistoryMessage.textContent = 'Nenhum histórico de preço disponível.'; // Garante que a mensagem correta seja exibida
+                    noHistoryMessage.textContent = 'Nenhum histórico de preço disponível.';
                     return;
                 }
 
                 chartCanvas.style.display = 'block';
                 noHistoryMessage.style.display = 'none';
 
-                const dates = [...new Set(historyData.map(item => item.date))].sort(); // Datas únicas e ordenadas
+                const dates = [...new Set(historyData.map(item => item.date))].sort();
                 
                 const steamPrices = dates.map(date => {
                     const item = historyData.find(d => d.date === date && d.platform === 'Steam');
@@ -2317,8 +2316,8 @@
                             {
                                 label: 'Steam',
                                 data: steamPrices,
-                                borderColor: chartColors.darkPurple, // <-- ALTERADO PARA ROXO ESCURO
-                                backgroundColor: 'rgba(106, 74, 156, 0.2)', // Opcional: ajustar a área para combinar
+                                borderColor: chartColors.darkPurple, // Cor: Roxo escuro
+                                backgroundColor: 'rgba(106, 74, 156, 0.2)',
                                 fill: false,
                                 tension: 0.1,
                                 spanGaps: true
@@ -2326,7 +2325,7 @@
                             {
                                 label: 'PSN',
                                 data: psnPrices,
-                                borderColor: chartColors.lightPurple, // <-- MANTIDO ROXO CLARO
+                                borderColor: chartColors.lightPurple, // Cor: Roxo claro
                                 backgroundColor: 'rgba(184, 156, 235, 0.2)',
                                 fill: false,
                                 tension: 0.1,
@@ -2342,55 +2341,40 @@
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: 'var(--secondary-text)' // <-- ALTERADO PARA CINZA CLARO
+                                    color: 'var(--secondary-text)' // Cor: Cinza claro para legenda
                                 }
                             },
-// ... (código do tooltip)
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += formatCurrency(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
                         },
                         scales: {
                             x: {
-// ... (código do eixo X)
-                                ticks: {
-                                    color: 'var(--secondary-text)' // <-- MANTIDO CINZA CLARO
-                                },
-// ...
-                            },
-                            y: {
-// ... (código do eixo Y)
-                                title: {
-                                    display: true,
-                                    text: 'Preço (R$)',
-                                    color: 'var(--secondary-text)' // <-- MANTIDO CINZA CLARO
-                                },
-                                ticks: {
-// ...
-                                    color: 'var(--secondary-text)' // <-- MANTIDO CINZA CLARO
-                                },
-// ...
-                            }
-                        }
-                    }
-                        },
-                        (scales {
-                            x: {
-                                type: 'time', // Usa escala de tempo para datas
+                                type: 'time',
                                 time: {
-                                    parser: 'YYYY-MM-DD', // <-- CORREÇÃO APLICADA AQUI
-                                    unit: 'day', 
-                                    tooltipFormat: 'DD/MM/YYYY', 
+                                    parser: 'YYYY-MM-DD',      // Correção: Formato de leitura da data
+                                    unit: 'day',
+                                    tooltipFormat: 'DD/MM/YYYY',// Correção: Formato de exibição no tooltip
                                     displayFormats: {
-                                        day: 'DD/MM'
+                                        day: 'DD/MM'        // Correção: Formato de exibição no eixo
                                     }
                                 },
-                                                title: {
-                                    display: false,
-                                    text: 'Data'
-                                },
                                 ticks: {
-                                    color: 'var(--secondary-text)'
+                                    color: 'var(--secondary-text)' // Cor: Cinza claro para eixo X
                                 },
                                 grid: {
-                                    color: 'rgba(48, 54, 61, 0.3)' // Cor da grade
+                                    color: 'rgba(48, 54, 61, 0.3)'
                                 }
                             },
                             y: {
@@ -2398,16 +2382,16 @@
                                 title: {
                                     display: true,
                                     text: 'Preço (R$)',
-                                    color: 'var(--secondary-text)'
+                                    color: 'var(--secondary-text)' // Cor: Cinza claro para título do eixo Y
                                 },
                                 ticks: {
                                     callback: function(value, index, ticks) {
-                                        return formatCurrency(value); // Formata os ticks do eixo Y como moeda
+                                        return formatCurrency(value);
                                     },
-                                    color: 'var(--secondary-text)'
+                                    color: 'var(--secondary-text)' // Cor: Cinza claro para eixo Y
                                 },
                                 grid: {
-                                    color: 'rgba(48, 54, 61, 0.3)' // Cor da grade
+                                    color: 'rgba(48, 54, 61, 0.3)'
                                 }
                             }
                         }
