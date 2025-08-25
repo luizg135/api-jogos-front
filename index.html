@@ -732,7 +732,7 @@
             width: 100%;
             height: 100%;
             display: flex;
-            flex-direction: column; 
+            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
@@ -885,27 +885,16 @@
             font-size: 16px;
             color: var(--accent-purple);
         }
-
-        /*
-            ESTILOS NOVOS E REESTRUTURADOS PARA O MODAL DA LISTA DE DESEJOS
-        */
-        #wishDetailsModal .modal-content {
-            max-width: 1500px;
-            width: 100%;
-        }
-
         #wishDetailsModal .game-details-body {
-            grid-template-columns: 1fr 2fr; 
-            padding: 24px;
-            gap: 24px;
+            grid-template-columns: 1fr; 
+            padding: 24px; 
         }
-
         #wishDetailsModal .game-details-stats {
             background-color: var(--bg-color);
             padding: 16px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            margin-bottom: 0; 
+            margin-bottom: 24px; 
         }
         #wishDetailsModal .game-details-stats-item {
             padding: 10px 0; 
@@ -918,18 +907,17 @@
             font-size: 16px; 
         }
         #wishDetailsModal .game-details-actions {
-            grid-column: 1 / -1; 
             justify-content: center; 
             padding-top: 0; 
-            margin-top: 24px;
         }
-        
+        /* Estilos para o gráfico de histórico de preços */
         .price-history-chart-container {
             background-color: var(--bg-color);
             padding: 16px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            min-height: 200px; 
+            margin-top: 24px;
+            min-height: 200px; /* Altura mínima para o gráfico */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -947,39 +935,11 @@
         .price-history-chart-wrapper {
             position: relative;
             width: 100%;
-            flex-grow: 1;
+            height: 180px; /* Altura fixa para o canvas do gráfico */
         }
         #priceHistoryChart {
             max-height: 100%;
             max-width: 100%;
-        }
-
-        /* REGRAS DE MEDIA QUERY PARA AJUSTAR O MODAL EM TELAS PEQUENAS */
-        @media (max-width: 768px) {
-            #wishDetailsModal .game-details-body {
-                grid-template-columns: 1fr;
-                padding: 16px;
-            }
-
-            .game-details-info {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                padding: 16px;
-            }
-
-            .game-details-info .game-cover-art {
-                width: 100px;
-                height: 130px;
-                transform: translateY(20px);
-            }
-            .game-details-body {
-                padding-top: 40px;
-            }
-
-            .game-details-actions {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
@@ -1311,6 +1271,7 @@
                         <span id="wishPriceStatus" class="price-status">N/A</span>
                     </div>
                 </div>
+                <!-- NOVO CONTAINER PARA O GRÁFICO DE HISTÓRICO DE PREÇOS -->
                 <div class="price-history-chart-container">
                     <h3>Histórico de Preços</h3>
                     <div class="price-history-chart-wrapper">
@@ -1499,8 +1460,8 @@
         let notificationInterval; 
         let isInitialLoad = true; 
         let allNotifications = []; 
-        let priceHistoryChartInstance = null;
-        
+        let priceHistoryChartInstance = null; // Instância do Chart.js para o histórico de preços
+
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
         function showToast(message, isError = false) {
             Toastify({
@@ -1928,7 +1889,7 @@
                     const gameYear = g['Terminado em'] ? new Date(g['Terminado em']).getFullYear() : null;
                     const gameRating = parseFloat(g.Nota) || 0;
                     const gameMetacritic = parseFloat(g.Metacritic) || 0;
-                    const gamePrice = parseFloat(String(g.Preço).replace(',','.')) || 0;
+                    const gamePrice = parseFloat(String(g.Preço).replace(',', '.')) || 0;
                     const gameHours = parseInt(g['Tempo de Jogo']) || 0;
                     const nameMatch = name ? gameName.includes(name) : true;
                     const statusMatch = status !== 'all' ? gameStatus === status : true;
@@ -2294,6 +2255,7 @@
             document.getElementById('editWishDetailsBtn').onclick = () => editWish(safeName);
             document.getElementById('deleteWishDetailsBtn').onclick = () => deleteWish(safeName);
             
+            // --- NOVO: Carregar e renderizar o gráfico de histórico de preços ---
             await renderPriceHistoryChart(wishName);
 
             document.getElementById('wishDetailsModal').classList.add('active');
@@ -2301,16 +2263,18 @@
         function closeWishDetailsModal() {
             document.getElementById('wishDetailsModal').classList.remove('active');
             if (priceHistoryChartInstance) {
-                priceHistoryChartInstance.destroy();
+                priceHistoryChartInstance.destroy(); // Destrói a instância do gráfico ao fechar o modal
                 priceHistoryChartInstance = null;
             }
         }
 
+        // --- NOVA FUNÇÃO: Renderizar o gráfico de histórico de preços ---
         async function renderPriceHistoryChart(gameName) {
             const chartCanvas = document.getElementById('priceHistoryChart');
             const noHistoryMessage = document.getElementById('noPriceHistoryMessage');
             if (!chartCanvas || !noHistoryMessage) return;
 
+            // Destrói qualquer instância de gráfico existente antes de criar uma nova
             if (priceHistoryChartInstance) {
                 priceHistoryChartInstance.destroy();
                 priceHistoryChartInstance = null;
@@ -2326,14 +2290,14 @@
                 if (historyData.length === 0) {
                     chartCanvas.style.display = 'none';
                     noHistoryMessage.style.display = 'block';
-                    noHistoryMessage.textContent = 'Nenhum histórico de preço disponível.'; 
+                    noHistoryMessage.textContent = 'Nenhum histórico de preço disponível.'; // Garante que a mensagem correta seja exibida
                     return;
                 }
 
                 chartCanvas.style.display = 'block';
                 noHistoryMessage.style.display = 'none';
 
-                const dates = [...new Set(historyData.map(item => item.date))].sort(); 
+                const dates = [...new Set(historyData.map(item => item.date))].sort(); // Datas únicas e ordenadas
                 
                 const steamPrices = dates.map(date => {
                     const item = historyData.find(d => d.date === date && d.platform === 'Steam');
@@ -2357,7 +2321,7 @@
                                 backgroundColor: 'rgba(147, 112, 219, 0.2)',
                                 fill: false,
                                 tension: 0.1,
-                                spanGaps: true 
+                                spanGaps: true // Permite que a linha continue mesmo com dados nulos
                             },
                             {
                                 label: 'PSN',
@@ -2398,13 +2362,13 @@
                         },
                         scales: {
                             x: {
-                                type: 'time',
+                                type: 'time', // Usa escala de tempo para datas
                                 time: {
-                                    parser: 'yyyy-MM-dd',
-                                    unit: 'day', 
-                                    tooltipFormat: 'dd/MM/yyyy', 
+                                    parser: 'yyyy-MM-dd', // Adicionado parser explícito para o formato de data
+                                    unit: 'day', // Unidade de exibição
+                                    tooltipFormat: 'dd/MM/yyyy', // Formato da dica de ferramenta
                                     displayFormats: {
-                                        day: 'dd/MM' 
+                                        day: 'dd/MM' // Formato de exibição no eixo
                                     }
                                 },
                                 title: {
@@ -2415,7 +2379,7 @@
                                     color: 'var(--secondary-text)'
                                 },
                                 grid: {
-                                    color: 'rgba(48, 54, 61, 0.3)' 
+                                    color: 'rgba(48, 54, 61, 0.3)' // Cor da grade
                                 }
                             },
                             y: {
@@ -2427,12 +2391,12 @@
                                 },
                                 ticks: {
                                     callback: function(value, index, ticks) {
-                                        return formatCurrency(value); 
+                                        return formatCurrency(value); // Formata os ticks do eixo Y como moeda
                                     },
                                     color: 'var(--secondary-text)'
                                 },
                                 grid: {
-                                    color: 'rgba(48, 54, 61, 0.3)' 
+                                    color: 'rgba(48, 54, 61, 0.3)' // Cor da grade
                                 }
                             }
                         }
@@ -2448,7 +2412,7 @@
         }
 
 
-        async function handleSearch(query) { 
+        async function handleSearch(query) { // Adicionado 'async' aqui
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -2471,7 +2435,7 @@
             document.getElementById('gameDescription').value = game.description;
             document.getElementById('searchResultsContainer').innerHTML = '';
         }
-        async function handleWishSearch(query) { 
+        async function handleWishSearch(query) { // Adicionado 'async' aqui
             const resultsContainer = document.getElementById('wishSearchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -2868,12 +2832,22 @@
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
 </script>
+<!-- Remove a importação do date-fns e seu locale -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/date-fns.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/locale/pt-BR/index.min.js"></script> -->
+
+<!-- Adiciona a biblioteca Moment.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<!-- Adiciona o locale pt-br para Moment.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pt-br.min.js"></script>
+
 <script>
+    // Configura Moment.js para usar o locale pt-br
     moment.locale('pt-br');
     console.log("Moment.js loaded and locale set to pt-br.");
 </script>
+
+<!-- Em seguida, adiciona o adaptador para a escala de tempo do Chart.js para Moment.js -->
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
 </body>
 </html>
