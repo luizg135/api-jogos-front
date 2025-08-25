@@ -1010,7 +1010,7 @@
             </section>
             <section id="graficos" class="page">
                 <header class="profile-header">
-                    <div class="profile-main">
+                    <div class="profile-main" style="justify-content: space-between;">
                         <div class="profile-info">
                             <h1 style="color: var(--accent-purple);">Análise Gráfica</h1>
                             <p>Visão detalhada sobre seus hábitos e conquistas.</p>
@@ -1896,7 +1896,7 @@
                     const styleMatch = style !== 'all' ? gameStyles.includes(style) : true;
                     const yearMatch = year !== 'all' ? gameYear == year : true;
                     
-                    const ratingMatch = (gameRating >= minRating && gameRating <= maxRating);
+                    const ratingMatch = (gameRating >= minRating && gameRating >= maxRating);
                     const metacriticMatch = (gameMetacritic >= minMetacritic && gameMetacritic <= maxMetacritic);
                     const priceMatch = (gamePrice >= minPrice && gamePrice <= maxPrice);
                     const hoursMatch = (gameHours >= minHours && gameHours <= maxHours);
@@ -2832,27 +2832,22 @@
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
 </script>
-<!-- Adiciona a biblioteca date-fns primeiro -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/date-fns.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/locale/pt-BR/index.min.js"></script>
+<!-- Remove a importação do date-fns e seu locale -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/date-fns.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/locale/pt-BR/index.min.js"></script> -->
+
+<!-- Adiciona a biblioteca Moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<!-- Adiciona o locale pt-br para Moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pt-br.min.js"></script>
+
 <script>
-    // Explicitamente atribui dateFns ao objeto window para garantir que o adaptador o encontre
-    // O unpkg pode não fazer isso automaticamente em todos os ambientes.
-    if (typeof dateFns !== 'undefined') {
-        window.dateFns = dateFns;
-        console.log("dateFns global object after manual assignment:", typeof window.dateFns, window.dateFns);
-    } else {
-        console.error("dateFns is still undefined after loading from cdnjs.");
-    }
-    // Verifica se o locale ptBR está disponível e o atribui se necessário
-    if (typeof dateFnsLocales !== 'undefined' && typeof dateFnsLocales.ptBR !== 'undefined') {
-        window.dateFns_locale_ptBR = dateFnsLocales.ptBR;
-        console.log("dateFns_locale_ptBR global object after manual assignment:", typeof window.dateFns_locale_ptBR, window.dateFns_locale_ptBR);
-    } else {
-        console.error("dateFns_locale_ptBR is still undefined after loading from cdnjs.");
-    }
+    // Configura Moment.js para usar o locale pt-br
+    moment.locale('pt-br');
+    console.log("Moment.js loaded and locale set to pt-br.");
 </script>
-<!-- Em seguida, adiciona o adaptador para a escala de tempo do Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.min.js"></script>
+
+<!-- Em seguida, adiciona o adaptador para a escala de tempo do Chart.js para Moment.js -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
 </body>
 </html>
