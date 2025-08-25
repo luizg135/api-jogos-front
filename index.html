@@ -352,7 +352,7 @@
         .achievement-icon.tier-Platina .material-symbols-outlined { color: var(--rank-platina); }
         .achievement-icon.tier-Diamante .material-symbols-outlined { color: var(--rank-diamante); }
         .achievement-icon.tier-Mestre .material-symbols-outlined { color: var(--rank-mestre); }
-        
+    
         .achievements-list::-webkit-scrollbar {
             width: 8px; 
         }
@@ -1000,93 +1000,7 @@
             justify-content: center; /* Centraliza os botões */
             padding-top: 0; /* Remove padding superior extra */
         }
-
-        /* Estilos para a seção de jogos similares */
-        .similar-games-section {
-            grid-column: 1 / -1; /* Ocupa todas as colunas */
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .similar-games-section h3 {
-            margin: 0 0 16px 0;
-            font-size: 18px;
-            color: var(--primary-text);
-            font-weight: 600;
-        }
-
-        .similar-games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Cards menores para similares */
-            gap: 16px;
-        }
-
-        .similar-game-card {
-            background-color: var(--bg-color);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            text-align: center;
-            padding-bottom: 8px; /* Espaço para o texto */
-            position: relative;
-        }
-
-        .similar-game-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-            border-color: var(--accent-purple);
-        }
-
-        .similar-game-card img {
-            width: 100%;
-            height: 120px; /* Altura fixa para as capas */
-            object-fit: cover;
-            display: block;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .similar-game-card p {
-            margin: 8px 4px 0 4px;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--primary-text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .similar-game-card .game-ownership-status {
-            font-size: 10px;
-            font-weight: 400;
-            color: var(--secondary-text);
-            display: block;
-            margin-top: 2px;
-        }
-
-        .similar-game-card.owned-game {
-            border-color: var(--accent-green); /* Borda verde para jogos possuídos */
-            box-shadow: 0 0 8px rgba(35, 134, 54, 0.4);
-        }
-
-        .similar-game-card.owned-game:hover {
-            box-shadow: 0 0 15px rgba(35, 134, 54, 0.6);
-        }
-
-        .similar-game-card .owned-indicator {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background-color: var(--accent-green);
-            color: white;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-            z-index: 10;
-        }
+    
     </style>
 </head>
 
@@ -1364,15 +1278,6 @@
                     <h3>Descrição</h3>
                     <p id="gameDescriptionDetails"></p>
                 </div>
-                <!-- NOVO: Seção para Jogos Similares -->
-                <div class="similar-games-section">
-                    <h3>Jogos que Você Também Pode Gostar</h3>
-                    <div id="similarGamesContainer" class="similar-games-grid">
-                        <!-- Jogos similares serão renderizados aqui -->
-                        <p class="no-results" style="display: none;">Nenhuma sugestão de jogo similar encontrada.</p>
-                    </div>
-                </div>
-                <!-- FIM NOVO -->
                 <div class="game-details-actions">
                     <button class="action-button" id="editGameDetailsBtn"><span class="material-symbols-outlined">edit</span></button>
                     <button class="action-button delete-btn" id="deleteGameDetailsBtn"><span class="material-symbols-outlined">delete</span></button>
@@ -1477,7 +1382,7 @@
             <span class="close-button" onclick="closeAchievementsModal()">&times;</span>
             <h2>Conquistas</h2>
             <div class="tabs">
-                <button class="tab-button active" data-tab="completed" onclick="switchAchievementTab(event, 'completed')">Concluídas</button>
+                <button class="tab-button active" onclick="switchAchievementTab(event, 'completed')">Concluídas</button>
                 <button class="tab-button" onclick="switchAchievementTab(event, 'pending')">Pendentes</button>
             </div>
             <div id="completed" class="tab-content active">
@@ -1735,8 +1640,8 @@
             const container = document.getElementById('recent-platinums');
             if (!container) return;
             const platinados = library.filter(g => g['Platinado?'] === 'Sim' && g.Link)
-                                    .sort((a, b) => new Date(b['Terminado em']) - new Date(a['Terminado em']))
-                                    .slice(0, 5);
+                                      .sort((a, b) => new Date(b['Terminado em']) - new Date(a['Terminado em']))
+                                      .slice(0, 5);
             if (platinados.length === 0) {
                 container.innerHTML = `<p style="color: var(--secondary-text); grid-column: 1 / -1;">Nenhum jogo platinado com imagem encontrada.</p>`;
                 return;
@@ -2031,8 +1936,6 @@
 
             if (suffix === '-desejos') {
                 // REMOVIDO: minWishPrice e maxWishPrice
-                // const minWishPrice = parseFloat(document.getElementById('minWishPrice' + suffix)?.value) || 0;
-                // const maxWishPrice = parseFloat(document.getElementById('maxWishPrice' + suffix)?.value) || Infinity;
                 const minSteamPrice = parseFloat(document.getElementById('minSteamPrice' + suffix)?.value) || 0;
                 const maxSteamPrice = parseFloat(document.getElementById('maxSteamPrice' + suffix)?.value) || Infinity;
                 const minPsnPrice = parseFloat(document.getElementById('minPsnPrice' + suffix)?.value) || 0;
@@ -2108,7 +2011,7 @@
                     const hoursMatch = (gameHours >= minHours && gameHours <= maxHours);
 
                     return nameMatch && statusMatch && styleMatch && yearMatch &&
-                            ratingMatch && metacriticMatch && priceMatch && hoursMatch;
+                           ratingMatch && metacriticMatch && priceMatch && hoursMatch;
                 });
             }
 
@@ -2401,133 +2304,64 @@
             event.currentTarget.classList.add('active');
         }
         
-        async function openGameDetailsModal(gameName) {
-            const similarGamesContainer = document.getElementById('similarGamesContainer');
-            similarGamesContainer.innerHTML = '<p class="no-results">Carregando sugestões...</p>'; // Mensagem de carregamento
-
-            try {
-                const encodedGameName = encodeURIComponent(gameName);
-                const response = await fetch(`${API_URL}/game_details_and_similar/${encodedGameName}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (response.status === 401) {
-                    localStorage.removeItem('jwt_token');
-                    window.location.href = 'login.html';
-                    return;
-                }
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                const data = await response.json();
-
-                if (data.success && data.details) {
-                    const game = data.details;
-                    const similarGames = data.similar_games;
-
-                    document.getElementById('gameNameDetails').textContent = game.Nome;
-                    document.getElementById('gamePlatformDetails').textContent = game.Plataforma || 'Não informado';
-                    document.getElementById('gameStatusDetails').textContent = game.Status || 'Não informado';
-                    
-                    const gameRatingDetails = document.getElementById('gameRatingDetails');
-                    const gameRating = parseFloat(game.Nota);
-                    gameRatingDetails.textContent = game.Nota || 'N/A';
-                    gameRatingDetails.className = 'rating-score';
-                    if (!isNaN(gameRating)) {
-                        if (gameRating >= 80) {
-                            gameRatingDetails.classList.add('good');
-                        } else if (gameRating >= 50) {
-                            gameRatingDetails.classList.add('mixed');
-                        } else if (gameRating >= 0) {
-                            gameRatingDetails.classList.add('bad');
-                        }
-                    }
-                    
-                    document.getElementById('gameHoursDetails').textContent = `${game['Tempo de Jogo'] || 0}h`;
-                    document.getElementById('gameStylesDetails').textContent = game.Estilo || 'Não informado';
-                    document.getElementById('gameAchievementsDetails').textContent = game['Conquistas Obtidas'] || 0;
-                    document.getElementById('gameDescriptionDetails').textContent = game.Descricao || 'Nenhuma descrição disponível.';
-                    
-                    const gameMetacriticDetails = document.getElementById('gameMetacriticDetails');
-                    const metacriticScore = parseInt(game.Metacritic);
-                    gameMetacriticDetails.textContent = game.Metacritic || 'N/A';
-                    gameMetacriticDetails.className = 'metacritic-score';
-                    if (metacriticScore >= 75) {
-                        gameMetacriticDetails.classList.add('good');
-                    } else if (metacriticScore >= 50) {
-                        gameMetacriticDetails.classList.add('mixed');
-                    } else if (metacriticScore > 0) {
-                        gameMetacriticDetails.classList.add('bad');
-                    } else {
-                        gameMetacriticDetails.classList.add('mixed');
-                    }
-                    
-                    const coverArt = game.Link || 'https://i.imgur.com/Z0ebi8o.png';
-                    document.getElementById('gameCoverArt').src = coverArt;
-                    document.getElementById('gameCoverBackground').src = coverArt;
-
-                    const safeName = game.Nome.replace(/'/g, "\\'");
-                    document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName);
-                    document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(safeName);
-
-                    // Renderizar jogos similares
-                    renderSimilarGames(similarGames);
-
-                    document.getElementById('gameDetailsModal').classList.add('active');
-                } else {
-                    showToast(data.message || "Erro ao obter detalhes do jogo.", true);
-                    similarGamesContainer.innerHTML = '<p class="no-results">Erro ao carregar sugestões.</p>';
-                }
-            } catch (err) {
-                console.error('Erro ao buscar detalhes do jogo e similares:', err);
-                showToast("Erro de conexão ao buscar detalhes do jogo.", true);
-                similarGamesContainer.innerHTML = '<p class="no-results">Erro de conexão ao carregar sugestões.</p>';
+        function openGameDetailsModal(gameName) {
+            const game = fullData.biblioteca.find(g => g.Nome === gameName);
+            if (!game) {
+                showToast("Jogo não encontrado.", true);
+                return;
             }
+
+            document.getElementById('gameNameDetails').textContent = game.Nome;
+            document.getElementById('gamePlatformDetails').textContent = game.Plataforma || 'Não informado';
+            document.getElementById('gameStatusDetails').textContent = game.Status || 'Não informado';
+            
+            const gameRatingDetails = document.getElementById('gameRatingDetails');
+            const gameRating = parseFloat(game.Nota);
+            gameRatingDetails.textContent = game.Nota || 'N/A';
+            gameRatingDetails.className = 'rating-score';
+            if (!isNaN(gameRating)) {
+                if (gameRating >= 80) {
+                    gameRatingDetails.classList.add('good');
+                } else if (gameRating >= 50) {
+                    gameRatingDetails.classList.add('mixed');
+                } else if (gameRating >= 0) {
+                    gameRatingDetails.classList.add('bad');
+                }
+            }
+            
+            document.getElementById('gameHoursDetails').textContent = `${game['Tempo de Jogo'] || 0}h`;
+            document.getElementById('gameStylesDetails').textContent = game.Estilo || 'Não informado';
+            document.getElementById('gameAchievementsDetails').textContent = game['Conquistas Obtidas'] || 0;
+            document.getElementById('gameDescriptionDetails').textContent = game.Descricao || 'Nenhuma descrição disponível.';
+            
+            const gameMetacriticDetails = document.getElementById('gameMetacriticDetails');
+            const metacriticScore = parseInt(game.Metacritic);
+            gameMetacriticDetails.textContent = game.Metacritic || 'N/A';
+            gameMetacriticDetails.className = 'metacritic-score';
+            if (metacriticScore >= 75) {
+                gameMetacriticDetails.classList.add('good');
+            } else if (metacriticScore >= 50) {
+                gameMetacriticDetails.classList.add('mixed');
+            } else if (metacriticScore > 0) {
+                gameMetacriticDetails.classList.add('bad');
+            } else {
+                gameMetacriticDetails.classList.add('mixed');
+            }
+            
+            const coverArt = game.Link || 'https://i.imgur.com/Z0ebi8o.png';
+            document.getElementById('gameCoverArt').src = coverArt;
+            document.getElementById('gameCoverBackground').src = coverArt;
+
+            const safeName = game.Nome.replace(/'/g, "\\'");
+            document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName);
+            document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(safeName);
+
+            document.getElementById('gameDetailsModal').classList.add('active');
         }
 
         function closeGameDetailsModal() {
             document.getElementById('gameDetailsModal').classList.remove('active');
-            document.getElementById('similarGamesContainer').innerHTML = ''; // Limpa as sugestões ao fechar
         }
-
-        // NOVO: Função para renderizar jogos similares
-        function renderSimilarGames(similarGames = []) {
-            const container = document.getElementById('similarGamesContainer');
-            if (!container) return;
-
-            container.innerHTML = ''; // Limpa o conteúdo anterior
-
-            if (similarGames.length === 0) {
-                container.innerHTML = '<p class="no-results">Nenhuma sugestão de jogo similar encontrada.</p>';
-                return;
-            }
-
-            similarGames.forEach(sGame => {
-                const safeName = sGame.Nome ? sGame.Nome.replace(/'/g, "\\'") : 'Nome Desconhecido';
-                const imageUrl = sGame.Link || 'https://placehold.co/120x120/21262d/e6edf3?text=Sem+Capa';
-                const genres = sGame.Generos || 'Não informado';
-                let statusText = '';
-                let ownedIndicator = '';
-                let cardClass = 'similar-game-card';
-
-                if (sGame.is_owned) {
-                    cardClass += ' owned-game';
-                    statusText = `(Possuído: ${sGame.Status || 'Status Desconhecido'})`;
-                    ownedIndicator = '<span class="owned-indicator">Na Biblioteca</span>';
-                } else {
-                    statusText = '(Não Possuído)';
-                }
-
-                container.innerHTML += `
-                    <div class="${cardClass}" title="${safeName}">
-                        ${ownedIndicator}
-                        <img src="${imageUrl}" alt="${safeName}">
-                        <p>${sGame.Nome}</p>
-                        <span class="game-ownership-status">${statusText}</span>
-                    </div>
-                `;
-            });
-        }
-
 
         // NOVO: Funções para o modal de detalhes da lista de desejos
         function openWishDetailsModal(wishName) {
@@ -2912,7 +2746,7 @@
             };
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
-            setupFilterListeners('-desejos'); 
+            setupFilterListeners('-desejos'); // Configura listeners para filtros de desejos
             
             const gameNameInput = document.getElementById('gameName');
             if (gameNameInput) {
@@ -2950,7 +2784,7 @@
                     } else {
                         currentSortKey = key;
                         currentSortDirection = 'asc';
-                    }
+    }
 
                     fullData.biblioteca.sort((a, b) => {
                         let valA = a[currentSortKey] || '';
@@ -2966,10 +2800,10 @@
 
                         if (valA < valB) {
                             return currentSortDirection === 'asc' ? -1 : 1;
-                        }
+        }
                         if (valA > valB) {
                             return currentSortDirection === 'asc' ? 1 : -1;
-                        }
+        }
                         return 0;
                     });
 
