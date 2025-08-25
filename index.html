@@ -2831,7 +2831,9 @@
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
 </script>
-<!-- Adiciona o adaptador para a escala de tempo do Chart.js -->
+<!-- Adiciona a biblioteca date-fns primeiro -->
+<script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/dist/date-fns.min.js"></script>
+<!-- Em seguida, adiciona o adaptador para a escala de tempo do Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.min.js"></script>
 </body>
 </html>
