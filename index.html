@@ -27,7 +27,6 @@
             --secondary-text: #7d8590; --border-color: #30363d; --accent-purple: #9370db;
             --accent-green: #238636;
         }
-        /* Removido body.light-mode */
         *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif; background-color: var(--bg-color);
@@ -244,14 +243,14 @@
         .trophy-icon { color: var(--accent-purple); font-size: 22px !important; filter: drop_shadow(0 0 8px var(--accent-purple)); }
         .nota-cell { font-weight: 600; color: var(--accent-purple); }
         .no-results { text-align: center; color: var(--secondary-text); padding: 48px; }
-        .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; } /* Aumentado minmax */
+        .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; } 
         .wish-card {
             background-color: var(--surface-color); border-radius: 12px;
             border: 1px solid var(--border-color); overflow: hidden; border-bottom: 3px solid transparent;
             transition: all 0.2s ease;
             position: relative;
-            height: 320px; /* Aumentado a altura do card */
-            cursor: pointer; /* Adicionado cursor pointer para indicar clicável */
+            height: 320px; 
+            cursor: pointer; 
         }
         .wish-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .wish-card-img { width: 100%; height: 180px; object-fit: cover; display: block; background-color: #010409; }
@@ -259,10 +258,10 @@
         .wish-card-title { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 0 8px 0; }
         .wish-card-details { 
             display: flex; 
-            flex-direction: column; /* Alterado para coluna para exibir mais informações */
+            flex-direction: column; 
             gap: 4px;
             font-size: 12px; 
-            margin-top: auto; /* Empurra para o final do card-info */
+            margin-top: auto; 
         }
         .wish-card-price-row {
             display: flex;
@@ -280,8 +279,8 @@
             text-transform: uppercase;
         }
         .price-status.bom { background-color: var(--accent-green); }
-        .price-status.normal { background-color: #f39c12; } /* Laranja */
-        .price-status.ruim { background-color: #cb2d3e; } /* Vermelho */
+        .price-status.normal { background-color: #f39c12; } 
+        .price-status.ruim { background-color: #cb2d3e; } 
 
 
         .modal-overlay {
@@ -415,11 +414,10 @@
             font-size: 24px;
             color: var(--accent-purple);
         }
-        /* Estilos para a Visualização em Grade e Botões de Ação */
         .header-actions {
             display: flex;
             gap: 8px;
-            margin-left: auto; /* Adicionado para empurrar os botões para a direita */
+            margin-left: auto; 
         }
 
         .games-grid {
@@ -648,7 +646,6 @@
             max-height: 200px;
             overflow-y: auto;
         }
-        /* Estilos para a barra de rolagem da descrição do jogo */
         .game-details-description p::-webkit-scrollbar {
             width: 8px; 
         }
@@ -701,12 +698,11 @@
             color: white;
         }
 
-        /* Novas regras para o modal de filtros avançados */
         .advanced-filters-modal-content {
             background-color: var(--surface-color);
             padding: 32px;
             border-radius: 16px;
-            max-width: 600px; /* Aumentado para acomodar mais filtros */
+            max-width: 600px; 
             width: 90%;
             position: relative;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -755,25 +751,24 @@
             border-color: var(--primary-text);
         }
 
-        /* Loading Screen Styles */
         #loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #301934 0%, #0d1117 100%); /* Degradê roxo para preto */
-            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'), linear-gradient(135deg, #301934 0%, #0d1117 100%); /* Textura + Degradê */
+            background: linear-gradient(135deg, #301934 0%, #0d1117 100%); 
+            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'), linear-gradient(135deg, #301934 0%, #0d1117 100%); 
             display: flex;
-            flex-direction: column; /* Para alinhar texto e GIF */
+            flex-direction: column; 
             align-items: center;
             justify-content: center;
             z-index: 9999;
             opacity: 1;
             visibility: visible;
             transition: opacity 0.5s ease, visibility 0.5s ease;
-            color: var(--primary-text); /* Cor do texto */
-            font-size: 2em; /* Tamanho do texto de carregamento */
+            color: var(--primary-text); 
+            font-size: 2em; 
             font-weight: 600;
         }
 
@@ -793,15 +788,15 @@
         }
 
         #loading-screen .loading-text {
-            margin-bottom: 20px; /* Espaço entre o texto e o GIF */
-            text-shadow: 0 0 10px rgba(147, 112, 219, 0.7); /* Sombra no texto */
-            display: flex; /* Para animar os pontos individualmente */
-            align-items: flex-end; /* Alinha os pontos na base */
+            margin-bottom: 20px; 
+            text-shadow: 0 0 10px rgba(147, 112, 219, 0.7); 
+            display: flex; 
+            align-items: flex-end; 
         }
 
         #loading-screen .loading-text span {
             animation: bounce 1.4s infinite;
-            display: inline-block; /* Permite a animação individual */
+            display: inline-block; 
         }
 
         #loading-screen .loading-text span:nth-child(2) {
@@ -823,17 +818,16 @@
 
         #loading-screen img {
             position: absolute;
-            bottom: 20px; /* Canto inferior direito */
+            bottom: 20px; 
             right: 20px;
-            max-width: 200px; /* Tamanho ajustado para o GIF */
+            max-width: 200px; 
             max-height: 200px;
             object-fit: contain;
         }
 
-        /* Estilos para os cabeçalhos das abas com textura */
         .profile-header {
-            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'); /* Textura + Degradê: Roxo para Preto */
-            background-color: var(--surface-color); /* Fallback */
+            background-image: url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'); 
+            background-color: var(--surface-color); 
             border: 1px solid var(--border-color);
             padding: 32px;
             border-radius: 16px;
@@ -843,7 +837,6 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Estilos para o botão de notificações */
         .notifications-button {
             position: relative;
         }
@@ -852,30 +845,29 @@
             position: absolute;
             top: -5px;
             right: -5px;
-            background-color: var(--accent-purple); /* Roxo para o contador */
+            background-color: var(--accent-purple); 
             color: white;
             font-size: 12px;
             font-weight: 700;
             border-radius: 50%;
             padding: 2px 6px;
-            min-width: 20px; /* Garante que o círculo seja visível mesmo com 1 dígito */
+            min-width: 20px; 
             text-align: center;
             line-height: 1.2;
-            display: none; /* Escondido por padrão */
+            display: none; 
         }
         .notification-count.visible {
             display: block;
         }
 
-        /* Estilos para o modal de notificações */
         #notificationsModal .modal-content {
             max-width: 600px;
         }
 
-        .notifications-list-container { /* Novo contêiner para as listas de notificações */
+        .notifications-list-container { 
             max-height: 400px;
             overflow-y: auto;
-            padding-right: 10px; /* Espaçamento para a barra de rolagem */
+            padding-right: 10px; 
         }
 
         .notifications-list-container::-webkit-scrollbar {
@@ -911,12 +903,12 @@
         }
 
         .notification-item:hover {
-            background-color: rgba(147, 112, 219, 0.1); /* Leve destaque no hover */
+            background-color: rgba(147, 112, 219, 0.1); 
         }
 
         .notification-item.read {
             opacity: 0.7;
-            background-color: rgba(125, 133, 144, 0.1); /* Mais opaco se lida */
+            background-color: rgba(125, 133, 144, 0.1); 
         }
 
         .notification-item strong {
@@ -934,10 +926,9 @@
             font-size: 10px;
             color: var(--secondary-text);
             margin-top: 8px;
-            align-self: flex-end; /* Alinha a data à direita */
+            align-self: flex-end; 
         }
 
-        /* Botão "Marcar todas como lidas" */
         .mark-all-read-btn {
             background-color: var(--accent-purple);
             color: white;
@@ -955,24 +946,22 @@
             background-color: #a884e9;
         }
 
-        /* NOVO: Estilos para a data de atualização no cabeçalho da wishlist */
         .wishlist-header-info {
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 12px;
             color: var(--secondary-text);
-            margin-left: auto; /* Alinha à direita */
+            margin-left: auto; 
         }
         .wishlist-header-info .material-symbols-outlined {
             font-size: 16px;
             color: var(--accent-purple);
         }
 
-        /* Ajustes para o modal de detalhes da wishlist */
         #wishDetailsModal .game-details-body {
-            grid-template-columns: 1fr; /* Altera para uma única coluna */
-            padding: 24px; /* Ajusta o padding */
+            grid-template-columns: 1fr; 
+            padding: 24px; 
         }
 
         #wishDetailsModal .game-details-stats {
@@ -980,25 +969,25 @@
             padding: 16px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            margin-bottom: 24px; /* Adiciona espaço abaixo das estatísticas */
+            margin-bottom: 24px; 
         }
 
         #wishDetailsModal .game-details-stats-item {
-            padding: 10px 0; /* Aumenta o padding vertical */
-            font-size: 16px; /* Aumenta o tamanho da fonte */
+            padding: 10px 0; 
+            font-size: 16px; 
         }
 
         #wishDetailsModal .game-details-stats-item span:first-child {
-            font-size: 14px; /* Ajusta o tamanho da label */
+            font-size: 14px; 
         }
 
         #wishDetailsModal .game-details-stats-item span:last-child {
-            font-size: 16px; /* Ajusta o tamanho do valor */
+            font-size: 16px; 
         }
 
         #wishDetailsModal .game-details-actions {
-            justify-content: center; /* Centraliza os botões */
-            padding-top: 0; /* Remove padding superior extra */
+            justify-content: center; 
+            padding-top: 0; 
         }
     
     </style>
@@ -1104,6 +1093,9 @@
                         <p>Explore toda a sua coleção.</p>
                     </div>
                     <div class="header-actions">
+                        <button class="nav-button" id="randomGameBtn" title="Sortear Jogo Aleatório">
+                            <span class="material-symbols-outlined">shuffle</span>
+                        </button>
                         <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">view_list</span></button>
                         <button class="nav-button" id="openAdvancedFiltersBtn-biblioteca" title="Filtros Avançados">
                             <span class="material-symbols-outlined">filter_alt</span>
@@ -1114,17 +1106,17 @@
             </header>
                 <div class="table-container" style="display: none;">
                     <table class="games-table">
-            <thead>
-                <tr>
-                    <th class="sortable-header" data-sort-key="Nome">Nome <span class="sort-icon"></span></th>
-                    <th class="sortable-header" data-sort-key="Plataforma">Plataforma <span class="sort-icon"></span></th>
-                    <th class="sortable-header" data-sort-key="Status">Status <span class="sort-icon"></span></th>
-                    <th class="sortable-header" data-sort-key="Nota">Nota <span class="sort-icon"></span></th>
-                    <th class="sortable-header" data-sort-key="Tempo de Jogo">Horas <span class="sort-icon"></span></th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-                        <tbody id="game-list-tbody"></tbody>
+                        <thead>
+                            <tr>
+                                <th class="sortable-header" data-sort-key="Nome">Nome <span class="sort-icon"></span></th>
+                                <th class="sortable-header" data-sort-key="Plataforma">Plataforma <span class="sort-icon"></span></th>
+                                <th class="sortable-header" data-sort-key="Status">Status <span class="sort-icon"></span></th>
+                                <th class="sortable-header" data-sort-key="Nota">Nota <span class="sort-icon"></span></th>
+                                <th class="sortable-header" data-sort-key="Tempo de Jogo">Horas <span class="sort-icon"></span></th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                            <tbody id="game-list-tbody"></tbody>
                     </table>
                 </div>
                 <div id="no-results-message" class="no-results" style="display: none;"><p>Nenhum jogo encontrado.</p></div>
@@ -1497,21 +1489,60 @@
             <button class="mark-all-read-btn" onclick="markAllNotificationsAsRead()">Marcar todas como lidas</button>
         </div>
     </div>
+    
+    <div id="randomGameModal" class="modal-overlay">
+        <div class="advanced-filters-modal-content">
+            <span class="close-button" onclick="closeRandomGameModal()">&times;</span>
+            <h2>Sortear um Jogo</h2>
+            <p style="color: var(--secondary-text); font-size: 14px; margin-top: -12px; margin-bottom: 24px;">Filtre para encontrar sua próxima aventura!</p>
+            <form id="randomGameForm">
+                <div class="advanced-filters-grid">
+                    <div class="filter-group">
+                        <label for="randomPlatform">Plataforma</label>
+                        <select id="randomPlatform" name="plataforma">
+                            <option value="">Qualquer</option>
+                            <option value="Computador">Computador</option>
+                            <option value="PlayStation">PlayStation</option>
+                            <option value="Xbox">Xbox</option>
+                            <option value="Nintendo">Nintendo</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="randomStyle">Gênero/Estilo</label>
+                        <input type="text" id="randomStyle" name="estilo" placeholder="Ex: RPG, Ação...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="randomMetacriticMin">Metacritic Mínimo</label>
+                        <input type="number" id="randomMetacriticMin" name="metacritic_min" min="0" max="100" placeholder="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="randomMetacriticMax">Metacritic Máximo</label>
+                        <input type="number" id="randomMetacriticMax" name="metacritic_max" min="0" max="100" placeholder="100">
+                    </div>
+                </div>
+                <div class="filter-modal-actions">
+                    <button type="submit" class="apply-filters-btn">
+                        <span class="material-symbols-outlined" style="font-size: 20px; margin-right: 8px;">casino</span>
+                        Sortear Jogo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
 <script>
-    console.log("Script loaded and starting execution."); // Very early log
+    console.log("Script loaded and starting execution."); 
 
         // --- VARIÁVEIS GLOBAIS ---
         const API_URL = 'https://api-jogos-nrma.onrender.com/api';
-        // Cores ajustadas para tons de roxo e cinza
         const chartColors = {
-            purple: '#9370db',        // Roxo normal
+            purple: '#9370db',       // Roxo normal
             darkPurple: '#6a4a9c',    // Roxo escuro
             lightPurple: '#b89ceb',   // Roxo claro
-            grey: '#7d8590',          // Cinza normal
-            darkGrey: '#4a5057',      // Cinza escuro
-            lightGrey: '#a5acb4'      // Cinza claro
+            grey: '#7d8590',         // Cinza normal
+            darkGrey: '#4a5057',     // Cinza escuro
+            lightGrey: '#a5acb4'     // Cinza claro
         };
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
@@ -1522,9 +1553,9 @@
 
         let searchTimeout;
         let wishSearchTimeout;
-        let notificationInterval; // Variável para armazenar o ID do intervalo das notificações
-        let isInitialLoad = true; // Flag para controlar a tela de carregamento inicial
-        let allNotifications = []; // Armazena todas as notificações buscadas
+        let notificationInterval; 
+        let isInitialLoad = true; 
+        let allNotifications = []; 
 
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
@@ -1540,12 +1571,12 @@
         }
 
         async function fetchGameData() {
-            console.log('fetchGameData: Starting...'); // Log 1
+            console.log('fetchGameData: Starting...'); 
             try {
                 const loadingScreen = document.getElementById('loading-screen');
-                if (isInitialLoad && loadingScreen) { // Só mostra a tela de carregamento na carga inicial
+                if (isInitialLoad && loadingScreen) { 
                     loadingScreen.classList.remove('hidden');
-                    console.log('fetchGameData: Loading screen shown.'); // Log after showing
+                    console.log('fetchGameData: Loading screen shown.'); 
                 }
 
                 const response = await fetch(`${API_URL}/games/data`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -1556,12 +1587,12 @@
                 }
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 fullData = await response.json();
-                console.log('fetchGameData: Data fetched successfully.'); // Log 2
-                console.log('fullData after fetch:', fullData); // <--- ADDED LOG
+                console.log('fetchGameData: Data fetched successfully.'); 
+                console.log('fullData after fetch:', fullData); 
                 
                 try {
-                    await renderAllPages(); // Await renderAllPages as it calls fetchNotifications (async)
-                    console.log('fetchGameData: renderAllPages completed.'); // Log after rendering
+                    await renderAllPages(); 
+                    console.log('fetchGameData: renderAllPages completed.'); 
                 } catch (renderErr) {
                     console.error('Erro durante a renderização da página:', renderErr);
                     document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao renderizar os dados.</p>`;
@@ -1571,19 +1602,19 @@
                 console.error('Erro ao buscar dados da API:', err);
                 document.body.innerHTML = `<p style="color: white; text-align: center; padding-top: 50px;">Erro ao carregar os dados.</p>`;
             } finally {
-                console.log('fetchGameData: Entering finally block. isInitialLoad:', isInitialLoad); // New log
+                console.log('fetchGameData: Entering finally block. isInitialLoad:', isInitialLoad); 
                 const loadingScreen = document.getElementById('loading-screen');
-                if (isInitialLoad && loadingScreen) { // Só esconde a tela de carregamento na carga inicial
+                if (isInitialLoad && loadingScreen) { 
                     loadingScreen.classList.add('hidden');
-                    console.log('fetchGameData: Loading screen hidden.'); // Log 5
-                    isInitialLoad = false; // Desativa a flag após o primeiro carregamento
+                    console.log('fetchGameData: Loading screen hidden.'); 
+                    isInitialLoad = false; 
                 }
             }
         }
         
-        async function renderAllPages() { // Make it async
-            console.log('renderAllPages: Starting...'); // Log 3
-            try { // Add try-catch here for rendering errors
+        async function renderAllPages() { 
+            console.log('renderAllPages: Starting...'); 
+            try { 
                 loadProfileSettings(fullData.perfil);
                 renderGamerCard(fullData.estatisticas);
                 renderSummaryCards(fullData.estatisticas, 'summary');
@@ -1593,13 +1624,13 @@
                 populateFilters();
                 applyFilters('-graficos');
                 applyFilters('-biblioteca');
-                applyFilters('-desejos'); // Aplicar filtros da lista de desejos
-                updateLastWishlistUpdate(fullData.desejos); // Atualizar data de última atualização
-                await fetchNotifications(); // Await fetchNotifications
-                console.log('renderAllPages: Finished.'); // Log 4
+                applyFilters('-desejos'); 
+                updateLastWishlistUpdate(fullData.desejos); 
+                await fetchNotifications(); 
+                console.log('renderAllPages: Finished.'); 
             } catch (renderError) {
                 console.error('Erro dentro de renderAllPages:', renderError);
-                throw renderError; // Re-throw to be caught by fetchGameData's outer catch
+                throw renderError; 
             }
         }
 
@@ -1629,7 +1660,6 @@
             const cards = [
                 { t: 'Total de Jogos', v: stats.total_jogos || 0, i: 'sports_esports' }, { t: 'Horas Jogadas', v: `${(stats.total_horas_jogadas || 0).toLocaleString('pt-BR')}h`, i: 'timer' },
                 { t: 'Custo Total', v: formatCurrency(stats.custo_total_biblioteca), i: 'shopping_cart' }, 
-                // Correção: Garante que media_notas seja um número antes de chamar toFixed
                 { t: 'Média das Notas', v: typeof stats.media_notas === 'number' ? stats.media_notas.toFixed(2) : 'N/A', i: 'star' },
                 { t: 'Platinados', v: stats.total_platinados || 0, i: 'emoji_events' }, { t: 'Conquistas', v: stats.total_conquistas || 0, i: 'military_tech' }
             ];
@@ -1640,8 +1670,8 @@
             const container = document.getElementById('recent-platinums');
             if (!container) return;
             const platinados = library.filter(g => g['Platinado?'] === 'Sim' && g.Link)
-                                      .sort((a, b) => new Date(b['Terminado em']) - new Date(a['Terminado em']))
-                                      .slice(0, 5);
+                                        .sort((a, b) => new Date(b['Terminado em']) - new Date(a['Terminado em']))
+                                        .slice(0, 5);
             if (platinados.length === 0) {
                 container.innerHTML = `<p style="color: var(--secondary-text); grid-column: 1 / -1;">Nenhum jogo platinado com imagem encontrada.</p>`;
                 return;
@@ -1749,14 +1779,13 @@
             return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        // NOVO: Função para determinar o status do preço
         function getPriceStatus(steamCurrent, steamLowest, psnCurrent, psnLowest) {
             const currentSteam = parseFloat(String(steamCurrent).replace(',', '.')) || Infinity;
             const lowestSteam = parseFloat(String(steamLowest).replace(',', '.')) || Infinity;
             const currentPsn = parseFloat(String(psnCurrent).replace(',', '.')) || Infinity;
             const lowestPsn = parseFloat(String(psnLowest).replace(',', '.')) || Infinity;
 
-            const threshold = 0.15; // 15% acima do menor preço histórico
+            const threshold = 0.15; 
 
             if (currentSteam <= lowestSteam || currentPsn <= lowestPsn) {
                 return { status: 'Bom', class: 'bom' };
@@ -1780,7 +1809,6 @@
 
             container.innerHTML = wishlist.map(game => {
                 const safeName = game.Nome.replace(/'/g, "\\'");
-                // Acessa as propriedades diretamente, sem .get()
                 const steamCurrent = game['Steam Preco Atual'] || 'N/A';
                 const psnCurrent = game['PSN Preco Atual'] || 'N/A'; 
                 const steamLowest = game['Steam Menor Preco Historico'] || 'N/A';
@@ -1812,7 +1840,6 @@
             }).join('');
         }
 
-        // NOVO: Função para atualizar a data da última atualização da wishlist
         function updateLastWishlistUpdate(wishlist = []) {
             const lastUpdateElement = document.getElementById('lastWishlistUpdate');
             if (!lastUpdateElement) return;
@@ -1820,20 +1847,18 @@
             let latestDate = null;
 
             wishlist.forEach(item => {
-                const updateDateStr = item['Ultima Atualizacao']; // Acessa diretamente
+                const updateDateStr = item['Ultima Atualizacao']; 
                 if (updateDateStr) {
                     try {
-                        // Verifica se a string de data contém 'T' (formato ISO) ou ' ' (formato customizado)
                         let itemDate;
-                        if (updateDateStr.includes('T')) { // Ex: "2025-08-23T20:58:44"
+                        if (updateDateStr.includes('T')) { 
                             itemDate = new Date(updateDateStr);
-                        } else if (updateDateStr.includes(' ')) { // Ex: "2025-08-23 20:58:44"
+                        } else if (updateDateStr.includes(' ')) { 
                             const [datePart, timePart] = updateDateStr.split(' ');
                             const [year, month, day] = datePart.split('-');
                             const [hour, minute, second] = timePart.split(':');
                             itemDate = new Date(year, month - 1, day, hour, minute, second);
                         } else {
-                            // Se não for nenhum dos formatos esperados, tenta como data simples
                             itemDate = new Date(updateDateStr);
                         }
                         
@@ -1846,7 +1871,7 @@
                 }
             });
 
-            if (latestDate && !isNaN(latestDate)) { // Verifica se a data é válida
+            if (latestDate && !isNaN(latestDate)) { 
                 lastUpdateElement.textContent = `Última atualização: ${latestDate.toLocaleDateString('pt-BR')} ${latestDate.toLocaleTimeString('pt-BR')}`;
             } else {
                 lastUpdateElement.textContent = 'Última atualização: N/A';
@@ -1879,7 +1904,6 @@
             const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
             if(document.getElementById('platinadosChart')) createdCharts.platinados = new Chart('platinadosChart', { type: 'pie', data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
             if(document.getElementById('platformChart')) createdCharts.platform = new Chart('platformChart', { type: 'bar', data: { labels: Object.keys(platformData), datasets: [{ data: Object.values(platformData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }}}, plugins: { legend: { display: false }}} });
-            // Usando as novas cores de roxo e cinza para o gráfico de status
             if(document.getElementById('statusChart')) createdCharts.status = new Chart('statusChart', { type: 'doughnut', data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderColor: '#161b22', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
             if(document.getElementById('styleChart')) createdCharts.style = new Chart('styleChart', { type: 'bar', data: { labels: Object.keys(styleData), datasets: [{ data: Object.values(styleData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }}} });
         }
@@ -1894,12 +1918,10 @@
             const wishYears = [...new Set(wishlist.map(w => {
                 const dateStr = w['Data Lançamento'];
                 if (!dateStr || dateStr.toLowerCase().includes('em breve')) return null;
-                // Tenta parsear DD/MM/YYYY
                 if (dateStr.includes('/')) {
                     const parts = dateStr.split('/');
                     if (parts.length === 3) return parseInt(parts[2]);
                 }
-                // Tenta parsear YYYY-MM-DD
                 if (dateStr.includes('-')) {
                     const parts = dateStr.split('-');
                     if (parts.length === 3) return parseInt(parts[0]);
@@ -1915,15 +1937,13 @@
                 items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); 
             }
             
-            // Popula filtros para todas as seções
             const suffixes = ['-graficos', '-biblioteca', '-desejos'];
             suffixes.forEach(suffix => {
-                // Filtros da biblioteca e gráficos
                 if (suffix !== '-desejos') {
                     populate('statusFilter' + suffix, statuses); 
                     populate('styleFilter' + suffix, styles); 
                     populate('yearFilter' + suffix, years);
-                } else { // Filtros da lista de desejos
+                } else { 
                     populate('releaseYearFilter' + suffix, wishYears);
                 }
             });
@@ -1935,7 +1955,6 @@
             let filteredItems = [];
 
             if (suffix === '-desejos') {
-                // REMOVIDO: minWishPrice e maxWishPrice
                 const minSteamPrice = parseFloat(document.getElementById('minSteamPrice' + suffix)?.value) || 0;
                 const maxSteamPrice = parseFloat(document.getElementById('maxSteamPrice' + suffix)?.value) || Infinity;
                 const minPsnPrice = parseFloat(document.getElementById('minPsnPrice' + suffix)?.value) || 0;
@@ -1944,7 +1963,6 @@
 
                 filteredItems = (fullData.desejos || []).filter(w => {
                     const wishName = w.Nome.toLowerCase();
-                    // REMOVIDO: wishPrice
                     const steamCurrentPrice = parseFloat(String(w['Steam Preco Atual'] || '0').replace(',', '.')) || 0;
                     const psnCurrentPrice = parseFloat(String(w['PSN Preco Atual'] || '0').replace(',', '.')) || 0;
                     const wishReleaseDateStr = w['Data Lançamento'];
@@ -1958,23 +1976,14 @@
                     }
 
                     const nameMatch = name ? wishName.includes(name) : true;
-                    // REMOVIDO: priceMatch
                     const steamPriceMatch = (steamCurrentPrice >= minSteamPrice && steamCurrentPrice <= maxSteamPrice);
                     const psnPriceMatch = (psnCurrentPrice >= minPsnPrice && psnCurrentPrice <= maxPsnPrice);
                     const releaseYearMatch = releaseYear !== 'all' ? wishReleaseYear == releaseYear : true;
 
-                    // DEBUGGING LOGS for wishlist filters
-                    console.log('Filtering Wishlist Item:', w.Nome);
-                    console.log('  Filter Values:', { name, minSteamPrice, maxSteamPrice, minPsnPrice, maxPsnPrice, releaseYear });
-                    console.log('  Item Values:', { wishName, steamCurrentPrice, psnCurrentPrice, wishReleaseYear });
-                    console.log('  Matches:', { nameMatch, steamPriceMatch, psnPriceMatch, releaseYearMatch });
-                    console.log('  Overall Match:', nameMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch);
-
-
-                    return nameMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch; // Ajustado para remover priceMatch
+                    return nameMatch && steamPriceMatch && psnPriceMatch && releaseYearMatch; 
                 });
                 renderWishlist(filteredItems);
-            } else { // Filtros para gráficos e biblioteca
+            } else { 
                 const status = document.getElementById('statusFilter' + suffix)?.value || 'all';
                 const style = document.getElementById('styleFilter' + suffix)?.value || 'all';
                 const year = document.getElementById('yearFilter' + suffix)?.value || 'all';
@@ -2011,7 +2020,7 @@
                     const hoursMatch = (gameHours >= minHours && gameHours <= maxHours);
 
                     return nameMatch && statusMatch && styleMatch && yearMatch &&
-                           ratingMatch && metacriticMatch && priceMatch && hoursMatch;
+                            ratingMatch && metacriticMatch && priceMatch && hoursMatch;
                 });
             }
 
@@ -2022,7 +2031,6 @@
                     total_jogos: filteredItems.length,
                     total_horas_jogadas: filteredItems.reduce((sum, g) => sum + (parseInt(g['Tempo de Jogo']) || 0), 0),
                     custo_total_biblioteca: filteredItems.reduce((sum, g) => sum + (parseFloat(String(g.Preço).replace(',','.')) || 0), 0),
-                    // Correção: Garante que media_notas seja um número
                     media_notas: notas.length > 0 ? (notas.reduce((a,b) => parseFloat(a)+parseFloat(b), 0) / notas.length) : 0,
                     total_platinados: filteredItems.filter(g => g['Platinado?'] === 'Sim').length,
                     total_conquistas: filteredItems.reduce((sum, g) => sum + (parseInt(g['Conquistas Obtidas']) || 0), 0)
@@ -2033,10 +2041,8 @@
                 renderGameTable(filteredItems);
                 renderGameGrid(filteredItems);
             }
-            // A renderização da wishlist já está dentro do if (suffix === '-desejos')
         }
 
-        // Função para alternar a visibilidade do modal de filtros avançados
         function toggleAdvancedFiltersModal(suffix) {
             const modal = document.getElementById('advancedFiltersModal' + suffix);
             if (modal) {
@@ -2044,20 +2050,16 @@
             }
         }
 
-        // Função para limpar todos os filtros no modal
         function clearAllFilters(suffix) {
             document.getElementById('nameFilter' + suffix).value = '';
             
             if (suffix === '-desejos') {
-                // REMOVIDO: minWishPrice e maxWishPrice
-                // document.getElementById('minWishPrice' + suffix).value = '';
-                // document.getElementById('maxWishPrice' + suffix).value = '';
                 document.getElementById('minSteamPrice' + suffix).value = '';
                 document.getElementById('maxSteamPrice' + suffix).value = '';
                 document.getElementById('minPsnPrice' + suffix).value = '';
                 document.getElementById('maxPsnPrice' + suffix).value = '';
                 document.getElementById('releaseYearFilter' + suffix).value = 'all';
-            } else { // Para gráficos e biblioteca
+            } else { 
                 document.getElementById('statusFilter' + suffix).value = 'all';
                 document.getElementById('styleFilter' + suffix).value = 'all';
                 document.getElementById('yearFilter' + suffix).value = 'all';
@@ -2070,7 +2072,7 @@
                 document.getElementById('minHours' + suffix).value = '';
                 document.getElementById('maxHours' + suffix).value = '';
             }
-            applyFilters(suffix); // Aplica os filtros limpos imediatamente
+            applyFilters(suffix); 
         }
 
 
@@ -2169,29 +2171,24 @@
 
         function editWish(wishName) {
             const wishToEdit = fullData.desejos.find(w => w.Nome === wishName); if (!wishToEdit) { showToast("Item não encontrado.", true); return; }
-            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = wishName; // Corrigido para editWishMode
+            document.getElementById('addWishForm').reset(); document.getElementById('editWishMode').value = wishName; 
             document.getElementById('wishModalTitle').textContent = `Editar ${wishToEdit.Nome}`; document.getElementById('wishModalSubmitBtn').textContent = 'Atualizar Item';
             document.getElementById('wishGameName').value = wishToEdit.Nome;
             document.getElementById('wishGameLink').value = wishToEdit.Link || '';
             document.getElementById('wishGameRelease').value = wishToEdit["Data Lançamento"] || '';
-            // Preço removido do formulário de adição/edição de desejos, então não preenchemos aqui
-            // document.getElementById('wishGamePrice').value = String(wishToEdit.Preço || '').replace('.', ',');
             document.getElementById('addWishModal').classList.add('active');
-            closeWishDetailsModal(); // Fecha o modal de detalhes se estiver aberto
+            closeWishDetailsModal(); 
         }
 
         async function handleWishFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editWishMode').value; // Corrigido para editWishMode
+            const editModeValue = document.getElementById('editWishMode').value; 
             const isEditing = editModeValue !== '';
-            // Preço foi removido do formulário de adição/edição de desejos
-            // const priceValue = document.getElementById('wishGamePrice').value.replace(',', '.');
             const wishData = { 
                 Nome: document.getElementById('wishGameName').value, 
                 Link: document.getElementById('wishGameLink').value, 
                 "Data Lançamento": document.getElementById('wishGameRelease').value, 
-                // Preço será atualizado separadamente pela API externa ou manualmente
-                Preço: 0, // Valor padrão, pode ser atualizado depois
+                Preço: 0, 
                 "Steam Preco Atual": 0,
                 "Steam Menor Preco Historico": 0,
                 "PSN Preco Atual": 0,
@@ -2363,7 +2360,6 @@
             document.getElementById('gameDetailsModal').classList.remove('active');
         }
 
-        // NOVO: Funções para o modal de detalhes da lista de desejos
         function openWishDetailsModal(wishName) {
             const wish = fullData.desejos.find(w => w.Nome === wishName);
             if (!wish) {
@@ -2475,49 +2471,45 @@
             }
         }
 
-        // --- NOVO: Funções de Notificação no Frontend ---
-        let currentNotifications = []; // Armazena as notificações atuais para evitar popups duplicados
-        let allFetchedNotifications = []; // Armazena todas as notificações buscadas (lidas e não lidas)
+        let currentNotifications = []; 
+        let allFetchedNotifications = []; 
 
         async function fetchNotifications() {
-            console.log('fetchNotifications: Starting to fetch notifications.'); // New log
+            console.log('fetchNotifications: Starting to fetch notifications.'); 
             try {
                 const response = await fetch(`${API_URL}/games/notifications`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (response.status === 401) { 
-                    console.log('fetchNotifications: Unauthorized, returning.'); // New log
+                    console.log('fetchNotifications: Unauthorized, returning.'); 
                     return; 
-                } // Token expirado, será tratado pelo fetchGameData
+                } 
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
                 const notifications = await response.json();
-                console.log('fetchNotifications: Notifications fetched:', notifications.length); // New log
-                allFetchedNotifications = notifications; // Armazena todas as notificações
+                console.log('fetchNotifications: Notifications fetched:', notifications.length); 
+                allFetchedNotifications = notifications; 
                 
                 const unreadNotifications = notifications.filter(n => n.Lida === 'Não');
                 updateNotificationCount(unreadNotifications.length);
-                console.log('fetchNotifications: Notification count updated.'); // New log
+                console.log('fetchNotifications: Notification count updated.'); 
                 
-                // Renderiza as notificações na aba ativa atual
                 const activeTab = document.querySelector('#notificationsModal .tab-button.active');
                 if (activeTab) {
                     renderNotificationsInModal(activeTab.dataset.tab);
-                    console.log('fetchNotifications: renderNotificationsInModal called for active tab.'); // New log
+                    console.log('fetchNotifications: renderNotificationsInModal called for active tab.'); 
                 } else {
-                    renderNotificationsInModal('unread'); // Padrão para não lidas se nenhuma aba estiver ativa
-                    console.log('fetchNotifications: renderNotificationsInModal called for unread (default).'); // New log
+                    renderNotificationsInModal('unread'); 
+                    console.log('fetchNotifications: renderNotificationsInModal called for unread (default).'); 
                 }
 
-                // Exibir popups para novas notificações não lidas
-                console.log('fetchNotifications: Checking for new popups.'); // New log
+                console.log('fetchNotifications: Checking for new popups.'); 
                 unreadNotifications.forEach(newNotif => {
-                    // Verifica se a notificação já foi exibida como popup nesta sessão
                     if (!currentNotifications.some(n => n.ID === newNotif.ID)) {
                         showToast(newNotif.Mensagem);
-                        currentNotifications.push(newNotif); // Adiciona à lista de notificações exibidas
-                        console.log('fetchNotifications: Showing popup for ID:', newNotif.ID); // New log
+                        currentNotifications.push(newNotif); 
+                        console.log('fetchNotifications: Showing popup for ID:', newNotif.ID); 
                     }
                 });
-                console.log('fetchNotifications: Popup check completed.'); // New log
+                console.log('fetchNotifications: Popup check completed.'); 
 
             } catch (err) {
                 console.error('Erro ao buscar notificações:', err);
@@ -2537,14 +2529,14 @@
         }
 
         function renderNotificationsInModal(tabName) {
-            console.log('renderNotificationsInModal: Rendering for tab:', tabName); // New log
+            console.log('renderNotificationsInModal: Rendering for tab:', tabName); 
             const unreadListContainer = document.getElementById('unread-notifications-list');
             const readListContainer = document.getElementById('read-notifications-list');
 
             const unreadNotifications = allFetchedNotifications.filter(n => n.Lida === 'Não');
             const readNotifications = allFetchedNotifications.filter(n => n.Lida === 'Sim');
 
-            console.log('renderNotificationsInModal: Unread count:', unreadNotifications.length, 'Read count:', readNotifications.length); // New log
+            console.log('renderNotificationsInModal: Unread count:', unreadNotifications.length, 'Read count:', readNotifications.length); 
 
             const createNotificationHtml = (notif) => {
                 const date = new Date(notif.Data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
@@ -2572,7 +2564,7 @@
                     readListContainer.innerHTML = readNotifications.map(createNotificationHtml).join('');
                 }
             }
-            console.log('renderNotificationsInModal: Finished rendering for tab:', tabName); // New log
+            console.log('renderNotificationsInModal: Finished rendering for tab:', tabName); 
         }
 
         async function markNotificationAsReadAndRefresh(notificationId) {
@@ -2584,9 +2576,8 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
                 showToast("Notificação marcada como lida!");
-                // Remove a notificação da lista de notificações atuais para não exibir popup novamente
                 currentNotifications = currentNotifications.filter(n => n.ID !== notificationId);
-                fetchNotifications(); // Atualiza a lista e o contador
+                fetchNotifications(); 
             } catch (err) {
                 console.error('Erro ao marcar notificação como lida:', err);
                 showToast("Erro ao marcar notificação como lida.", true);
@@ -2601,7 +2592,6 @@
             }
 
             try {
-                // Itera sobre as notificações não lidas e marca cada uma como lida
                 for (const id of unreadIds) {
                     await fetch(`${API_URL}/games/notifications/mark-read/${id}`, {
                         method: 'POST',
@@ -2609,9 +2599,9 @@
                     });
                 }
                 showToast("Todas as notificações marcadas como lidas!");
-                currentNotifications = []; // Limpa os popups exibidos
-                fetchNotifications(); // Atualiza a lista e o contador
-                closeNotificationsModal(); // Fecha o modal após marcar todas
+                currentNotifications = []; 
+                fetchNotifications(); 
+                closeNotificationsModal(); 
             } catch (err) {
                 console.error('Erro ao marcar todas as notificações como lidas:', err);
                 showToast("Erro ao marcar todas as notificações como lidas.", true);
@@ -2620,14 +2610,13 @@
 
         function openNotificationsModal() {
             document.getElementById('notificationsModal').classList.add('active');
-            // Garante que a aba "Não Lidas" esteja ativa ao abrir o modal
             switchNotificationTab(null, 'unread'); 
-            fetchNotifications(); // Busca as notificações para garantir que o modal esteja atualizado
+            fetchNotifications(); 
         }
 
         async function closeNotificationsModal() {
             document.getElementById('notificationsModal').classList.remove('active');
-            fetchNotifications(); // Recarrega notificações para garantir que o contador esteja atualizado
+            fetchNotifications(); 
         }
 
         function switchNotificationTab(event, tabName) {
@@ -2641,11 +2630,9 @@
                 targetButton.classList.add('active');
             }
             
-            renderNotificationsInModal(tabName); // Renderiza as notificações para a aba selecionada
+            renderNotificationsInModal(tabName); 
         }
-        // --- FIM NOVO ---
         
-        // NOVO: Função para acionar a GitHub Action via backend
         async function triggerScraperAction() {
             Swal.fire({
                 title: 'Atualizando Preços...',
@@ -2678,6 +2665,112 @@
             }
         }
 
+        function handleSort(key) {
+            if (currentSortKey === key) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortKey = key;
+                currentSortDirection = 'asc';
+            }
+
+            fullData.biblioteca.sort((a, b) => {
+                let valA = a[currentSortKey] || '';
+                let valB = b[currentSortKey] || '';
+
+                if (key === 'Nota' || key === 'Tempo de Jogo') {
+                    valA = parseFloat(valA) || 0;
+                    valB = parseFloat(valB) || 0;
+                }
+
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                if (valA < valB) {
+                    return currentSortDirection === 'asc' ? -1 : 1;
+                }
+                if (valA > valB) {
+                    return currentSortDirection === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+
+            updateSortIcons();
+            applyFilters('-biblioteca');
+        }
+
+        function updateSortIcons() {
+            document.querySelectorAll('.sortable-header').forEach(header => {
+                header.classList.remove('sort-asc', 'sort-desc');
+                if (header.dataset.sortKey === currentSortKey) {
+                    header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+        
+        // --- ADIÇÃO: Funções para Sorteio de Jogo ---
+        function openRandomGameModal() {
+            document.getElementById('randomGameForm').reset();
+            document.getElementById('randomGameModal').classList.add('active');
+        }
+
+        function closeRandomGameModal() {
+            document.getElementById('randomGameModal').classList.remove('active');
+        }
+
+        async function handleRandomGameFormSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const plataforma = form.plataforma.value;
+            const estilo = form.estilo.value;
+            const metacritic_min = form.metacritic_min.value;
+            const metacritic_max = form.metacritic_max.value;
+            
+            const params = new URLSearchParams();
+            if (plataforma) params.append('plataforma', plataforma);
+            if (estilo) params.append('estilo', estilo);
+            if (metacritic_min) params.append('metacritic_min', metacritic_min);
+            if (metacritic_max) params.append('metacritic_max', metacritic_max);
+
+            const queryString = params.toString();
+            const url = `${API_URL}/games/random?${queryString}`;
+
+            Swal.fire({
+                title: 'Sorteando...',
+                text: 'Buscando o jogo perfeito para você!',
+                icon: 'info',
+                background: 'var(--surface-color)',
+                color: 'var(--primary-text)',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const response = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+                Swal.close();
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showToast('Nenhum jogo encontrado com esses filtros.', true);
+                    } else {
+                        throw new Error(`Erro na API: ${response.statusText}`);
+                    }
+                    return;
+                }
+
+                const game = await response.json();
+                
+                closeRandomGameModal();
+                openGameDetailsModal(game.Nome);
+
+            } catch (error) {
+                Swal.close();
+                console.error("Erro ao sortear jogo:", error);
+                showToast("Ocorreu um erro ao tentar sortear o jogo.", true);
+            }
+        }
+
+        // --- FIM DA ADIÇÃO ---
 
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
@@ -2689,7 +2782,6 @@
             setupListener('addWishBtn', 'click', openWishModal);
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             
-            // Adicionado listener para o novo botão de compartilhar
             setupListener('shareBtn', 'click', () => {
                 const shareLink = 'https://savepoint-hub.netlify.app/shareable.html';
                 const tempInput = document.createElement('input');
@@ -2701,13 +2793,13 @@
                 showToast('Link copiado para a área de transferência!');
             });
 
-            // --- NOVO: Listener para o botão de notificações ---
             setupListener('notificationsBtn', 'click', openNotificationsModal);
-            // --- FIM NOVO ---
-            
-            // NOVO: Listener para o botão de acionamento do scraper
             setupListener('triggerScraperBtn', 'click', triggerScraperAction);
-
+            
+            // --- ADIÇÃO DE LISTENERS PARA O SORTEIO ---
+            setupListener('randomGameBtn', 'click', openRandomGameModal);
+            setupListener('randomGameForm', 'submit', handleRandomGameFormSubmit);
+            // --- FIM DA ADIÇÃO ---
 
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
             setupListener('achievementsShortcut', 'click', openAchievementsModal);
@@ -2717,7 +2809,6 @@
                 }
             });
 
-            // Adiciona listeners para os novos botões de filtro
             setupListener('openAdvancedFiltersBtn-graficos', 'click', () => toggleAdvancedFiltersModal('-graficos'));
             setupListener('openAdvancedFiltersBtn-biblioteca', 'click', () => toggleAdvancedFiltersModal('-biblioteca'));
             setupListener('openAdvancedFiltersBtn-desejos', 'click', () => toggleAdvancedFiltersModal('-desejos'));
@@ -2731,22 +2822,20 @@
         updateSortIcons();
             
             const setupFilterListeners = (suffix) => {
-                // Filtros simples que ainda podem existir no modal
                 ['nameFilter', 'statusFilter', 'styleFilter', 'yearFilter',
-                 'minRating', 'maxRating', 'minMetacritic', 'maxMetacritic',
-                 'minPrice', 'maxPrice', 'minHours', 'maxHours', 
-                 'minWishPrice', 'maxWishPrice', 'minSteamPrice', 'maxSteamPrice',
-                 'minPsnPrice', 'maxPsnPrice', 'releaseYearFilter'].forEach(id => {
+                    'minRating', 'maxRating', 'minMetacritic', 'maxMetacritic',
+                    'minPrice', 'maxPrice', 'minHours', 'maxHours', 
+                    'minWishPrice', 'maxWishPrice', 'minSteamPrice', 'maxSteamPrice',
+                    'minPsnPrice', 'maxPsnPrice', 'releaseYearFilter'].forEach(id => {
                     const element = document.getElementById(id + suffix);
                     if (element) {
                         // A chamada de applyFilters agora será feita pelo botão "Aplicar Filtros" do modal
-                        // Para os inputs dentro do modal, não vamos aplicar imediatamente.
                     }
                 });
             };
             setupFilterListeners('-graficos');
             setupFilterListeners('-biblioteca');
-            setupFilterListeners('-desejos'); // Configura listeners para filtros de desejos
+            setupFilterListeners('-desejos'); 
             
             const gameNameInput = document.getElementById('gameName');
             if (gameNameInput) {
@@ -2777,51 +2866,8 @@
                     wishSearchContainer.innerHTML = '';
                 }
             });
-
-                function handleSort(key) {
-                    if (currentSortKey === key) {
-                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-                    } else {
-                        currentSortKey = key;
-                        currentSortDirection = 'asc';
-    }
-
-                    fullData.biblioteca.sort((a, b) => {
-                        let valA = a[currentSortKey] || '';
-                        let valB = b[currentSortKey] || '';
-
-                        if (key === 'Nota' || key === 'Tempo de Jogo') {
-                            valA = parseFloat(valA) || 0;
-                            valB = parseFloat(valB) || 0;
-                        }
-
-                        if (typeof valA === 'string') valA = valA.toLowerCase();
-                        if (typeof valB === 'string') valB = valB.toLowerCase();
-
-                        if (valA < valB) {
-                            return currentSortDirection === 'asc' ? -1 : 1;
-        }
-                        if (valA > valB) {
-                            return currentSortDirection === 'asc' ? 1 : -1;
-        }
-                        return 0;
-                    });
-
-                    updateSortIcons();
-                    applyFilters('-biblioteca');
-                }
-
-                function updateSortIcons() {
-                    document.querySelectorAll('.sortable-header').forEach(header => {
-                        header.classList.remove('sort-asc', 'sort-desc');
-                        if (header.dataset.sortKey === currentSortKey) {
-                            header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
-                        }
-                    });
-                }
             
             fetchGameData();
-            // Inicia a busca periódica por notificações a cada 30 segundos
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
 </script>
