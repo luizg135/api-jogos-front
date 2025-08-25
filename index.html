@@ -1497,9 +1497,9 @@
         };
 
         // Define cores padrão para todos os gráficos do Chart.js
-        Chart.defaults.plugins.legend.labels.color = chartColors.grey;
-        Chart.defaults.scale.ticks.color = chartColors.grey;
-        Chart.defaults.scale.title.color = chartColors.grey;
+        Chart.defaults.plugins.legend.labels.color = '#7d8590';
+        Chart.defaults.scale.ticks.color = '#7d8590';
+        Chart.defaults.scale.title.color = '#7d8590';
     
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
@@ -1843,13 +1843,82 @@ function renderWishlist(wishlist = []) {
             destroyCharts();
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
             const processMultiData = (key) => games.reduce((acc, game) => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
+            
             const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
-            const platformData = processData('Plataforma'); const statusData = processData('Status');
+            const platformData = processData('Plataforma'); 
+            const statusData = processData('Status');
             const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
-            if(document.getElementById('platinadosChart')) createdCharts.platinados = new Chart('platinadosChart', { type: 'pie', data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderColor: '#161b22', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
-            if(document.getElementById('platformChart')) createdCharts.platform = new Chart('platformChart', { type: 'bar', data: { labels: Object.keys(platformData), datasets: [{ data: Object.values(platformData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }}}, plugins: { legend: { display: false }}} });
-            if(document.getElementById('statusChart')) createdCharts.status = new Chart('statusChart', { type: 'doughnut', data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderColor: '#161b22', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }}} });
-            if(document.getElementById('styleChart')) createdCharts.style = new Chart('styleChart', { type: 'bar', data: { labels: Object.keys(styleData), datasets: [{ data: Object.values(styleData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }}} });
+
+            const sharedOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#7d8590'
+                        }
+                    }
+                }
+            };
+            
+            const barChartOptions = {
+                ...sharedOptions,
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { stepSize: 1, color: '#7d8590' },
+                        grid: { color: 'rgba(48, 54, 61, 0.5)' }
+                    },
+                    x: {
+                        ticks: { color: '#7d8590' },
+                        grid: { color: 'rgba(48, 54, 61, 0.5)' }
+                    }
+                }
+            };
+            
+            const horizontalBarChartOptions = {
+                 ...sharedOptions,
+                 indexAxis: 'y',
+                 scales: {
+                    x: { 
+                        ticks: { color: '#7d8590' },
+                        grid: { color: 'rgba(48, 54, 61, 0.5)' }
+                    },
+                    y: {
+                        ticks: { color: '#7d8590' },
+                        grid: { color: 'rgba(48, 54, 61, 0.5)' }
+                    }
+                }
+            };
+
+            if(document.getElementById('platinadosChart')) {
+                createdCharts.platinados = new Chart('platinadosChart', { 
+                    type: 'pie', 
+                    data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderWidth: 0 }] }, 
+                    options: sharedOptions 
+                });
+            }
+            if(document.getElementById('platformChart')) {
+                createdCharts.platform = new Chart('platformChart', { 
+                    type: 'bar', 
+                    data: { labels: Object.keys(platformData), datasets: [{ data: Object.values(platformData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, 
+                    options: barChartOptions
+                });
+            }
+            if(document.getElementById('statusChart')) {
+                createdCharts.status = new Chart('statusChart', { 
+                    type: 'doughnut', 
+                    data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderWidth: 0 }] }, 
+                    options: sharedOptions 
+                });
+            }
+            if(document.getElementById('styleChart')) {
+                createdCharts.style = new Chart('styleChart', { 
+                    type: 'bar', 
+                    data: { labels: Object.keys(styleData), datasets: [{ data: Object.values(styleData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, 
+                    options: horizontalBarChartOptions
+                });
+            }
         }
         
         function populateFilters() {
@@ -2403,8 +2472,8 @@ data: {
                                 data: steamPrices,
                                 borderColor: chartColors.darkPurple,
                                 backgroundColor: 'rgba(106, 74, 156, 0.2)',
-                                pointBackgroundColor: chartColors.darkPurple, // <-- ADICIONE ESTA LINHA
-                                pointBorderColor: chartColors.darkPurple,     // <-- ADICIONE ESTA LINHA
+                                pointBackgroundColor: chartColors.darkPurple,
+                                pointBorderColor: chartColors.darkPurple,
                                 fill: false,
                                 tension: 0.1,
                                 spanGaps: true
@@ -2414,8 +2483,8 @@ data: {
                                 data: psnPrices,
                                 borderColor: chartColors.lightPurple,
                                 backgroundColor: 'rgba(184, 156, 235, 0.2)',
-                                pointBackgroundColor: chartColors.lightPurple, // <-- ADICIONE ESTA LINHA
-                                pointBorderColor: chartColors.lightPurple,     // <-- ADICIONE ESTA LINHA
+                                pointBackgroundColor: chartColors.lightPurple,
+                                pointBorderColor: chartColors.lightPurple,
                                 fill: false,
                                 tension: 0.1,
                                 spanGaps: true
@@ -2431,7 +2500,7 @@ options: {
                                 position: 'top',
                                 labels: {
                                     color: '#7d8590',
-                                    usePointStyle: true, // <-- ADICIONE ESTA LINHA AQUI
+                                    usePointStyle: true,
                                 }
                             },
                             tooltip: {
@@ -2903,13 +2972,7 @@ options: {
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
 </script>
-<!-- Remove a importação do date-fns e seu locale -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/date-fns.min.js"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/locale/pt-BR/index.min.js"></script> -->
-
-<!-- Adiciona a biblioteca Moment.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<!-- Adiciona o locale pt-br para Moment.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pt-br.min.js"></script>
 
 <script>
@@ -2918,7 +2981,6 @@ options: {
     console.log("Moment.js loaded and locale set to pt-br.");
 </script>
 
-<!-- Em seguida, adiciona o adaptador para a escala de tempo do Chart.js para Moment.js -->
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
 </body>
 </html>
