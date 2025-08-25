@@ -2411,7 +2411,7 @@
         }
 
 
-        function handleSearch(query) {
+        async function handleSearch(query) { // Adicionado 'async' aqui
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -2434,7 +2434,7 @@
             document.getElementById('gameDescription').value = game.description;
             document.getElementById('searchResultsContainer').innerHTML = '';
         }
-        async function handleWishSearch(query) {
+        async function handleWishSearch(query) { // Adicionado 'async' aqui
             const resultsContainer = document.getElementById('wishSearchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
