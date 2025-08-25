@@ -910,7 +910,37 @@
             justify-content: center; 
             padding-top: 0; 
         }
-    
+        /* Estilos para o gráfico de histórico de preços */
+        .price-history-chart-container {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 24px;
+            min-height: 200px; /* Altura mínima para o gráfico */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .price-history-chart-container h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: var(--secondary-text);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            width: 100%;
+            text-align: center;
+        }
+        .price-history-chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 180px; /* Altura fixa para o canvas do gráfico */
+        }
+        #priceHistoryChart {
+            max-height: 100%;
+            max-width: 100%;
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -1241,6 +1271,14 @@
                         <span id="wishPriceStatus" class="price-status">N/A</span>
                     </div>
                 </div>
+                <!-- NOVO CONTAINER PARA O GRÁFICO DE HISTÓRICO DE PREÇOS -->
+                <div class="price-history-chart-container">
+                    <h3>Histórico de Preços</h3>
+                    <div class="price-history-chart-wrapper">
+                        <canvas id="priceHistoryChart"></canvas>
+                    </div>
+                    <p id="noPriceHistoryMessage" style="color: var(--secondary-text); font-size: 12px; margin-top: 10px; display: none;">Nenhum histórico de preço disponível.</p>
+                </div>
                 <div class="game-details-actions">
                     <button class="action-button" id="purchaseWishDetailsBtn"><span class="material-symbols-outlined">shopping_cart_checkout</span> Marcar como Comprado</button>
                     <button class="action-button" id="editWishDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar</button>
@@ -1423,6 +1461,8 @@
         let notificationInterval; 
         let isInitialLoad = true; 
         let allNotifications = []; 
+        let priceHistoryChartInstance = null; // Instância do Chart.js para o histórico de preços
+
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
         function showToast(message, isError = false) {
             Toastify({
@@ -2186,7 +2226,8 @@
         function closeGameDetailsModal() {
             document.getElementById('gameDetailsModal').classList.remove('active');
         }
-        function openWishDetailsModal(wishName) {
+
+        async function openWishDetailsModal(wishName) {
             const wish = fullData.desejos.find(w => w.Nome === wishName);
             if (!wish) {
                 showToast("Item da lista de desejos não encontrado.", true);
@@ -2214,12 +2255,163 @@
             document.getElementById('purchaseWishDetailsBtn').onclick = () => purchaseWish(safeName);
             document.getElementById('editWishDetailsBtn').onclick = () => editWish(safeName);
             document.getElementById('deleteWishDetailsBtn').onclick = () => deleteWish(safeName);
+            
+            // --- NOVO: Carregar e renderizar o gráfico de histórico de preços ---
+            await renderPriceHistoryChart(wishName);
+
             document.getElementById('wishDetailsModal').classList.add('active');
         }
         function closeWishDetailsModal() {
             document.getElementById('wishDetailsModal').classList.remove('active');
+            if (priceHistoryChartInstance) {
+                priceHistoryChartInstance.destroy(); // Destrói a instância do gráfico ao fechar o modal
+                priceHistoryChartInstance = null;
+            }
         }
-        async function handleSearch(query) {
+
+        // --- NOVA FUNÇÃO: Renderizar o gráfico de histórico de preços ---
+        async function renderPriceHistoryChart(gameName) {
+            const chartCanvas = document.getElementById('priceHistoryChart');
+            const noHistoryMessage = document.getElementById('noPriceHistoryMessage');
+            if (!chartCanvas || !noHistoryMessage) return;
+
+            // Destrói qualquer instância de gráfico existente antes de criar uma nova
+            if (priceHistoryChartInstance) {
+                priceHistoryChartInstance.destroy();
+                priceHistoryChartInstance = null;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/games/wishlist/price-history/${encodeURIComponent(gameName)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const historyData = await response.json();
+
+                if (historyData.length === 0) {
+                    chartCanvas.style.display = 'none';
+                    noHistoryMessage.style.display = 'block';
+                    return;
+                }
+
+                chartCanvas.style.display = 'block';
+                noHistoryMessage.style.display = 'none';
+
+                const dates = [...new Set(historyData.map(item => item.date))].sort(); // Datas únicas e ordenadas
+                
+                const steamPrices = dates.map(date => {
+                    const item = historyData.find(d => d.date === date && d.platform === 'Steam');
+                    return item ? item.price : null;
+                });
+                const psnPrices = dates.map(date => {
+                    const item = historyData.find(d => d.date === date && d.platform === 'PSN');
+                    return item ? item.price : null;
+                });
+
+                const ctx = chartCanvas.getContext('2d');
+                priceHistoryChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [
+                            {
+                                label: 'Steam',
+                                data: steamPrices,
+                                borderColor: chartColors.purple,
+                                backgroundColor: 'rgba(147, 112, 219, 0.2)',
+                                fill: false,
+                                tension: 0.1,
+                                spanGaps: true // Permite que a linha continue mesmo com dados nulos
+                            },
+                            {
+                                label: 'PSN',
+                                data: psnPrices,
+                                borderColor: chartColors.lightPurple,
+                                backgroundColor: 'rgba(184, 156, 235, 0.2)',
+                                fill: false,
+                                tension: 0.1,
+                                spanGaps: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    color: 'var(--primary-text)'
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += formatCurrency(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                type: 'time', // Usa escala de tempo para datas
+                                time: {
+                                    unit: 'day', // Unidade de exibição
+                                    tooltipFormat: 'dd/MM/yyyy', // Formato da dica de ferramenta
+                                    displayFormats: {
+                                        day: 'dd/MM' // Formato de exibição no eixo
+                                    }
+                                },
+                                title: {
+                                    display: false,
+                                    text: 'Data'
+                                },
+                                ticks: {
+                                    color: 'var(--secondary-text)'
+                                },
+                                grid: {
+                                    color: 'rgba(48, 54, 61, 0.3)' // Cor da grade
+                                }
+                            },
+                            y: {
+                                beginAtZero: false,
+                                title: {
+                                    display: true,
+                                    text: 'Preço (R$)',
+                                    color: 'var(--secondary-text)'
+                                },
+                                ticks: {
+                                    callback: function(value, index, ticks) {
+                                        return formatCurrency(value); // Formata os ticks do eixo Y como moeda
+                                    },
+                                    color: 'var(--secondary-text)'
+                                },
+                                grid: {
+                                    color: 'rgba(48, 54, 61, 0.3)' // Cor da grade
+                                }
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Erro ao buscar ou renderizar o histórico de preços:', error);
+                chartCanvas.style.display = 'none';
+                noHistoryMessage.style.display = 'block';
+                noHistoryMessage.textContent = 'Erro ao carregar histórico de preços.';
+            }
+        }
+
+
+        function handleSearch(query) {
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -2639,5 +2831,7 @@
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
 </script>
+<!-- Adiciona o adaptador para a escala de tempo do Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.min.js"></script>
 </body>
 </html>
