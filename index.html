@@ -2275,7 +2275,7 @@
         }
 
         // --- NOVA FUNÇÃO: Renderizar o gráfico de histórico de preços ---
-async function renderPriceHistoryChart(gameName) {
+        async function renderPriceHistoryChart(gameName) {
             const chartCanvas = document.getElementById('priceHistoryChart');
             const noHistoryMessage = document.getElementById('noPriceHistoryMessage');
             if (!chartCanvas || !noHistoryMessage) return;
@@ -2347,19 +2347,15 @@ async function renderPriceHistoryChart(gameName) {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: 'var(--secondary-text)'
+                                    color: '#7d8590' // <-- COR DEFINIDA DIRETAMENTE
                                 }
                             },
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
                                         let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.y !== null) {
-                                            label += formatCurrency(context.parsed.y);
-                                        }
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); }
                                         return label;
                                     }
                                 }
@@ -2372,33 +2368,25 @@ async function renderPriceHistoryChart(gameName) {
                                     parser: 'YYYY-MM-DD',
                                     unit: 'day',
                                     tooltipFormat: 'DD/MM/YYYY',
-                                    displayFormats: {
-                                        day: 'DD/MM'
-                                    }
+                                    displayFormats: { day: 'DD/MM' }
                                 },
                                 ticks: {
-                                    color: 'var(--secondary-text)'
+                                    color: '#7d8590' // <-- COR DEFINIDA DIRETAMENTE
                                 },
-                                grid: {
-                                    color: 'rgba(48, 54, 61, 0.3)'
-                                }
+                                grid: { color: 'rgba(48, 54, 61, 0.3)' }
                             },
                             y: {
                                 beginAtZero: false,
                                 title: {
                                     display: true,
                                     text: 'Preço (R$)',
-                                    color: 'var(--secondary-text)'
+                                    color: '#7d8590' // <-- COR DEFINIDA DIRETAMENTE
                                 },
                                 ticks: {
-                                    callback: function(value, index, ticks) {
-                                        return formatCurrency(value);
-                                    },
-                                    color: 'var(--secondary-text)'
+                                    callback: function(value, index, ticks) { return formatCurrency(value); },
+                                    color: '#7d8590' // <-- COR DEFINIDA DIRETAMENTE
                                 },
-                                grid: {
-                                    color: 'rgba(48, 54, 61, 0.3)'
-                                }
+                                grid: { color: 'rgba(48, 54, 61, 0.3)' }
                             }
                         }
                     }
