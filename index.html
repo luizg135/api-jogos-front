@@ -2290,6 +2290,7 @@
                 if (historyData.length === 0) {
                     chartCanvas.style.display = 'none';
                     noHistoryMessage.style.display = 'block';
+                    noHistoryMessage.textContent = 'Nenhum histórico de preço disponível.'; // Garante que a mensagem correta seja exibida
                     return;
                 }
 
@@ -2831,8 +2832,19 @@
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Adiciona a biblioteca date-fns primeiro -->
 <script src="https://unpkg.com/date-fns@2.30.0/dist/date-fns.min.js"></script>
+<script>
+    // Explicitamente atribui dateFns ao objeto window para garantir que o adaptador o encontre
+    // O unpkg pode não fazer isso automaticamente em todos os ambientes.
+    if (typeof dateFns !== 'undefined') {
+        window.dateFns = dateFns;
+        console.log("dateFns global object after manual assignment:", typeof window.dateFns, window.dateFns);
+    } else {
+        console.error("dateFns is still undefined after loading from unpkg.");
+    }
+</script>
+<!-- Em seguida, adiciona o adaptador para a escala de tempo do Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.min.js"></script>
 </body>
 </html>
