@@ -1727,7 +1727,7 @@
         
             // Se não houver preço ou for gratuito, não há status
             if (current === Infinity || lowest === Infinity || lowest === 0) {
-                return { status: 'N/A', class: 'normal' };
+                return { status: 'Normal', class: 'normal' };
             }
             if (current <= lowest) {
                 return { status: 'Bom', class: 'bom' };
