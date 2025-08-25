@@ -2275,7 +2275,7 @@
         }
 
         // --- NOVA FUNÇÃO: Renderizar o gráfico de histórico de preços ---
-        async function renderPriceHistoryChart(gameName) {
+async function renderPriceHistoryChart(gameName) {
             const chartCanvas = document.getElementById('priceHistoryChart');
             const noHistoryMessage = document.getElementById('noPriceHistoryMessage');
             if (!chartCanvas || !noHistoryMessage) return;
@@ -2322,7 +2322,7 @@
                             {
                                 label: 'Steam',
                                 data: steamPrices,
-                                borderColor: chartColors.darkPurple, // Cor: Roxo escuro
+                                borderColor: chartColors.darkPurple,
                                 backgroundColor: 'rgba(106, 74, 156, 0.2)',
                                 fill: false,
                                 tension: 0.1,
@@ -2331,7 +2331,7 @@
                             {
                                 label: 'PSN',
                                 data: psnPrices,
-                                borderColor: chartColors.lightPurple, // Cor: Roxo claro
+                                borderColor: chartColors.lightPurple,
                                 backgroundColor: 'rgba(184, 156, 235, 0.2)',
                                 fill: false,
                                 tension: 0.1,
@@ -2347,7 +2347,7 @@
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: 'var(--secondary-text)' // Cor: Cinza claro para legenda
+                                    color: 'var(--secondary-text)'
                                 }
                             },
                             tooltip: {
@@ -2369,15 +2369,15 @@
                             x: {
                                 type: 'time',
                                 time: {
-                                    parser: 'YYYY-MM-DD',      // Correção: Formato de leitura da data
+                                    parser: 'YYYY-MM-DD',
                                     unit: 'day',
-                                    tooltipFormat: 'DD/MM/YYYY',// Correção: Formato de exibição no tooltip
+                                    tooltipFormat: 'DD/MM/YYYY',
                                     displayFormats: {
-                                        day: 'DD/MM'        // Correção: Formato de exibição no eixo
+                                        day: 'DD/MM'
                                     }
                                 },
                                 ticks: {
-                                    color: 'var(--secondary-text)' // Cor: Cinza claro para eixo X
+                                    color: 'var(--secondary-text)'
                                 },
                                 grid: {
                                     color: 'rgba(48, 54, 61, 0.3)'
@@ -2388,13 +2388,13 @@
                                 title: {
                                     display: true,
                                     text: 'Preço (R$)',
-                                    color: 'var(--secondary-text)' // Cor: Cinza claro para título do eixo Y
+                                    color: 'var(--secondary-text)'
                                 },
                                 ticks: {
                                     callback: function(value, index, ticks) {
                                         return formatCurrency(value);
                                     },
-                                    color: 'var(--secondary-text)' // Cor: Cinza claro para eixo Y
+                                    color: 'var(--secondary-text)'
                                 },
                                 grid: {
                                     color: 'rgba(48, 54, 61, 0.3)'
@@ -2411,8 +2411,6 @@
                 noHistoryMessage.textContent = 'Erro ao carregar histórico de preços.';
             }
         }
-
-
         async function handleSearch(query) { // Adicionado 'async' aqui
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
