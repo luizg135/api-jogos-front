@@ -1773,7 +1773,7 @@
         function renderAllCharts(games = []) {
             destroyCharts();
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
-            const processMultiData = (key) => games.reduce((acc, game => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
+            const processMultiData = (key) => games.reduce((acc, game) => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
             const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
             const platformData = processData('Plataforma'); const statusData = processData('Status');
             const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
@@ -1813,7 +1813,7 @@
                 items.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`); 
             }
             
-            const suffixes = ['-graficos', '-biblioteca', '-desejos'];
+            const suffixes = ['-graficos', '-biblioteca', '--desejos'];
             suffixes.forEach(suffix => {
                 if (suffix !== '-desejos') {
                     populate('statusFilter' + suffix, statuses); 
