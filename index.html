@@ -941,75 +941,6 @@
             max-height: 100%;
             max-width: 100%;
         }
-        
-        /* Adicione este novo bloco de CSS abaixo dos outros estilos */
-        .game-details-stats.compact-wishlist {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .game-details-stats.compact-wishlist .price-group {
-            background-color: var(--bg-color);
-            border-radius: 8px;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-        }
-
-        .game-details-stats.compact-wishlist h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--primary-text);
-            margin: 0 0 12px 0;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .game-details-stats.compact-wishlist .price-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            padding: 4px 0;
-        }
-
-        .game-details-stats.compact-wishlist .price-item span:first-child {
-            color: var(--secondary-text);
-            font-weight: 500;
-        }
-
-        .game-details-stats.compact-wishlist .price-item span:last-child {
-            font-weight: 600;
-        }
-
-        .game-details-stats.compact-wishlist .last-update-status {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            text-align: center;
-            font-size: 14px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .game-details-stats.compact-wishlist .last-update,
-        .game-details-stats.compact-wishlist .price-status-container {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            align-items: center;
-        }
-        
-        /* Media query para telas maiores para um layout de 2 colunas */
-        @media (min-width: 600px) {
-            .game-details-stats.compact-wishlist {
-                grid-template-columns: 1fr 1fr;
-            }
-            .game-details-stats.compact-wishlist .last-update-status {
-                grid-column: 1 / -1;
-            }
-        }
     </style>
 </head>
 <body class="dark-mode">
@@ -1240,39 +1171,39 @@
                 </div>
             </div>
             <div class="game-details-body">
-                <div class="game-details-stats compact-wishlist">
-                    <div class="price-group">
-                        <h4>Steam</h4>
-                        <div class="price-item"><span>Preço Atual:</span><span id="wishSteamCurrentPrice">N/A</span></div>
-                        <div class="price-item"><span>Menor Histórico:</span><span id="wishSteamLowestPrice">N/A</span></div>
+                <div class="game-details-stats">
+                    <div class="game-details-stats-item">
+                        <span>Status:</span>
+                        <span id="gameStatusDetails"></span>
                     </div>
-                    <div class="price-group">
-                        <h4>PSN</h4>
-                        <div class="price-item"><span>Preço Atual:</span><span id="wishPsnCurrentPrice">N/A</span></div>
-                        <div class="price-item"><span>Menor Histórico:</span><span id="wishPsnLowestPrice">N/A</span></div>
+                    <div class="game-details-stats-item">
+                        <span>Nota:</span>
+                        <span id="gameRatingDetails"></span>
                     </div>
-                    <div class="last-update-status">
-                        <div class="last-update">
-                            <span>Última Atualização:</span>
-                            <span id="wishLastPriceUpdate">N/A</span>
-                        </div>
-                        <div class="price-status-container">
-                            <span>Status Preço:</span>
-                            <span id="wishPriceStatus" class="price-status">N/A</span>
-                        </div>
+                    <div class="game-details-stats-item">
+                        <span>Horas de Jogo:</span>
+                        <span id="gameHoursDetails"></span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Estilo:</span>
+                        <span id="gameStylesDetails"></span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Metacritic:</span>
+                        <span id="gameMetacriticDetails"></span>
+                    </div>
+                    <div class="game-details-stats-item">
+                        <span>Conquistas:</span>
+                        <span id="gameAchievementsDetails"></span>
                     </div>
                 </div>
-                <div class="price-history-chart-container">
-                    <h3>Histórico de Preços</h3>
-                    <div class="price-history-chart-wrapper">
-                        <canvas id="priceHistoryChart"></canvas>
-                    </div>
-                    <p id="noPriceHistoryMessage" style="color: var(--secondary-text); font-size: 12px; margin-top: 10px; display: none;">Nenhum histórico de preço disponível.</p>
+                <div class="game-details-description">
+                    <h3>Descrição</h3>
+                    <p id="gameDescriptionDetails"></p>
                 </div>
                 <div class="game-details-actions">
-                    <button class="action-button" id="purchaseWishDetailsBtn"><span class="material-symbols-outlined">shopping_cart_checkout</span> Marcar como Comprado</button>
-                    <button class="action-button" id="editWishDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar</button>
-                    <button class="action-button delete-btn" id="deleteWishDetailsBtn"><span class="material-symbols-outlined">delete</span> Excluir</button>
+                    <button class="action-button" id="editGameDetailsBtn"><span class="material-symbols-outlined">edit</span></button>
+                    <button class="action-button delete-btn" id="deleteGameDetailsBtn"><span class="material-symbols-outlined">delete</span></button>
                 </div>
             </div>
         </div>
