@@ -1450,7 +1450,10 @@
             lightGrey: '#a5acb4'     // Cinza claro
         };
 
-        Chart.defaults.color = chartColors.grey;
+        // Define cores padrão para todos os gráficos do Chart.js
+        Chart.defaults.plugins.legend.labels.color = chartColors.grey;
+        Chart.defaults.scale.ticks.color = chartColors.grey;
+        Chart.defaults.scale.title.color = chartColors.grey;
     
         let fullData = { estatisticas: {}, biblioteca: [], desejos: [], perfil: {}, conquistas_concluidas: [], conquistas_pendentes: [] };
         let createdCharts = {};
