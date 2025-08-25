@@ -1000,7 +1000,197 @@
             justify-content: center; /* Centraliza os botões */
             padding-top: 0; /* Remove padding superior extra */
         }
-    
+        /* Estilos para o gráfico de histórico de preços */
+        .price-history-chart-container {
+            margin-top: 24px;
+            height: 250px;
+            position: relative;
+        }
+        .price-history-chart-container h3 {
+            text-align: center;
+            font-size: 16px;
+            color: var(--secondary-text);
+            margin-bottom: 12px;
+        }
+        .price-history-chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        #noPriceHistory {
+            text-align: center;
+            color: var(--secondary-text);
+            padding: 20px;
+            font-style: italic;
+        }
+        /* Estilos para a seção de jogos similares */
+        .similar-games-section {
+            grid-column: 1 / -1; /* Ocupa toda a largura */
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+        .similar-games-section h3 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            color: var(--primary-text);
+            text-align: center;
+        }
+        .similar-games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+        }
+        .similar-game-card {
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .similar-game-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        .similar-game-card img {
+            width: 100%;
+            height: 100px; /* Altura fixa para as capas */
+            object-fit: cover;
+            display: block;
+        }
+        .similar-game-info {
+            padding: 8px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .similar-game-info strong {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--primary-text);
+        }
+        .similar-game-info small {
+            color: var(--secondary-text);
+        }
+        .similar-game-owned-tag {
+            background-color: var(--accent-green);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+            display: inline-block;
+        }
+        /* Estilos para o modal de sincronização da Steam */
+        #syncModal .modal-content {
+            max-width: 700px;
+        }
+        .steam-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        .steam-preview-grid::-webkit-scrollbar { width: 8px; }
+        .steam-preview-grid::-webkit-scrollbar-track { background: transparent; }
+        .steam-preview-grid::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; border: 2px solid var(--surface-color); }
+        .steam-preview-grid { scrollbar-width: thin; scrollbar-color: var(--border-color) var(--surface-color); }
+
+        .steam-game-item {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+        .steam-game-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .steam-game-item h4 {
+            margin: 0 0 4px 0;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+        .steam-game-item p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--secondary-text);
+        }
+        .steam-game-item input[type="checkbox"] {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent-purple);
+        }
+        .steam-game-category {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .steam-sync-status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--secondary-text);
+        }
+        .steam-sync-status.loading {
+            color: var(--accent-purple);
+        }
+        .steam-sync-status.error {
+            color: #cb2d3e;
+        }
+        .steam-sync-status.success {
+            color: var(--accent-green);
+        }
+        /* Estilos para o modal de sorteio de jogo */
+        #randomGameModal .modal-content {
+            max-width: 500px;
+        }
+        .random-game-filters {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        @media (min-width: 480px) {
+            .random-game-filters {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+        .random-game-filters .filter-group label {
+            margin-bottom: 4px;
+        }
+        .random-game-filters button {
+            margin-top: 24px;
+        }
+        #randomGameResult {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+            color: var(--primary-text);
+        }
     </style>
 </head>
 
@@ -1107,6 +1297,14 @@
                         <button class="nav-button" id="toggleViewBtn" title="Mudar Visualização"><span class="material-symbols-outlined">view_list</span></button>
                         <button class="nav-button" id="openAdvancedFiltersBtn-biblioteca" title="Filtros Avançados">
                             <span class="material-symbols-outlined">filter_alt</span>
+                        </button>
+                        <!-- NOVO BOTÃO: Sortear Jogo -->
+                        <button class="nav-button" id="randomGameBtn" title="Sortear Jogo">
+                            <span class="material-symbols-outlined">casino</span>
+                        </button>
+                        <!-- NOVO BOTÃO: Sincronizar com Steam -->
+                        <button class="nav-button" id="syncLibraryBtn" title="Sincronizar com Steam">
+                            <span class="material-symbols-outlined">sync</span>
                         </button>
                         <button class="nav-button" id="addGameBtn" title="Adicionar Novo Jogo"><span class="material-symbols-outlined">add</span></button>
                     </div>
@@ -1278,6 +1476,13 @@
                     <h3>Descrição</h3>
                     <p id="gameDescriptionDetails"></p>
                 </div>
+                <!-- NOVA SEÇÃO: Jogos Similares -->
+                <div class="similar-games-section">
+                    <h3>Jogos Similares</h3>
+                    <div id="similarGamesGrid" class="similar-games-grid">
+                        <p class="no-results" id="noSimilarGames">Nenhum jogo similar encontrado.</p>
+                    </div>
+                </div>
                 <div class="game-details-actions">
                     <button class="action-button" id="editGameDetailsBtn"><span class="material-symbols-outlined">edit</span></button>
                     <button class="action-button delete-btn" id="deleteGameDetailsBtn"><span class="material-symbols-outlined">delete</span></button>
@@ -1354,6 +1559,12 @@
                         <span id="wishPriceStatus" class="price-status">N/A</span>
                     </div>
                 </div>
+                <!-- NOVA SEÇÃO: Histórico de Preços -->
+                <div class="price-history-chart-container" id="priceHistoryChartContainer">
+                    <h3>Histórico de Preços</h3>
+                    <canvas id="priceHistoryChart"></canvas>
+                    <p id="noPriceHistory" style="display: none;">Sem dados de histórico de preços para exibir.</p>
+                </div>
                 <div class="game-details-actions">
                     <button class="action-button" id="purchaseWishDetailsBtn"><span class="material-symbols-outlined">shopping_cart_checkout</span> Marcar como Comprado</button>
                     <button class="action-button" id="editWishDetailsBtn"><span class="material-symbols-outlined">edit</span> Editar</button>
@@ -1372,6 +1583,8 @@
                 <div class="form-group"><label for="profileNameInput">Nome do Perfil</label><input type="text" id="profileNameInput" required></div>
                 <div class="form-group"><label for="profileSubtitleInput">Subtítulo do Perfil</label><input type="text" id="profileSubtitleInput"></div>
                 <div class="form-group"><label for="profileAvatarInput">URL da Foto de Perfil</label><input type="url" id="profileAvatarInput"></div>
+                <!-- NOVO CAMPO: Fundo do Cabeçalho -->
+                <div class="form-group"><label for="profileHeaderBgInput">URL do Fundo do Cabeçalho</label><input type="url" id="profileHeaderBgInput"></div>
                 <button type="submit">Salvar Alterações</button>
             </form>
         </div>
@@ -1475,7 +1688,6 @@
         </div>
     </div>
 
-
     <div id="notificationsModal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-button" onclick="closeNotificationsModal()">&times;</span>
@@ -1495,6 +1707,67 @@
                 </div>
             </div>
             <button class="mark-all-read-btn" onclick="markAllNotificationsAsRead()">Marcar todas como lidas</button>
+        </div>
+    </div>
+
+    <!-- NOVO MODAL: Sincronizar Biblioteca Steam -->
+    <div id="syncModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeSyncModal()">&times;</span>
+            <h2>Sincronizar Biblioteca Steam</h2>
+            <form id="syncForm">
+                <div class="form-group">
+                    <label for="steamIdInput">Steam ID (Ex: 76561198123456789)</label>
+                    <input type="text" id="steamIdInput" placeholder="Insira seu Steam ID" required>
+                </div>
+                <button type="button" id="previewSteamBtn">Pré-visualizar Jogos</button>
+            </form>
+            <div id="steamPreviewContainer">
+                <div class="steam-sync-status" id="steamSyncStatus"></div>
+                <div id="newGamesPreview" class="steam-preview-grid" style="display: none;">
+                    <h3 class="steam-game-category">Novos Jogos</h3>
+                </div>
+                <div id="existingGamesPreview" class="steam-preview-grid" style="display: none;">
+                    <h3 class="steam-game-category">Jogos Existentes (Atualizar)</h3>
+                </div>
+                <button type="button" id="syncSelectedGamesBtn" style="display: none;">Sincronizar Selecionados</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVO MODAL: Sortear Jogo -->
+    <div id="randomGameModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeRandomGameModal()">&times;</span>
+            <h2>Sortear Jogo</h2>
+            <form id="randomGameForm">
+                <div class="random-game-filters">
+                    <div class="filter-group">
+                        <label for="randomPlatform">Plataforma</label>
+                        <select id="randomPlatform">
+                            <option value="all">Todas</option>
+                            <!-- Opções preenchidas dinamicamente -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="randomStyle">Estilo</label>
+                        <select id="randomStyle">
+                            <option value="all">Todos</option>
+                            <!-- Opções preenchidas dinamicamente -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="randomMinMetacritic">Metacritic Mínimo</label>
+                        <input type="number" id="randomMinMetacritic" min="0" max="100" placeholder="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="randomMaxMetacritic">Metacritic Máximo</label>
+                        <input type="number" id="randomMaxMetacritic" min="0" max="100" placeholder="100">
+                    </div>
+                </div>
+                <button type="submit">Sortear Jogo!</button>
+            </form>
+            <p id="randomGameResult" style="display: none;"></p>
         </div>
     </div>
 
@@ -1525,6 +1798,7 @@
         let notificationInterval; // Variável para armazenar o ID do intervalo das notificações
         let isInitialLoad = true; // Flag para controlar a tela de carregamento inicial
         let allNotifications = []; // Armazena todas as notificações buscadas
+        let priceHistoryChart = null; // Variável para o gráfico de histórico de preços
 
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
 
@@ -1927,6 +2201,10 @@
                     populate('releaseYearFilter' + suffix, wishYears);
                 }
             });
+
+            // Popula filtros para o modal de sorteio de jogo
+            populate('randomPlatform', [...new Set(library.map(g => g.Plataforma).filter(Boolean))].sort());
+            populate('randomStyle', [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort());
         }
         
         function applyFilters(suffix) {
@@ -2277,12 +2555,18 @@
             document.getElementById('profileNameInput').value = profile.profileName || '';
             document.getElementById('profileSubtitleInput').value = profile.profileSubtitle || '';
             document.getElementById('profileAvatarInput').value = profile.profileAvatar || '';
+            document.getElementById('profileHeaderBgInput').value = profile.headerBackgroundUrl || ''; // NOVO CAMPO
             document.getElementById('settingsModal').classList.add('active');
         }
         function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
         async function handleSettingsFormSubmit(event) {
             event.preventDefault();
-            const newProfileData = { profileName: document.getElementById('profileNameInput').value, profileSubtitle: document.getElementById('profileSubtitleInput').value, profileAvatar: document.getElementById('profileAvatarInput').value };
+            const newProfileData = { 
+                profileName: document.getElementById('profileNameInput').value, 
+                profileSubtitle: document.getElementById('profileSubtitleInput').value, 
+                profileAvatar: document.getElementById('profileAvatarInput').value,
+                headerBackgroundUrl: document.getElementById('profileHeaderBgInput').value // NOVO CAMPO
+            };
             try {
                 const response = await fetch(`${API_URL}/games/profile/edit`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(newProfileData) });
                 if (response.ok) { showToast('Perfil atualizado com sucesso!'); closeSettingsModal(); fullData.perfil = newProfileData; loadProfileSettings(fullData.perfil); }
@@ -2293,6 +2577,13 @@
             document.getElementById('gamerName').textContent = profile.profileName || 'Seu Nome';
             document.getElementById('profileSubtitle').textContent = profile.profileSubtitle || 'Resumo da jornada!';
             document.getElementById('profileAvatar').src = profile.profileAvatar || 'https://i.imgur.com/Z0ebi8o.png';
+            // NOVO: Define o background do cabeçalho do perfil
+            const profileHeader = document.querySelector('.profile-header');
+            if (profile.headerBackgroundUrl) {
+                profileHeader.style.backgroundImage = `url('${profile.headerBackgroundUrl}'), linear-gradient(135deg, #301934 0%, #0d1117 100%)`;
+            } else {
+                profileHeader.style.backgroundImage = `url('https://www.transparenttextures.com/patterns/dark-fish-skin.png'), linear-gradient(135deg, #301934 0%, #0d1117 100%)`;
+            }
         }
 
         function openAchievementsModal() { document.getElementById('achievementsModal').classList.add('active'); }
@@ -2304,7 +2595,7 @@
             event.currentTarget.classList.add('active');
         }
         
-        function openGameDetailsModal(gameName) {
+        async function openGameDetailsModal(gameName) {
             const game = fullData.biblioteca.find(g => g.Nome === gameName);
             if (!game) {
                 showToast("Jogo não encontrado.", true);
@@ -2356,15 +2647,25 @@
             document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName);
             document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(safeName);
 
+            // NOVO: Carregar jogos similares
+            const rawgId = game.RAWG_ID;
+            if (rawgId) {
+                await getSimilarGames(rawgId);
+            } else {
+                document.getElementById('similarGamesGrid').innerHTML = '<p class="no-results">RAWG ID não disponível para buscar jogos similares.</p>';
+            }
+
             document.getElementById('gameDetailsModal').classList.add('active');
         }
 
         function closeGameDetailsModal() {
             document.getElementById('gameDetailsModal').classList.remove('active');
+            // Limpa os jogos similares ao fechar o modal
+            document.getElementById('similarGamesGrid').innerHTML = '<p class="no-results" id="noSimilarGames">Nenhum jogo similar encontrado.</p>';
         }
 
         // NOVO: Funções para o modal de detalhes da lista de desejos
-        function openWishDetailsModal(wishName) {
+        async function openWishDetailsModal(wishName) {
             const wish = fullData.desejos.find(w => w.Nome === wishName);
             if (!wish) {
                 showToast("Item da lista de desejos não encontrado.", true);
@@ -2398,11 +2699,113 @@
             document.getElementById('editWishDetailsBtn').onclick = () => editWish(safeName);
             document.getElementById('deleteWishDetailsBtn').onclick = () => deleteWish(safeName);
 
+            // NOVO: Renderiza o gráfico de histórico de preços
+            await renderPriceHistoryChart(wish.Nome);
+
             document.getElementById('wishDetailsModal').classList.add('active');
         }
 
         function closeWishDetailsModal() {
             document.getElementById('wishDetailsModal').classList.remove('active');
+            // Destrói o gráfico ao fechar o modal para evitar problemas de renderização
+            if (priceHistoryChart) {
+                priceHistoryChart.destroy();
+                priceHistoryChart = null;
+            }
+        }
+        
+        // NOVO: Função para renderizar o gráfico de histórico de preços
+        async function renderPriceHistoryChart(gameName) {
+            const container = document.getElementById('priceHistoryChartContainer');
+            const noHistoryMessage = document.getElementById('noPriceHistory');
+            const canvas = document.getElementById('priceHistoryChart');
+            if (!container || !noHistoryMessage || !canvas) return;
+
+            if (priceHistoryChart) {
+                priceHistoryChart.destroy();
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/games/wishlist/price-history/${encodeURIComponent(gameName)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const history = await response.json();
+
+                if (history.length === 0) {
+                    canvas.style.display = 'none';
+                    noHistoryMessage.style.display = 'block';
+                    return;
+                }
+
+                canvas.style.display = 'block';
+                noHistoryMessage.style.display = 'none';
+
+                const steamData = history.filter(h => h.Plataforma === 'Steam');
+                const psnData = history.filter(h => h.Plataforma === 'PSN');
+                const allDates = [...new Set(history.map(h => h.Data))].sort();
+
+                const datasets = [];
+
+                if (steamData.length > 0) {
+                    datasets.push({
+                        label: 'Steam',
+                        data: allDates.map(date => {
+                            const record = steamData.find(h => h.Data === date);
+                            return record ? parseFloat(String(record.Preço).replace(',', '.')) : null;
+                        }),
+                        borderColor: chartColors.purple,
+                        tension: 0.3,
+                        fill: false,
+                        spanGaps: true
+                    });
+                }
+
+                if (psnData.length > 0) {
+                    datasets.push({
+                        label: 'PSN',
+                        data: allDates.map(date => {
+                            const record = psnData.find(h => h.Data === date);
+                            return record ? parseFloat(String(record.Preço).replace(',', '.')) : null;
+                        }),
+                        borderColor: chartColors.grey,
+                        tension: 0.3,
+                        fill: false,
+                        spanGaps: true
+                    });
+                }
+                
+                priceHistoryChart = new Chart(canvas, {
+                    type: 'line',
+                    data: {
+                        labels: allDates,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Data', color: 'var(--secondary-text)' },
+                                ticks: { color: 'var(--secondary-text)' },
+                                grid: { color: 'var(--border-color)' }
+                            },
+                            y: {
+                                title: { display: true, text: 'Preço (R$)', color: 'var(--secondary-text)' },
+                                ticks: { color: 'var(--secondary-text)' },
+                                grid: { color: 'var(--border-color)' }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Erro ao buscar histórico de preços:", error);
+                canvas.style.display = 'none';
+                noHistoryMessage.style.display = 'block';
+                noHistoryMessage.textContent = "Erro ao carregar o histórico de preços.";
+            }
         }
 
 
@@ -2549,7 +2952,7 @@
             const createNotificationHtml = (notif) => {
                 const date = new Date(notif.Data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
                 return `
-                    <div class="notification-item ${notif.Lida === 'Sim' ? 'read' : ''}" data-id="${notif.ID}" onclick="markNotificationAsReadAndRefresh(${notif.ID})">
+                    <div class="notification-item ${notif.Lida === 'Sim' ? 'read' : ''}" data-id="${notif.ID}" onclick="handleNotificationClick(event, ${notif.ID})">
                         <strong>${notif.Tipo}</strong>
                         <span>${notif.Mensagem}</span>
                         <small>${date}</small>
@@ -2590,6 +2993,47 @@
             } catch (err) {
                 console.error('Erro ao marcar notificação como lida:', err);
                 showToast("Erro ao marcar notificação como lida.", true);
+            }
+        }
+        
+        // NOVO: Função que lida com o clique na notificação
+        async function handleNotificationClick(event, notificationId) {
+            event.preventDefault(); // Evita comportamento padrão
+            const clickedNotif = allFetchedNotifications.find(n => n.ID === notificationId);
+            if (!clickedNotif) {
+                showToast("Notificação não encontrada.", true);
+                return;
+            }
+
+            // Marca como lida e atualiza a interface
+            await markNotificationAsReadAndRefresh(notificationId);
+            closeNotificationsModal();
+
+            // Lógica de navegação interna baseada no link
+            const internalLink = clickedNotif.LinkInterno;
+            if (internalLink) {
+                const params = new URLSearchParams(internalLink);
+                const page = params.get('page');
+                const modal = params.get('modal');
+                const name = params.get('name');
+                const achId = params.get('achId');
+
+                if (page) {
+                    const pageElement = document.getElementById(page);
+                    const pageButton = document.querySelector(`.nav-button[onclick*="'${page}'"]`);
+                    if (pageElement && pageButton) {
+                        openPage({ currentTarget: pageButton }, page);
+                    }
+                }
+
+                if (modal === 'game-details' && name) {
+                    openGameDetailsModal(name);
+                } else if (modal === 'wish-details' && name) {
+                    openWishDetailsModal(name);
+                } else if (page === 'conquistas' && achId) {
+                    openAchievementsModal();
+                    // Aqui você pode adicionar lógica para dar destaque a uma conquista específica, se desejar
+                }
             }
         }
 
@@ -2678,6 +3122,276 @@
             }
         }
 
+        // NOVO: Funções para sincronização da biblioteca Steam
+        function openSyncModal() {
+            document.getElementById('syncModal').classList.add('active');
+            document.getElementById('syncForm').reset();
+            document.getElementById('steamPreviewContainer').style.display = 'none';
+            document.getElementById('newGamesPreview').innerHTML = '<h3 class="steam-game-category">Novos Jogos</h3>';
+            document.getElementById('existingGamesPreview').innerHTML = '<h3 class="steam-game-category">Jogos Existentes (Atualizar)</h3>';
+            document.getElementById('syncSelectedGamesBtn').style.display = 'none';
+            document.getElementById('steamSyncStatus').textContent = '';
+        }
+
+        function closeSyncModal() {
+            document.getElementById('syncModal').classList.remove('active');
+        }
+
+        async function getSteamLibraryPreview() {
+            const steamId = document.getElementById('steamIdInput').value;
+            if (!steamId) {
+                showToast("Por favor, insira seu Steam ID.", true);
+                return;
+            }
+
+            const statusElement = document.getElementById('steamSyncStatus');
+            statusElement.textContent = 'Buscando jogos da Steam...';
+            statusElement.className = 'steam-sync-status loading';
+            document.getElementById('steamPreviewContainer').style.display = 'block';
+            document.getElementById('newGamesPreview').style.display = 'none';
+            document.getElementById('existingGamesPreview').style.display = 'none';
+            document.getElementById('syncSelectedGamesBtn').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/games/sync/steam/preview?steam_id=${encodeURIComponent(steamId)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    renderSteamGamesPreview(result.new_games, result.existing_games_to_update);
+                    statusElement.textContent = 'Pré-visualização carregada. Selecione os jogos para sincronizar.';
+                    statusElement.className = 'steam-sync-status success';
+                    document.getElementById('syncSelectedGamesBtn').style.display = 'block';
+                } else {
+                    statusElement.textContent = result.message || 'Erro ao pré-visualizar jogos da Steam.';
+                    statusElement.className = 'steam-sync-status error';
+                }
+            } catch (error) {
+                console.error('Erro ao pré-visualizar jogos da Steam:', error);
+                statusElement.textContent = 'Erro de conexão ao pré-visualizar jogos da Steam.';
+                statusElement.className = 'steam-sync-status error';
+            }
+        }
+
+        function renderSteamGamesPreview(newGames, existingGames) {
+            const newGamesContainer = document.getElementById('newGamesPreview');
+            const existingGamesContainer = document.getElementById('existingGamesPreview');
+
+            newGamesContainer.innerHTML = '<h3 class="steam-game-category">Novos Jogos</h3>';
+            existingGamesContainer.innerHTML = '<h3 class="steam-game-category">Jogos Existentes (Atualizar)</h3>';
+
+            if (newGames.length > 0) {
+                newGamesContainer.style.display = 'grid';
+                newGames.forEach(game => {
+                    newGamesContainer.innerHTML += `
+                        <div class="steam-game-item">
+                            <input type="checkbox" class="steam-game-checkbox" data-game-name="${game.Nome}" data-rawg-id="${game.RAWG_ID || ''}" data-playtime="${game['Tempo de Jogo'] || 0}" checked>
+                            <img src="${game.Link || 'https://placehold.co/180x100/21262d/e6edf3?text=Sem+Capa'}" alt="${game.Nome}">
+                            <h4>${game.Nome}</h4>
+                            <p>${game['Tempo de Jogo'] || 0}h jogadas</p>
+                        </div>
+                    `;
+                });
+            } else {
+                newGamesContainer.innerHTML += '<p class="no-results">Nenhum novo jogo encontrado.</p>';
+            }
+
+            if (existingGames.length > 0) {
+                existingGamesContainer.style.display = 'grid';
+                existingGames.forEach(game => {
+                    existingGamesContainer.innerHTML += `
+                        <div class="steam-game-item">
+                            <input type="checkbox" class="steam-game-checkbox" data-game-name="${game.Nome}" data-rawg-id="${game.RAWG_ID || ''}" data-playtime="${game['Tempo de Jogo'] || 0}" checked>
+                            <img src="${game.Link || 'https://placehold.co/180x100/21262d/e6edf3?text=Sem+Capa'}" alt="${game.Nome}">
+                            <h4>${game.Nome}</h4>
+                            <p>${game['Tempo de Jogo'] || 0}h jogadas</p>
+                        </div>
+                    `;
+                });
+            } else {
+                existingGamesContainer.innerHTML += '<p class="no-results">Nenhum jogo existente para atualizar.</p>';
+            }
+        }
+
+        async function syncSelectedSteamGames() {
+            const steamId = document.getElementById('steamIdInput').value;
+            const selectedCheckboxes = document.querySelectorAll('#steamPreviewContainer .steam-game-checkbox:checked');
+            
+            if (selectedCheckboxes.length === 0) {
+                showToast("Nenhum jogo selecionado para sincronizar.", true);
+                return;
+            }
+
+            const selectedGamesData = Array.from(selectedCheckboxes).map(checkbox => ({
+                Nome: checkbox.dataset.gameName,
+                RAWG_ID: checkbox.dataset.rawgId,
+                "Tempo de Jogo": parseInt(checkbox.dataset.playtime)
+            }));
+
+            const statusElement = document.getElementById('steamSyncStatus');
+            statusElement.textContent = 'Sincronizando jogos selecionados...';
+            statusElement.className = 'steam-sync-status loading';
+            document.getElementById('syncSelectedGamesBtn').disabled = true; // Desabilita o botão durante a sincronização
+
+            try {
+                const response = await fetch(`${API_URL}/games/sync/steam`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ steam_id: steamId, selected_games: selectedGamesData })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    statusElement.textContent = result.message;
+                    statusElement.className = 'steam-sync-status success';
+                    showToast(result.message);
+                    closeSyncModal();
+                    fetchGameData(); // Recarrega todos os dados após a sincronização
+                } else {
+                    statusElement.textContent = result.message || 'Erro ao sincronizar jogos.';
+                    statusElement.className = 'steam-sync-status error';
+                    showToast(result.message || 'Erro ao sincronizar jogos.', true);
+                }
+            } catch (error) {
+                console.error('Erro ao sincronizar jogos da Steam:', error);
+                statusElement.textContent = 'Erro de conexão ao sincronizar jogos.';
+                statusElement.className = 'steam-sync-status error';
+                showToast('Erro de conexão ao sincronizar jogos.', true);
+            } finally {
+                document.getElementById('syncSelectedGamesBtn').disabled = false;
+            }
+        }
+        // FIM NOVO: Funções para sincronização da biblioteca Steam
+
+        // NOVO: Funções para Sortear Jogo
+        function openRandomGameModal() {
+            document.getElementById('randomGameModal').classList.add('active');
+            document.getElementById('randomGameForm').reset();
+            document.getElementById('randomGameResult').style.display = 'none';
+            // Popula os filtros com base nos dados atuais da biblioteca
+            populateRandomGameFilters();
+        }
+
+        function closeRandomGameModal() {
+            document.getElementById('randomGameModal').classList.remove('active');
+        }
+
+        function populateRandomGameFilters() {
+            const library = fullData.biblioteca || [];
+            const platforms = [...new Set(library.map(g => g.Plataforma).filter(Boolean))].sort();
+            const styles = [...new Set(library.flatMap(g => g.Estilo ? g.Estilo.split(',').map(s => s.trim()) : []).filter(Boolean))].sort();
+
+            const populateSelect = (elementId, items) => {
+                const select = document.getElementById(elementId);
+                if (!select) return;
+                select.innerHTML = '<option value="all">Todos</option>';
+                items.forEach(item => {
+                    select.innerHTML += `<option value="${item}">${item}</option>`;
+                });
+            };
+
+            populateSelect('randomPlatform', platforms);
+            populateSelect('randomStyle', styles);
+        }
+
+        async function handleRandomGameSubmit(event) {
+            event.preventDefault();
+            const platform = document.getElementById('randomPlatform').value;
+            const style = document.getElementById('randomStyle').value;
+            const minMetacritic = document.getElementById('randomMinMetacritic').value;
+            const maxMetacritic = document.getElementById('randomMaxMetacritic').value;
+
+            const params = new URLSearchParams();
+            if (platform !== 'all') params.append('platform', platform);
+            if (style !== 'all') params.append('style', style);
+            if (minMetacritic) params.append('min_metacritic', minMetacritic);
+            if (maxMetacritic) params.append('max_metacritic', maxMetacritic);
+
+            const resultElement = document.getElementById('randomGameResult');
+            resultElement.style.display = 'block';
+            resultElement.textContent = 'Sorteando jogo...';
+
+            try {
+                const response = await fetch(`${API_URL}/games/random-game?${params.toString()}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+
+                if (result.success && result.game) {
+                    resultElement.textContent = `Jogo sorteado: ${result.game.Nome}`;
+                    // Abre o modal de detalhes do jogo sorteado
+                    closeRandomGameModal();
+                    openGameDetailsModal(result.game.Nome);
+                } else {
+                    resultElement.textContent = result.message || 'Não foi possível sortear um jogo com os critérios fornecidos.';
+                }
+            } catch (error) {
+                console.error('Erro ao sortear jogo:', error);
+                resultElement.textContent = 'Erro de conexão ao sortear jogo.';
+            }
+        }
+        // FIM NOVO: Funções para Sortear Jogo
+
+        // NOVO: Funções para Jogos Similares
+        async function getSimilarGames(rawgId) {
+            const similarGamesGrid = document.getElementById('similarGamesGrid');
+            const noSimilarGamesMessage = document.getElementById('noSimilarGames');
+            similarGamesGrid.innerHTML = ''; // Limpa resultados anteriores
+            noSimilarGamesMessage.style.display = 'none';
+
+            if (!rawgId) {
+                noSimilarGamesMessage.textContent = 'RAWG ID não disponível para buscar jogos similares.';
+                noSimilarGamesMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/games/similar/${rawgId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+
+                if (result.success && result.similar_games.length > 0) {
+                    renderSimilarGames(result.similar_games);
+                } else {
+                    noSimilarGamesMessage.textContent = result.message || 'Nenhum jogo similar encontrado.';
+                    noSimilarGamesMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erro ao buscar jogos similares:', error);
+                noSimilarGamesMessage.textContent = 'Erro de conexão ao buscar jogos similares.';
+                noSimilarGamesMessage.style.display = 'block';
+            }
+        }
+
+        function renderSimilarGames(similarGames) {
+            const similarGamesGrid = document.getElementById('similarGamesGrid');
+            similarGamesGrid.innerHTML = ''; // Limpa para renderizar
+
+            if (similarGames.length === 0) {
+                document.getElementById('noSimilarGames').style.display = 'block';
+                return;
+            }
+            document.getElementById('noSimilarGames').style.display = 'none';
+
+            similarGames.forEach(game => {
+                const safeName = game.name.replace(/'/g, "\\'");
+                const ownedTag = game.is_owned ? '<span class="similar-game-owned-tag">Na Biblioteca</span>' : '';
+                similarGamesGrid.innerHTML += `
+                    <div class="similar-game-card" onclick="openGameDetailsModal('${safeName}')">
+                        <img src="${game.background_image || 'https://placehold.co/120x100/21262d/e6edf3?text=Sem+Capa'}" alt="${game.name}">
+                        <div class="similar-game-info">
+                            <strong>${game.name}</strong>
+                            <small>${game.styles || 'N/A'}</small>
+                            ${ownedTag}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        // FIM NOVO: Funções para Jogos Similares
+
 
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
@@ -2707,6 +3421,15 @@
             
             // NOVO: Listener para o botão de acionamento do scraper
             setupListener('triggerScraperBtn', 'click', triggerScraperAction);
+
+            // NOVO: Listeners para sincronização Steam
+            setupListener('syncLibraryBtn', 'click', openSyncModal);
+            setupListener('previewSteamBtn', 'click', getSteamLibraryPreview);
+            setupListener('syncSelectedGamesBtn', 'click', syncSelectedSteamGames);
+
+            // NOVO: Listeners para Sortear Jogo
+            setupListener('randomGameBtn', 'click', openRandomGameModal);
+            setupListener('randomGameForm', 'submit', handleRandomGameSubmit);
 
 
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
