@@ -1526,7 +1526,7 @@
                 <img id="wishCoverBackground" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo">
                 <div class="game-details-info">
                     <img id="wishCoverArt" src="https://i.imgur.com/Z0ebi8o.png" alt="Capa do Jogo" class="game-cover-art">
-                    <div class="game-details-info-text">
+                    <div class="wish-details-info-text">
                         <h2 id="wishNameDetails">Nome do Jogo</h2>
                         <p id="wishReleaseDetails">Data Lançamento</p>
                     </div>
@@ -2649,10 +2649,15 @@
 
             // NOVO: Carregar jogos similares
             const rawgId = game.RAWG_ID;
-            if (rawgId) {
+            const similarGamesGrid = document.getElementById('similarGamesGrid');
+            const noSimilarGamesMessage = document.getElementById('noSimilarGames');
+
+            if (rawgId && similarGamesGrid && noSimilarGamesMessage) {
                 await getSimilarGames(rawgId);
-            } else {
-                document.getElementById('similarGamesGrid').innerHTML = '<p class="no-results">RAWG ID não disponível para buscar jogos similares.</p>';
+            } else if (similarGamesGrid && noSimilarGamesMessage) {
+                similarGamesGrid.innerHTML = '';
+                noSimilarGamesMessage.textContent = 'RAWG ID não disponível para buscar jogos similares.';
+                noSimilarGamesMessage.style.display = 'block';
             }
 
             document.getElementById('gameDetailsModal').classList.add('active');
@@ -2661,7 +2666,13 @@
         function closeGameDetailsModal() {
             document.getElementById('gameDetailsModal').classList.remove('active');
             // Limpa os jogos similares ao fechar o modal
-            document.getElementById('similarGamesGrid').innerHTML = '<p class="no-results" id="noSimilarGames">Nenhum jogo similar encontrado.</p>';
+            const similarGamesGrid = document.getElementById('similarGamesGrid');
+            const noSimilarGamesMessage = document.getElementById('noSimilarGames');
+            if (similarGamesGrid) similarGamesGrid.innerHTML = '';
+            if (noSimilarGamesMessage) {
+                noSimilarGamesMessage.textContent = 'Nenhum jogo similar encontrado.';
+                noSimilarGamesMessage.style.display = 'block';
+            }
         }
 
         // NOVO: Funções para o modal de detalhes da lista de desejos
@@ -3285,7 +3296,7 @@
             const populateSelect = (elementId, items) => {
                 const select = document.getElementById(elementId);
                 if (!select) return;
-                select.innerHTML = '<option value="all">Todos</option>';
+                select.innerHTML = '<option value="all">Todas</option>';
                 items.forEach(item => {
                     select.innerHTML += `<option value="${item}">${item}</option>`;
                 });
@@ -3337,6 +3348,12 @@
         async function getSimilarGames(rawgId) {
             const similarGamesGrid = document.getElementById('similarGamesGrid');
             const noSimilarGamesMessage = document.getElementById('noSimilarGames');
+            
+            if (!similarGamesGrid || !noSimilarGamesMessage) {
+                console.error("Elementos HTML para jogos similares não encontrados.");
+                return;
+            }
+
             similarGamesGrid.innerHTML = ''; // Limpa resultados anteriores
             noSimilarGamesMessage.style.display = 'none';
 
@@ -3367,13 +3384,20 @@
 
         function renderSimilarGames(similarGames) {
             const similarGamesGrid = document.getElementById('similarGamesGrid');
+            const noSimilarGamesMessage = document.getElementById('noSimilarGames');
+
+            if (!similarGamesGrid || !noSimilarGamesMessage) {
+                console.error("Elementos HTML para jogos similares não encontrados durante a renderização.");
+                return;
+            }
+
             similarGamesGrid.innerHTML = ''; // Limpa para renderizar
 
             if (similarGames.length === 0) {
-                document.getElementById('noSimilarGames').style.display = 'block';
+                noSimilarGamesMessage.style.display = 'block';
                 return;
             }
-            document.getElementById('noSimilarGames').style.display = 'none';
+            noSimilarGamesMessage.style.display = 'none';
 
             similarGames.forEach(game => {
                 const safeName = game.name.replace(/'/g, "\\'");
