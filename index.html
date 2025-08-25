@@ -1773,7 +1773,7 @@
         function renderAllCharts(games = []) {
             destroyCharts();
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
-            const processMultiData = (key) => games.reduce((acc, game) => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
+            const processMultiData = (key) => games.reduce((acc, game => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
             const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
             const platformData = processData('Plataforma'); const statusData = processData('Status');
             const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
@@ -2833,7 +2833,8 @@
         });
 </script>
 <!-- Adiciona a biblioteca date-fns primeiro -->
-<script src="https://unpkg.com/date-fns@2.30.0/dist/date-fns.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/date-fns.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/locale/pt-BR/index.min.js"></script>
 <script>
     // Explicitamente atribui dateFns ao objeto window para garantir que o adaptador o encontre
     // O unpkg pode não fazer isso automaticamente em todos os ambientes.
@@ -2841,7 +2842,14 @@
         window.dateFns = dateFns;
         console.log("dateFns global object after manual assignment:", typeof window.dateFns, window.dateFns);
     } else {
-        console.error("dateFns is still undefined after loading from unpkg.");
+        console.error("dateFns is still undefined after loading from cdnjs.");
+    }
+    // Verifica se o locale ptBR está disponível e o atribui se necessário
+    if (typeof dateFnsLocales !== 'undefined' && typeof dateFnsLocales.ptBR !== 'undefined') {
+        window.dateFns_locale_ptBR = dateFnsLocales.ptBR;
+        console.log("dateFns_locale_ptBR global object after manual assignment:", typeof window.dateFns_locale_ptBR, window.dateFns_locale_ptBR);
+    } else {
+        console.error("dateFns_locale_ptBR is still undefined after loading from cdnjs.");
     }
 </script>
 <!-- Em seguida, adiciona o adaptador para a escala de tempo do Chart.js -->
