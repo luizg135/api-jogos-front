@@ -2054,7 +2054,7 @@
         }
         async function handleWishFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editWishMode').value; 
+            const editModeValue = document.getElementById('editMode').value; 
             const isEditing = editModeValue !== '';
             const wishData = { 
                 Nome: document.getElementById('wishGameName').value, 
@@ -2363,6 +2363,7 @@
                             x: {
                                 type: 'time', // Usa escala de tempo para datas
                                 time: {
+                                    parser: 'yyyy-MM-dd', // Adicionado parser explícito para o formato de data
                                     unit: 'day', // Unidade de exibição
                                     tooltipFormat: 'dd/MM/yyyy', // Formato da dica de ferramenta
                                     displayFormats: {
