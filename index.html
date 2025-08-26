@@ -2622,7 +2622,6 @@ options: {
             }
         }
         let currentNotifications = []; 
-        let allFetchedNotifications = []; 
         async function fetchNotifications() {
             try {
                 const response = await fetch(`${API_URL}/games/notifications`, { headers: { 'Authorization': `Bearer ${token}` } });
