@@ -1280,7 +1280,7 @@
         </div>
     </div>
     
-    <div id="gameDetailsModal" class="modal-overlay" onclick="if (event.target === this) closeGameDetailsModal()">
+    <div id="gameDetailsModal" class="modal-overlay">
         <div class="game-details-modal-content">
             <span class="close-button" onclick="closeGameDetailsModal()">&times;</span>
             <div class="game-details-header">
@@ -2432,7 +2432,7 @@ function renderWishlist(wishlist = []) {
             }
         }
         
-async function openGameDetailsModal(gameName) {
+        async function openGameDetailsModal(gameName) {
             const game = fullData.biblioteca.find(g => g.Nome === gameName);
             if (!game) {
                 showToast("Jogo não encontrado.", true);
@@ -2479,57 +2479,61 @@ async function openGameDetailsModal(gameName) {
             // NOVA LÓGICA PARA BUSCAR E RENDERIZAR JOGOS SIMILARES
             await renderSimilarGames(game.RAWG_ID);
         }
+        
+        function closeGameDetailsModal() {
+            document.getElementById('gameDetailsModal').classList.remove('active');
+        }
 
-async function openWishDetailsModal(wishName) {
-    const wish = fullData.desejos.find(w => w.Nome === wishName);
-    if (!wish) {
-        showToast("Item da lista de desejos não encontrado.", true);
-        return;
-    }
+        async function openWishDetailsModal(wishName) {
+            const wish = fullData.desejos.find(w => w.Nome === wishName);
+            if (!wish) {
+                showToast("Item da lista de desejos não encontrado.", true);
+                return;
+            }
 
-    // Preenche informações básicas do cabeçalho
-    document.getElementById('wishNameDetails').textContent = wish.Nome;
-    document.getElementById('wishReleaseDetails').textContent = wish['Data Lançamento'] || 'N/A';
-    document.getElementById('wishCoverArt').src = wish.Link || 'https://placehold.co/120x160/21262d/e6edf3?text=Sem+Capa';
-    document.getElementById('wishCoverBackground').src = wish.Link || 'https://placehold.co/800x250/21262d/e6edf3?text=Sem+Capa';
+            // Preenche informações básicas do cabeçalho
+            document.getElementById('wishNameDetails').textContent = wish.Nome;
+            document.getElementById('wishReleaseDetails').textContent = wish['Data Lançamento'] || 'N/A';
+            document.getElementById('wishCoverArt').src = wish.Link || 'https://placehold.co/120x160/21262d/e6edf3?text=Sem+Capa';
+            document.getElementById('wishCoverBackground').src = wish.Link || 'https://placehold.co/800x250/21262d/e6edf3?text=Sem+Capa';
 
-    // Prepara os dados de preço
-    const steamCurrent = wish['Steam Preco Atual'] || 'N/A';
-    const steamLowest = wish['Steam Menor Preco Historico'] || 'N/A';
-    const psnCurrent = wish['PSN Preco Atual'] || 'N/A';
-    const psnLowest = wish['PSN Menor Preco Historico'] || 'N/A';
+            // Prepara os dados de preço
+            const steamCurrent = wish['Steam Preco Atual'] || 'N/A';
+            const steamLowest = wish['Steam Menor Preco Historico'] || 'N/A';
+            const psnCurrent = wish['PSN Preco Atual'] || 'N/A';
+            const psnLowest = wish['PSN Menor Preco Historico'] || 'N/A';
 
-    // Preenche os preços
-    document.getElementById('wishSteamCurrentPrice').textContent = formatCurrency(steamCurrent);
-    document.getElementById('wishSteamLowestPrice').textContent = formatCurrency(steamLowest);
-    document.getElementById('wishPsnCurrentPrice').textContent = formatCurrency(psnCurrent);
-    document.getElementById('wishPsnLowestPrice').textContent = formatCurrency(psnLowest);
+            // Preenche os preços
+            document.getElementById('wishSteamCurrentPrice').textContent = formatCurrency(steamCurrent);
+            document.getElementById('wishSteamLowestPrice').textContent = formatCurrency(steamLowest);
+            document.getElementById('wishPsnCurrentPrice').textContent = formatCurrency(psnCurrent);
+            document.getElementById('wishPsnLowestPrice').textContent = formatCurrency(psnLowest);
 
-    // Calcula e define o status para a Steam
-    const steamStatus = getPriceStatusForPlatform(steamCurrent, steamLowest);
-    const steamStatusElement = document.getElementById('wishSteamPriceStatus');
-    steamStatusElement.textContent = steamStatus.status;
-    steamStatusElement.className = `price-status ${steamStatus.class}`;
+            // Calcula e define o status para a Steam
+            const steamStatus = getPriceStatusForPlatform(steamCurrent, steamLowest);
+            const steamStatusElement = document.getElementById('wishSteamPriceStatus');
+            steamStatusElement.textContent = steamStatus.status;
+            steamStatusElement.className = `price-status ${steamStatus.class}`;
 
-    // Calcula e define o status para a PSN
-    const psnStatus = getPriceStatusForPlatform(psnCurrent, psnLowest);
-    const psnStatusElement = document.getElementById('wishPsnPriceStatus');
-    psnStatusElement.textContent = psnStatus.status;
-    psnStatusElement.className = `price-status ${psnStatus.class}`;
+            // Calcula e define o status para a PSN
+            const psnStatus = getPriceStatusForPlatform(psnCurrent, psnLowest);
+            const psnStatusElement = document.getElementById('wishPsnPriceStatus');
+            psnStatusElement.textContent = psnStatus.status;
+            psnStatusElement.className = `price-status ${psnStatus.class}`;
 
-    // Preenche a data da última atualização
-    document.getElementById('wishLastPriceUpdate').textContent = wish['Ultima Atualizacao'] ? new Date(wish['Ultima Atualizacao']).toLocaleString('pt-BR') : 'N/A';
+            // Preenche a data da última atualização
+            document.getElementById('wishLastPriceUpdate').textContent = wish['Ultima Atualizacao'] ? new Date(wish['Ultima Atualizacao']).toLocaleString('pt-BR') : 'N/A';
 
-    // Configura os botões de ação
-    const safeName = wish.Nome.replace(/'/g, "\\'");
-    document.getElementById('purchaseWishDetailsBtn').onclick = () => purchaseWish(safeName);
-    document.getElementById('editWishDetailsBtn').onclick = () => editWish(safeName);
-    document.getElementById('deleteWishDetailsBtn').onclick = () => deleteWish(safeName);
+            // Configura os botões de ação
+            const safeName = wish.Nome.replace(/'/g, "\\'");
+            document.getElementById('purchaseWishDetailsBtn').onclick = () => purchaseWish(safeName);
+            document.getElementById('editWishDetailsBtn').onclick = () => editWish(safeName);
+            document.getElementById('deleteWishDetailsBtn').onclick = () => deleteWish(safeName);
 
-    // Renderiza o gráfico e abre o modal
-    await renderPriceHistoryChart(wishName);
-    document.getElementById('wishDetailsModal').classList.add('active');
-}
+            // Renderiza o gráfico e abre o modal
+            await renderPriceHistoryChart(wishName);
+            document.getElementById('wishDetailsModal').classList.add('active');
+        }
         function closeWishDetailsModal() {
             document.getElementById('wishDetailsModal').classList.remove('active');
             if (priceHistoryChartInstance) {
