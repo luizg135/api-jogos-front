@@ -1894,7 +1894,7 @@ function renderWishlist(wishlist = []) {
             if(document.getElementById('platinadosChart')) {
                 createdCharts.platinados = new Chart('platinadosChart', { 
                     type: 'pie', 
-                    data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderWidth: 3 }] }, 
+                    data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderWidth: 1 }] }, 
                     options: sharedOptions 
                 });
             }
@@ -1908,7 +1908,7 @@ function renderWishlist(wishlist = []) {
             if(document.getElementById('statusChart')) {
                 createdCharts.status = new Chart('statusChart', { 
                     type: 'doughnut', 
-                    data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderWidth: 3 }] }, 
+                    data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderWidth: 1 }] }, 
                     options: sharedOptions 
                 });
             }
