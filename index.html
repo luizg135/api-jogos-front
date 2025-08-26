@@ -1844,16 +1844,29 @@ function renderWishlist(wishlist = []) {
             const processData = (key) => games.reduce((acc, game) => { const v = game[key] || 'N/A'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
             const processMultiData = (key) => games.reduce((acc, game) => { if(game[key]) game[key].split(',').forEach(item => { const t = item.trim(); acc[t] = (acc[t] || 0) + 1; }); return acc; }, {});
             
+            // --- Preparação de dados ---
             const platinadosData = { 'Platinados': games.filter(g => g['Platinado?'] === 'Sim').length, 'Outros': games.filter(g => g['Platinado?'] !== 'Sim').length };
             const platformData = processData('Plataforma'); 
             const statusData = processData('Status');
             const styleData = Object.entries(processMultiData('Estilo')).sort(([,a],[,b]) => b-a).slice(0,5).reduce((r, [k,v]) => ({...r, [k]: v}), {});
 
+            // --- Filtragem de Segurança para Labels ---
+            const getValidKeys = (dataObj) => Object.keys(dataObj).filter(key => key !== 'undefined' && key !== 'N/A');
+            const statusLabels = getValidKeys(statusData);
+            const statusValues = statusLabels.map(label => statusData[label]);
+            const platformLabels = getValidKeys(platformData);
+            const platformValues = platformLabels.map(label => platformData[label]);
+
+            const styleLabels = getValidKeys(styleData);
+            const styleValues = styleLabels.map(label => styleData[label]);
+
+            // --- Opções de Estilo Comuns ---
             const sharedOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
+                        position: 'top',
                         labels: {
                             color: '#7d8590'
                         }
@@ -1894,29 +1907,41 @@ function renderWishlist(wishlist = []) {
             if(document.getElementById('platinadosChart')) {
                 createdCharts.platinados = new Chart('platinadosChart', { 
                     type: 'pie', 
-                    data: { labels: Object.keys(platinadosData), datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderWidth: 1 }] }, 
+                    data: { 
+                        labels: Object.keys(platinadosData), 
+                        datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderWidth: 0 }] 
+                    }, 
                     options: sharedOptions 
                 });
             }
             if(document.getElementById('platformChart')) {
                 createdCharts.platform = new Chart('platformChart', { 
                     type: 'bar', 
-                    data: { labels: Object.keys(platformData), datasets: [{ data: Object.values(platformData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, 
-                    options: barChartOptions
+                    data: { 
+                        labels: platformLabels, 
+                        datasets: [{ data: platformValues, backgroundColor: chartColors.purple, borderRadius: 4 }] 
+                    }, 
+                    options: { ...sharedOptions, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: '#7d8590' }, grid: { color: 'rgba(48, 54, 61, 0.5)' } }, x: { ticks: { color: '#7d8590' }, grid: { color: 'rgba(48, 54, 61, 0.5)' } } }, plugins: { legend: { display: false } } }
                 });
             }
             if(document.getElementById('statusChart')) {
                 createdCharts.status = new Chart('statusChart', { 
                     type: 'doughnut', 
-                    data: { labels: Object.keys(statusData), datasets: [{ data: Object.values(statusData), backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderWidth: 1 }] }, 
+                    data: { 
+                        labels: statusLabels, 
+                        datasets: [{ data: statusValues, backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderWidth: 0 }] 
+                    }, 
                     options: sharedOptions 
                 });
             }
             if(document.getElementById('styleChart')) {
                 createdCharts.style = new Chart('styleChart', { 
                     type: 'bar', 
-                    data: { labels: Object.keys(styleData), datasets: [{ data: Object.values(styleData), backgroundColor: chartColors.purple, borderRadius: 4 }] }, 
-                    options: horizontalBarChartOptions
+                    data: { 
+                        labels: styleLabels, 
+                        datasets: [{ data: styleValues, backgroundColor: chartColors.purple, borderRadius: 4 }] 
+                    }, 
+                    options: { ...sharedOptions, indexAxis: 'y', scales: { x: { ticks: { color: '#7d8590' }, grid: { color: 'rgba(48, 54, 61, 0.5)' } }, y: { ticks: { color: '#7d8590' }, grid: { color: 'rgba(48, 54, 61, 0.5)' } } }, plugins: { legend: { display: false } } }
                 });
             }
         }
