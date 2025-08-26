@@ -1909,7 +1909,7 @@ function renderWishlist(wishlist = []) {
                     type: 'pie', 
                     data: { 
                         labels: Object.keys(platinadosData), 
-                        datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderWidth: 0 }] 
+                        datasets: [{ data: Object.values(platinadosData), backgroundColor: [chartColors.purple, chartColors.lightPurple], borderWidth: 3 }] 
                     }, 
                     options: sharedOptions 
                 });
@@ -1929,7 +1929,7 @@ function renderWishlist(wishlist = []) {
                     type: 'doughnut', 
                     data: { 
                         labels: statusLabels, 
-                        datasets: [{ data: statusValues, backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderWidth: 0 }] 
+                        datasets: [{ data: statusValues, backgroundColor: [chartColors.lightPurple, chartColors.purple, chartColors.darkPurple, chartColors.lightGrey, chartColors.grey, chartColors.darkGrey], borderWidth: 3 }] 
                     }, 
                     options: sharedOptions 
                 });
