@@ -991,12 +991,13 @@
         }
 
         .similar-games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            display: flex; /* MUDANÇA: Usar flexbox em vez de grid */
+            flex-wrap: nowrap; /* MUDANÇA: Impede que os itens quebrem para a linha de baixo */
+            overflow-x: auto; /* MUDANÇA: Adiciona a rolagem horizontal */
+            overflow-y: hidden; /* Oculta a rolagem vertical desnecessária */
             gap: 16px;
-            max-height: 250px; /* Altura máxima para a área de scroll */
-            overflow-y: auto; /* Adiciona scroll se necessário */
             padding: 8px;
+            padding-bottom: 16px; /* Espaço para a barra de rolagem não sobrepor o conteúdo */
             border-radius: 8px;
             background-color: var(--bg-color);
         }
@@ -1019,6 +1020,8 @@
         }
 
         .similar-game-card {
+            flex: 0 0 120px; /* MUDANÇA: Define um tamanho fixo para os cards não encolherem */
+            width: 120px; /* Garante a largura do card */
             border-radius: 8px;
             overflow: hidden;
             position: relative;
@@ -1051,18 +1054,17 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .library-indicator {
+        .library-tag {
             position: absolute;
-            top: 6px;
-            right: 6px;
+            top: 8px;
+            right: 8px;
             background-color: var(--accent-purple);
             color: white;
-            padding: 4px;
-            border-radius: 50%;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
     </style>
 </head>
