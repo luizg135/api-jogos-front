@@ -3140,7 +3140,7 @@ options: {
                 container.innerHTML = similarGames.map(game => `
                     <div class="similar-game-card" title="${game.name}\nEstilo: ${game.styles}">
                         <img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${game.name}">
-                        ${game.in_library ? '<span class="library-indicator" title="Na sua biblioteca"><span class="material-symbols-outlined" style="font-size: 16px;">bookmark</span></span>' : ''}
+                        ${game.in_library ? '<div class="library-tag">Na Biblioteca</div>' : ''}
                         <div class="similar-game-overlay">${game.name}</div>
                     </div>
                 `).join('');
