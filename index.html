@@ -977,6 +977,93 @@
         #wishDetailsModal .game-details-actions {
             margin-top: 16px; /* Adicionar margem acima dos botões */
         }
+        .game-details-similar {
+            grid-column: 1 / -1;
+            margin-top: 16px;
+        }
+
+        .game-details-similar h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: var(--secondary-text);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .similar-games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 16px;
+            max-height: 250px; /* Altura máxima para a área de scroll */
+            overflow-y: auto; /* Adiciona scroll se necessário */
+            padding: 8px;
+            border-radius: 8px;
+            background-color: var(--bg-color);
+        }
+        
+        /* Estilização da barra de scroll para a nova seção */
+        .similar-games-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        .similar-games-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .similar-games-grid::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 10px;
+            border: 2px solid var(--bg-color);
+        }
+        .similar-games-grid {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--bg-color);
+        }
+
+        .similar-game-card {
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .similar-game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+
+        .similar-game-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .similar-game-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(16, 17, 22, 0.9) 30%, transparent);
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--primary-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .library-indicator {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background-color: var(--accent-purple);
+            color: white;
+            padding: 4px;
+            border-radius: 50%;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -1236,6 +1323,11 @@
                 <div class="game-details-description">
                     <h3>Descrição</h3>
                     <p id="gameDescriptionDetails"></p>
+                </div>
+                <div class="game-details-similar">
+                    <h3>Jogos Similares</h3>
+                    <div id="similarGamesContainer" class="similar-games-grid">
+                        </div>
                 </div>
                 <div class="game-details-actions">
                     <button class="action-button" id="editGameDetailsBtn"><span class="material-symbols-outlined">edit</span></button>
@@ -2340,7 +2432,7 @@ function renderWishlist(wishlist = []) {
             }
         }
         
-        function openGameDetailsModal(gameName) {
+async function openGameDetailsModal(gameName) {
             const game = fullData.biblioteca.find(g => g.Nome === gameName);
             if (!game) {
                 showToast("Jogo não encontrado.", true);
@@ -2355,13 +2447,9 @@ function renderWishlist(wishlist = []) {
             gameRatingDetails.textContent = game.Nota || 'N/A';
             gameRatingDetails.className = 'rating-score';
             if (!isNaN(gameRating)) {
-                if (gameRating >= 80) {
-                    gameRatingDetails.classList.add('good');
-                } else if (gameRating >= 50) {
-                    gameRatingDetails.classList.add('mixed');
-                } else if (gameRating >= 0) {
-                    gameRatingDetails.classList.add('bad');
-                }
+                if (gameRating >= 80) gameRatingDetails.classList.add('good');
+                else if (gameRating >= 50) gameRatingDetails.classList.add('mixed');
+                else if (gameRating >= 0) gameRatingDetails.classList.add('bad');
             }
             
             document.getElementById('gameHoursDetails').textContent = `${game['Tempo de Jogo'] || 0}h`;
@@ -2373,26 +2461,23 @@ function renderWishlist(wishlist = []) {
             const metacriticScore = parseInt(game.Metacritic);
             gameMetacriticDetails.textContent = game.Metacritic || 'N/A';
             gameMetacriticDetails.className = 'metacritic-score';
-            if (metacriticScore >= 75) {
-                gameMetacriticDetails.classList.add('good');
-            } else if (metacriticScore >= 50) {
-                gameMetacriticDetails.classList.add('mixed');
-            } else if (metacriticScore > 0) {
-                gameMetacriticDetails.classList.add('bad');
-            } else {
-                gameMetacriticDetails.classList.add('mixed');
-            }
+            if (metacriticScore >= 75) gameMetacriticDetails.classList.add('good');
+            else if (metacriticScore >= 50) gameMetacriticDetails.classList.add('mixed');
+            else if (metacriticScore > 0) gameMetacriticDetails.classList.add('bad');
+            else gameMetacriticDetails.classList.add('mixed');
             
             const coverArt = game.Link || 'https://i.imgur.com/Z0ebi8o.png';
             document.getElementById('gameCoverArt').src = coverArt;
             document.getElementById('gameCoverBackground').src = coverArt;
+            
             const safeName = game.Nome.replace(/'/g, "\\'");
             document.getElementById('editGameDetailsBtn').onclick = () => openGameModalForEdit(safeName);
             document.getElementById('deleteGameDetailsBtn').onclick = () => deleteGame(safeName);
+            
             document.getElementById('gameDetailsModal').classList.add('active');
-        }
-        function closeGameDetailsModal() {
-            document.getElementById('gameDetailsModal').classList.remove('active');
+
+            // NOVA LÓGICA PARA BUSCAR E RENDERIZAR JOGOS SIMILARES
+            await renderSimilarGames(game.RAWG_ID);
         }
 
 async function openWishDetailsModal(wishName) {
@@ -3019,6 +3104,46 @@ options: {
             fetchGameData();
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
+    async function renderSimilarGames(rawgId) {
+            const container = document.getElementById('similarGamesContainer');
+            if (!container) return;
+
+            container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Buscando jogos similares...</p>';
+
+            if (!rawgId) {
+                container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Não há ID do RAWG para buscar similares.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/games/similar-games/${rawgId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Falha ao buscar jogos similares.');
+                }
+
+                const similarGames = await response.json();
+
+                if (similarGames.length === 0) {
+                    container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Nenhum jogo similar encontrado.</p>';
+                    return;
+                }
+
+                container.innerHTML = similarGames.map(game => `
+                    <div class="similar-game-card" title="${game.name}\nEstilo: ${game.styles}">
+                        <img src="${game.background_image || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${game.name}">
+                        ${game.in_library ? '<span class="library-indicator" title="Na sua biblioteca"><span class="material-symbols-outlined" style="font-size: 16px;">bookmark</span></span>' : ''}
+                        <div class="similar-game-overlay">${game.name}</div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error("Erro ao renderizar jogos similares:", error);
+                container.innerHTML = '<p style="color: #cb2d3e; font-size: 12px;">Erro ao carregar jogos similares.</p>';
+            }
+        }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pt-br.min.js"></script>
