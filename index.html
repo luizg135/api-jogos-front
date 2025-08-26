@@ -1511,7 +1511,7 @@
         let wishSearchTimeout;
         let notificationInterval; 
         let isInitialLoad = true; 
-        let allNotifications = []; 
+        let allFetchedNotifications = []; 
         let priceHistoryChartInstance = null; // Instância do Chart.js para o histórico de preços
 
         // --- DEFINIÇÃO DE TODAS AS FUNÇÕES ---
@@ -1831,7 +1831,7 @@ function renderWishlist(wishlist = []) {
             if (!completedContainer || !pendingContainer || !mainContainer) return;
             const createAchievementHTML = (ach, isCompleted) => {
                 const progressPercent = ach.meta > 0 ? (ach.progresso_atual / ach.meta) * 100 : 100;
-                return `<div class="achievement-card ${isCompleted ? 'completed' : ''}"><div class="achievement-icon tier-${ach.Tier || 'default'}"><span class="material-symbols-outlined">${ach.Icone || 'star'}</span></div><div class="achievement-details"><h3>${ach.Nome}</h3><p>${ach.Descricao}</p>${isCompleted ? `<p class="exp-reward">+${ach.EXP} EXP</p>` : `<div class="achievement-progress-bar-container"><div class="achievement-progress-bar" style="width: ${progressPercent}%;"></div></div><p class="achievement-progress-text">${Math.floor(ach.progresso_atual)} / ${ach.meta}</p>`}</div></div>`;
+                return `<div class="achievement-card ${isCompleted ? 'completed' : ''}" id="ach-${ach.ID}"><div class="achievement-icon tier-${ach.Tier || 'default'}"><span class="material-symbols-outlined">${ach.Icone || 'star'}</span></div><div class="achievement-details"><h3>${ach.Nome}</h3><p>${ach.Descricao}</p>${isCompleted ? `<p class="exp-reward">+${ach.EXP} EXP</p>` : `<div class="achievement-progress-bar-container"><div class="achievement-progress-bar" style="width: ${progressPercent}%;"></div></div><p class="achievement-progress-text">${Math.floor(ach.progresso_atual)} / ${ach.meta}</p>`}</div></div>`;
             };
             completedContainer.innerHTML = completed.length > 0 ? completed.map(ach => createAchievementHTML(ach, true)).join('') : `<p>Nenhuma conquista concluída.</p>`;
             pendingContainer.innerHTML = pending.length > 0 ? pending.map(ach => createAchievementHTML(ach, false)).join('') : `<p>Todas as conquistas foram concluídas!</p>`;
@@ -2192,7 +2192,7 @@ function renderWishlist(wishlist = []) {
         }
         async function handleWishFormSubmit(event) {
             event.preventDefault();
-            const editModeValue = document.getElementById('editMode').value; 
+            const editModeValue = document.getElementById('editWishMode').value; 
             const isEditing = editModeValue !== '';
             const wishData = { 
                 Nome: document.getElementById('wishGameName').value, 
@@ -2306,7 +2306,13 @@ function renderWishlist(wishlist = []) {
             document.querySelectorAll('#achievementsModal .tab-content').forEach(tc => tc.classList.remove('active'));
             document.querySelectorAll('#achievementsModal .tab-button').forEach(tb => tb.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if (event) { // Adicionado para evitar erro quando chamado sem evento
+                event.currentTarget.classList.add('active');
+            } else {
+                // Ativa o botão do separador programaticamente
+                const targetButton = document.querySelector(`#achievementsModal .tab-button[onclick*="'${tabName}'"]`);
+                if(targetButton) targetButton.classList.add('active');
+            }
         }
         
         function openGameDetailsModal(gameName) {
@@ -2552,7 +2558,7 @@ options: {
                 noHistoryMessage.textContent = 'Erro ao carregar histórico de preços.';
             }
         }
-        async function handleSearch(query) { // Adicionado 'async' aqui
+        async function handleSearch(query) { 
             const resultsContainer = document.getElementById('searchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -2575,7 +2581,7 @@ options: {
             document.getElementById('gameDescription').value = game.description;
             document.getElementById('searchResultsContainer').innerHTML = '';
         }
-        async function handleWishSearch(query) { // Adicionado 'async' aqui
+        async function handleWishSearch(query) { 
             const resultsContainer = document.getElementById('wishSearchResultsContainer');
             if (query.length < 3) { resultsContainer.innerHTML = ''; return; }
             const response = await fetch(`${API_URL}/games/search-external?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -2618,40 +2624,25 @@ options: {
         let currentNotifications = []; 
         let allFetchedNotifications = []; 
         async function fetchNotifications() {
-            console.log('fetchNotifications: Starting to fetch notifications.'); 
             try {
                 const response = await fetch(`${API_URL}/games/notifications`, { headers: { 'Authorization': `Bearer ${token}` } });
-                if (response.status === 401) { 
-                    console.log('fetchNotifications: Unauthorized, returning.'); 
-                    return; 
-                } 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) return;
                 
                 const notifications = await response.json();
-                console.log('fetchNotifications: Notifications fetched:', notifications.length); 
                 allFetchedNotifications = notifications; 
                 
                 const unreadNotifications = notifications.filter(n => n.Lida === 'Não');
                 updateNotificationCount(unreadNotifications.length);
-                console.log('fetchNotifications: Notification count updated.'); 
                 
                 const activeTab = document.querySelector('#notificationsModal .tab-button.active');
-                if (activeTab) {
-                    renderNotificationsInModal(activeTab.dataset.tab);
-                    console.log('fetchNotifications: renderNotificationsInModal called for active tab.'); 
-                } else {
-                    renderNotificationsInModal('unread'); 
-                    console.log('fetchNotifications: renderNotificationsInModal called for unread (default).'); 
-                }
-                console.log('fetchNotifications: Checking for new popups.'); 
+                renderNotificationsInModal(activeTab ? activeTab.dataset.tab : 'unread');
+                
                 unreadNotifications.forEach(newNotif => {
                     if (!currentNotifications.some(n => n.ID === newNotif.ID)) {
                         showToast(newNotif.Mensagem);
                         currentNotifications.push(newNotif); 
-                        console.log('fetchNotifications: Showing popup for ID:', newNotif.ID); 
                     }
                 });
-                console.log('fetchNotifications: Popup check completed.'); 
             } catch (err) {
                 console.error('Erro ao buscar notificações:', err);
             }
@@ -2660,24 +2651,21 @@ options: {
             const notificationCountElement = document.getElementById('notificationCount');
             if (notificationCountElement) {
                 notificationCountElement.textContent = count;
-                if (count > 0) {
-                    notificationCountElement.classList.add('visible');
-                } else {
-                    notificationCountElement.classList.remove('visible');
-                }
+                notificationCountElement.classList.toggle('visible', count > 0);
             }
         }
         function renderNotificationsInModal(tabName) {
-            console.log('renderNotificationsInModal: Rendering for tab:', tabName); 
             const unreadListContainer = document.getElementById('unread-notifications-list');
             const readListContainer = document.getElementById('read-notifications-list');
             const unreadNotifications = allFetchedNotifications.filter(n => n.Lida === 'Não');
             const readNotifications = allFetchedNotifications.filter(n => n.Lida === 'Sim');
-            console.log('renderNotificationsInModal: Unread count:', unreadNotifications.length, 'Read count:', readNotifications.length); 
+
             const createNotificationHtml = (notif) => {
                 const date = new Date(notif.Data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+                const safeLink = notif.Link ? notif.Link.replace(/'/g, "\\'") : '';
                 return `
-                    <div class="notification-item ${notif.Lida === 'Sim' ? 'read' : ''}" data-id="${notif.ID}" onclick="markNotificationAsReadAndRefresh(${notif.ID})">
+                    <div class="notification-item ${notif.Lida === 'Sim' ? 'read' : ''}" 
+                         onclick="handleNotificationClick(${notif.ID}, '${notif.Tipo}', '${safeLink}')">
                         <strong>${notif.Tipo}</strong>
                         <span>${notif.Mensagem}</span>
                         <small>${date}</small>
@@ -2685,20 +2673,11 @@ options: {
                 `;
             };
             if (unreadListContainer) {
-                if (unreadNotifications.length === 0) {
-                    unreadListContainer.innerHTML = '<p class="no-results">Nenhuma notificação não lida por enquanto!</p>';
-                } else {
-                    unreadListContainer.innerHTML = unreadNotifications.map(createNotificationHtml).join('');
-                }
+                unreadListContainer.innerHTML = unreadNotifications.length > 0 ? unreadNotifications.map(createNotificationHtml).join('') : '<p class="no-results">Nenhuma notificação não lida.</p>';
             }
             if (readListContainer) {
-                if (readNotifications.length === 0) {
-                    readListContainer.innerHTML = '<p class="no-results">Nenhuma notificação lida por enquanto!</p>';
-                } else {
-                    readListContainer.innerHTML = readNotifications.map(createNotificationHtml).join('');
-                }
+                readListContainer.innerHTML = readNotifications.length > 0 ? readNotifications.map(createNotificationHtml).join('') : '<p class="no-results">Nenhuma notificação lida.</p>';
             }
-            console.log('renderNotificationsInModal: Finished rendering for tab:', tabName); 
         }
         async function markNotificationAsReadAndRefresh(notificationId) {
             try {
@@ -2708,9 +2687,8 @@ options: {
                 });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
-                showToast("Notificação marcada como lida!");
                 currentNotifications = currentNotifications.filter(n => n.ID !== notificationId);
-                fetchNotifications(); 
+                await fetchNotifications(); 
             } catch (err) {
                 console.error('Erro ao marcar notificação como lida:', err);
                 showToast("Erro ao marcar notificação como lida.", true);
@@ -2719,10 +2697,12 @@ options: {
         async function markAllNotificationsAsRead() {
             const unreadIds = allFetchedNotifications.filter(n => n.Lida === 'Não').map(n => n.ID);
             if (unreadIds.length === 0) {
-                showToast("Nenhuma notificação não lida para marcar!", false);
+                showToast("Nenhuma notificação não lida para marcar.", false);
                 return;
             }
             try {
+                // Para melhorar a performance, podemos enviar todos os IDs de uma vez se a API suportar
+                // Por agora, faremos um a um.
                 for (const id of unreadIds) {
                     await fetch(`${API_URL}/games/notifications/mark-read/${id}`, {
                         method: 'POST',
@@ -2731,21 +2711,69 @@ options: {
                 }
                 showToast("Todas as notificações marcadas como lidas!");
                 currentNotifications = []; 
-                fetchNotifications(); 
+                await fetchNotifications(); 
                 closeNotificationsModal(); 
             } catch (err) {
-                console.error('Erro ao marcar todas as notificações como lidas:', err);
+                console.error('Erro ao marcar todas como lidas:', err);
                 showToast("Erro ao marcar todas as notificações como lidas.", true);
             }
         }
+        
+        async function handleNotificationClick(id, type, link) {
+            closeNotificationsModal();
+            await markNotificationAsReadAndRefresh(id);
+        
+            if (!link) return;
+        
+            setTimeout(() => {
+                switch (type) {
+                    case 'Conquista Desbloqueada':
+                        openAchievementsModal();
+                        setTimeout(() => {
+                            const achievementElement = document.getElementById(`ach-${link}`);
+                            if (achievementElement) {
+                                switchAchievementTab(null, 'completed');
+                                achievementElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                achievementElement.style.transition = 'background-color 0.5s';
+                                achievementElement.style.backgroundColor = 'rgba(147, 112, 219, 0.2)';
+                                setTimeout(() => {
+                                    achievementElement.style.backgroundColor = '';
+                                }, 2000);
+                            }
+                        }, 200);
+                        break;
+        
+                    case 'Promoção':
+                    case 'Lançamento Próximo':
+                    case 'Novo Desejo Adicionado':
+                    case 'Desejo Removido':
+                    case 'Desejo Comprado':
+                        if (fullData.desejos.some(game => game.Nome === link)) {
+                            openWishDetailsModal(link);
+                        } else {
+                            showToast(`'${link}' não está mais na sua lista de desejos.`);
+                        }
+                        break;
+                    
+                    case 'Novo Jogo Adicionado':
+                    case 'Jogo Removido':
+                         if (fullData.biblioteca.some(game => game.Nome === link)) {
+                            openGameDetailsModal(link);
+                        } else {
+                            showToast(`'${link}' não está mais na sua biblioteca.`);
+                        }
+                        break;
+                }
+            }, 150);
+        }
+
         function openNotificationsModal() {
             document.getElementById('notificationsModal').classList.add('active');
-            switchNotificationTab(null, 'unread'); 
+            switchNotificationTab({ currentTarget: document.querySelector('#notificationsModal .tab-button.active') }, 'unread'); 
             fetchNotifications(); 
         }
-        async function closeNotificationsModal() {
+        function closeNotificationsModal() {
             document.getElementById('notificationsModal').classList.remove('active');
-            fetchNotifications(); 
         }
         function switchNotificationTab(event, tabName) {
             document.querySelectorAll('#notificationsModal .tab-content').forEach(tc => tc.classList.remove('active'));
@@ -2826,7 +2854,6 @@ options: {
             });
         }
         
-        // --- ADIÇÃO: Funções para Sorteio de Jogo ---
         function openRandomGameModal() {
             document.getElementById('randomGameForm').reset();
             document.getElementById('randomGameModal').classList.add('active');
@@ -2880,7 +2907,6 @@ options: {
                 showToast("Ocorreu um erro ao tentar sortear o jogo.", true);
             }
         }
-        // --- FIM DA ADIÇÃO ---
         document.addEventListener('DOMContentLoaded', () => {
             const setupListener = (id, event, handler) => { const element = document.getElementById(id); if (element) { element.addEventListener(event, handler); }};
             
@@ -2904,10 +2930,8 @@ options: {
             setupListener('notificationsBtn', 'click', openNotificationsModal);
             setupListener('triggerScraperBtn', 'click', triggerScraperAction);
             
-            // --- ADIÇÃO DE LISTENERS PARA O SORTEIO ---
             setupListener('randomGameBtn', 'click', openRandomGameModal);
             setupListener('randomGameForm', 'submit', handleRandomGameFormSubmit);
-            // --- FIM DA ADIÇÃO ---
             setupListener('toggleViewBtn', 'click', toggleLibraryView);
             setupListener('achievementsShortcut', 'click', openAchievementsModal);
             setupListener('gameDetailsModal', 'click', (event) => {
