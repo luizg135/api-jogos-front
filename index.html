@@ -3110,26 +3110,20 @@ options: {
             fetchGameData();
             notificationInterval = setInterval(fetchNotifications, 30000); 
         });
+// Em index.html, dentro da tag <script>
+
 async function renderSimilarGames(gameName) {
     const container = document.getElementById('similarGamesContainer');
     if (!container) return;
 
     container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Buscando jogos similares...</p>';
 
-    if (!gameName) {
-        container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Nome do jogo base não fornecido.</p>';
-        return;
-    }
-
     try {
-        // 1. Chama a nova rota da API que busca os dados da planilha
         const response = await fetch(`${API_URL}/games/similar-games/${encodeURIComponent(gameName)}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        if (!response.ok) {
-            throw new Error('Falha ao buscar jogos similares da planilha.');
-        }
+        if (!response.ok) throw new Error('Falha ao buscar jogos similares.');
 
         const similarGamesRaw = await response.json();
 
@@ -3138,26 +3132,13 @@ async function renderSimilarGames(gameName) {
             return;
         }
 
-        // 2. Prepara os dados para a filtragem
         const libraryGameNames = new Set(fullData.biblioteca.map(g => g.Nome));
         const finishedStatuses = ["Finalizado", "Platinado"];
-        const finishedGames = new Set(
-            fullData.biblioteca
-                .filter(g => finishedStatuses.includes(g.Status))
-                .map(g => g.Nome)
-        );
+        const finishedGames = new Set(fullData.biblioteca.filter(g => finishedStatuses.includes(g.Status)).map(g => g.Nome));
 
-        // 3. Aplica todos os seus tratamentos
         const processedGames = similarGamesRaw
-            // REQUISITO 1: Não aparecer jogos finalizados ou platinados
             .filter(game => !finishedGames.has(game['Jogo Similar']))
-            // REQUISITO 2: Ordenar por Metascore (do maior para o menor)
-            .sort((a, b) => {
-                const scoreA = parseInt(a.Metascore) || 0;
-                const scoreB = parseInt(b.Metascore) || 0;
-                return scoreB - scoreA;
-            })
-            // REQUISITO 2: Apresentar no máximo 10 jogos
+            .sort((a, b) => (parseInt(b.Metascore) || 0) - (parseInt(a.Metascore) || 0))
             .slice(0, 10);
 
         if (processedGames.length === 0) {
@@ -3165,11 +3146,8 @@ async function renderSimilarGames(gameName) {
             return;
         }
         
-        // 4. Renderiza o HTML final com as regras aplicadas
         container.innerHTML = processedGames.map(game => {
-            // REQUISITO 3: Indicar com a tag "Na biblioteca"
             const isInLibrary = libraryGameNames.has(game['Jogo Similar']);
-            
             return `
             <div class="similar-game-card" title="${game['Jogo Similar']}\nMetascore: ${game.Metascore || 'N/A'}">
                 <img src="${game.Imagem || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${game['Jogo Similar']}">
