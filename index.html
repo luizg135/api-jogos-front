@@ -3113,55 +3113,79 @@ options: {
 // Em index.html, dentro da tag <script>
 
 async function renderSimilarGames(gameName) {
-    const container = document.getElementById('similarGamesContainer');
-    if (!container) return;
+        const container = document.getElementById('similarGamesContainer');
+        if (!container) return;
 
-    container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Buscando jogos similares...</p>';
+        container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Buscando jogos similares...</p>';
 
-    try {
-        const response = await fetch(`${API_URL}/games/similar-games/${encodeURIComponent(gameName)}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        try {
+            const response = await fetch(`${API_URL}/games/similar-games/${encodeURIComponent(gameName)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-        if (!response.ok) throw new Error('Falha ao buscar jogos similares.');
+            if (!response.ok) {
+                throw new Error('Falha ao buscar jogos similares da API.');
+            }
 
-        const similarGamesRaw = await response.json();
+            const similarGamesRaw = await response.json();
 
-        if (similarGamesRaw.length === 0) {
-            container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Nenhuma sugestão encontrada para este jogo.</p>';
-            return;
+            if (similarGamesRaw.length === 0) {
+                container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Nenhuma sugestão encontrada para este jogo.</p>';
+                return;
+            }
+
+            const libraryGameNames = new Set(fullData.biblioteca.map(g => g.Nome));
+            const finishedStatuses = ["Finalizado", "Platinado"];
+            const finishedGames = new Set(
+                fullData.biblioteca
+                    .filter(g => finishedStatuses.includes(g.Status))
+                    .map(g => g.Nome)
+            );
+
+            // 1. Filtra os jogos já concluídos
+            const eligibleGames = similarGamesRaw.filter(game => !finishedGames.has(game['Jogo Similar']));
+
+            // 2. Separa em dois grupos: os que estão na biblioteca e os que não estão
+            const inLibrary = [];
+            const notInLibrary = [];
+
+            eligibleGames.forEach(game => {
+                if (libraryGameNames.has(game['Jogo Similar'])) {
+                    inLibrary.push(game);
+                } else {
+                    notInLibrary.push(game);
+                }
+            });
+
+            // 3. Ordena cada grupo individualmente por Metascore
+            const sortByMetascore = (a, b) => (parseInt(b.Metascore) || 0) - (parseInt(a.Metascore) || 0);
+            inLibrary.sort(sortByMetascore);
+            notInLibrary.sort(sortByMetascore);
+
+            // 4. Junta as listas (os da biblioteca primeiro) e pega os 10 primeiros
+            const processedGames = [...inLibrary, ...notInLibrary].slice(0, 10);
+
+            if (processedGames.length === 0) {
+                container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Nenhuma sugestão disponível após a filtragem.</p>';
+                return;
+            }
+            
+            container.innerHTML = processedGames.map(game => {
+                const isInLibrary = libraryGameNames.has(game['Jogo Similar']);
+                return `
+                <div class="similar-game-card" title="${game['Jogo Similar']}\nMetascore: ${game.Metascore || 'N/A'}">
+                    <img src="${game.Imagem || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${game['Jogo Similar']}">
+                    ${isInLibrary ? '<div class="library-tag">Na Biblioteca</div>' : ''}
+                    <div class="similar-game-overlay">${game['Jogo Similar']}</div>
+                </div>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error("Erro ao renderizar jogos similares:", error);
+            container.innerHTML = '<p style="color: #cb2d3e; font-size: 12px;">Erro ao carregar jogos similares.</p>';
         }
-
-        const libraryGameNames = new Set(fullData.biblioteca.map(g => g.Nome));
-        const finishedStatuses = ["Finalizado", "Platinado"];
-        const finishedGames = new Set(fullData.biblioteca.filter(g => finishedStatuses.includes(g.Status)).map(g => g.Nome));
-
-        const processedGames = similarGamesRaw
-            .filter(game => !finishedGames.has(game['Jogo Similar']))
-            .sort((a, b) => (parseInt(b.Metascore) || 0) - (parseInt(a.Metascore) || 0))
-            .slice(0, 10);
-
-        if (processedGames.length === 0) {
-            container.innerHTML = '<p style="color: var(--secondary-text); font-size: 12px;">Nenhuma sugestão disponível após a filtragem.</p>';
-            return;
-        }
-        
-        container.innerHTML = processedGames.map(game => {
-            const isInLibrary = libraryGameNames.has(game['Jogo Similar']);
-            return `
-            <div class="similar-game-card" title="${game['Jogo Similar']}\nMetascore: ${game.Metascore || 'N/A'}">
-                <img src="${game.Imagem || 'https://i.imgur.com/Z0ebi8o.png'}" alt="${game['Jogo Similar']}">
-                ${isInLibrary ? '<div class="library-tag">Na Biblioteca</div>' : ''}
-                <div class="similar-game-overlay">${game['Jogo Similar']}</div>
-            </div>
-            `;
-        }).join('');
-
-    } catch (error) {
-        console.error("Erro ao renderizar jogos similares:", error);
-        container.innerHTML = '<p style="color: #cb2d3e; font-size: 12px;">Erro ao carregar jogos similares.</p>';
     }
-}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pt-br.min.js"></script>
