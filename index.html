@@ -1066,55 +1066,111 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-    .steam-sync-container {
+/* Em index.html, adicione este CSS */
+.steam-sync-container .tabs {
     display: flex;
-    flex-direction: column;
-    gap: 24px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 16px;
+}
+.steam-sync-container .tab-button {
+    padding: 10px 16px;
+    border: none;
+    background: none;
+    color: var(--secondary-text);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+}
+.steam-sync-container .tab-button.active {
+    color: var(--primary-text);
+}
+.steam-sync-container .tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--accent-purple);
 }
 .steam-sync-section {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 16px;
+    display: none;
 }
-.steam-sync-section h3 {
-    margin: 0 0 16px 0;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 16px;
+.steam-sync-section.active {
+    display: block;
+}
+.steam-sync-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.toggle-all-btn {
+    background: none;
+    border: 1px solid var(--border-color);
     color: var(--secondary-text);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.toggle-all-btn:hover {
+    background-color: var(--surface-color);
+    color: var(--primary-text);
 }
 .steam-games-list {
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
     padding-right: 10px;
+}
+.steam-games-list::-webkit-scrollbar { width: 8px; }
+.steam-games-list::-webkit-scrollbar-track { background: transparent; }
+.steam-games-list::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 10px;
+    border: 2px solid var(--bg-color);
 }
 .steam-game-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 8px 0;
-    font-size: 14px;
+    gap: 12px;
+    padding: 10px 4px;
 }
 .steam-game-item:not(:last-child) {
     border-bottom: 1px solid var(--border-color);
 }
-.steam-game-item label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
+.steam-game-item input[type="checkbox"] {
+    flex-shrink: 0;
 }
-.steam-game-info small {
-    display: block;
+.steam-game-item img {
+    width: 96px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+.steam-game-details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    font-size: 14px;
+}
+.steam-game-details small {
     color: var(--secondary-text);
     font-size: 12px;
+    margin-top: 2px;
+}
+.steam-game-details .update-info {
+    color: var(--accent-purple);
+    font-weight: 500;
 }
 .steam-sync-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 16px;
+    margin-top: 24px;
 }
 .steam-sync-actions button {
     width: auto;
@@ -1126,18 +1182,12 @@
     margin-bottom: 16px;
 }
 .progress-bar-container {
-    width: 100%;
-    height: 10px;
-    background-color: var(--border-color);
-    border-radius: 5px;
-    overflow: hidden;
+    width: 100%; height: 10px; background-color: var(--border-color);
+    border-radius: 5px; overflow: hidden;
 }
 .progress-bar-fill {
-    height: 100%;
-    width: 0%;
-    background-color: var(--accent-purple);
-    border-radius: 5px;
-    transition: width 0.3s ease;
+    height: 100%; width: 0%; background-color: var(--accent-purple);
+    border-radius: 5px; transition: width 0.3s ease;
 }
     </style>
 </head>
@@ -1214,10 +1264,6 @@
                             <p>Visão detalhada sobre seus hábitos e conquistas.</p>
                         </div>
                         <div class="header-actions">
-                            <button class="nav-button" id="syncSteamBtn" title="Sincronizar com a Steam">
-                            <span class="material-symbols-outlined">cloud_sync</span>
-                        </button>
-                        
                         <button class="nav-button" id="randomGameBtn" title="Sortear Jogo Aleatório">
                             <span class="material-symbols-outlined">shuffle</span>
                         </button>
@@ -1243,6 +1289,9 @@
                         <p>Explore toda a sua coleção.</p>
                     </div>
                     <div class="header-actions">
+                        <button class="nav-button" id="syncSteamBtn" title="Sincronizar com a Steam">
+                            <span class="material-symbols-outlined">cloud_sync</span>
+                        </button>
                         <button class="nav-button" id="randomGameBtn" title="Sortear Jogo Aleatório">
                             <span class="material-symbols-outlined">shuffle</span>
                         </button>
@@ -1657,12 +1706,12 @@
             </form>
         </div>
     </div>
-    <div id="steamSyncModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 700px;">
+  <div id="steamSyncModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px;">
         <span class="close-button" id="closeSteamSyncModal">&times;</span>
         <h2>Sincronizar com a Steam</h2>
         <div id="steamSyncContent">
-            <!-- O conteúdo será preenchido dinamicamente pelo JavaScript -->
+            <!-- Conteúdo dinâmico -->
         </div>
     </div>
 </div>
@@ -3295,60 +3344,80 @@ async function renderSimilarGames(gameName) {
             container.innerHTML = '<p style="color: #cb2d3e; font-size: 12px;">Erro ao carregar jogos similares.</p>';
         }
     }
-async function openSteamSyncModal() {
+function openSteamSyncModal() {
     const modal = document.getElementById('steamSyncModal');
     const content = document.getElementById('steamSyncContent');
     modal.classList.add('active');
-    content.innerHTML = '<p>Buscando sua biblioteca na Steam...</p>';
+    content.innerHTML = '<p style="text-align: center; color: var(--secondary-text);">Buscando sua biblioteca na Steam... Isso pode demorar um pouco.</p>';
 
-    try {
-        const response = await fetch(`${API_URL}/games/steam/library`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Falha ao buscar dados da Steam.');
-        }
-
-        const data = await response.json();
-        
-        const createCheckboxList = (games, type) => {
-            if (games.length === 0) return '';
-            return games.map(game => `
-                <div class="steam-game-item">
-                    <label>
-                        <input type="checkbox" class="steam-sync-checkbox" data-type="${type}" value='${JSON.stringify(game)}' checked>
-                        <div class="steam-game-info">
+    fetch(`${API_URL}/games/steam/library`, { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(response => {
+            if (!response.ok) { return response.json().then(err => { throw new Error(err.error || 'Falha ao buscar dados da Steam.') }); }
+            return response.json();
+        })
+        .then(data => {
+            const createListHTML = (games, type) => {
+                if (games.length === 0) return '<p style="font-size: 12px; color: var(--secondary-text); text-align: center; padding: 20px 0;">Nenhum jogo nesta categoria.</p>';
+                return games.map(game => `
+                    <div class="steam-game-item">
+                        <input type="checkbox" class="steam-sync-checkbox" data-section="${type}" value='${JSON.stringify(game)}' checked>
+                        <img src="${game.cover_image}" alt="${game.name}">
+                        <div class="steam-game-details">
                             <strong>${game.name}</strong>
-                            <small>Horas: ${game.playtime} | Conquistas: ${game.achievements}</small>
+                            ${type === 'update' 
+                                ? `<small>Horas: ${game.playtime_local} → <span class="update-info">${game.playtime_steam}</span> | Conquistas: ${game.achievements_local} → <span class="update-info">${game.achievements_steam}</span></small>`
+                                : `<small>Horas: ${game.playtime_steam} | Conquistas: ${game.achievements_steam}</small>`
+                            }
                         </div>
-                    </label>
-                </div>
-            `).join('');
-        };
+                    </div>
+                `).join('');
+            };
 
-        content.innerHTML = `
-            <div class="steam-sync-container">
-                <div class="steam-sync-section">
-                    <h3>Novos Jogos para Adicionar (${data.new_games.length})</h3>
-                    <div class="steam-games-list">${createCheckboxList(data.new_games, 'new')}</div>
+            content.innerHTML = `
+                <div class="steam-sync-container">
+                    <div class="tabs">
+                        <button class="tab-button active" onclick="switchSteamSyncTab(event, 'add')">Adicionar (${data.new_games.length})</button>
+                        <button class="tab-button" onclick="switchSteamSyncTab(event, 'update')">Atualizar (${data.games_to_update.length})</button>
+                    </div>
+                    <div id="add" class="steam-sync-section active">
+                        <div class="steam-sync-header">
+                            <h3>Novos Jogos para Adicionar</h3>
+                            <button class="toggle-all-btn" onclick="toggleAllCheckboxes('add', this)">Desmarcar Tudo</button>
+                        </div>
+                        <div class="steam-games-list">${createListHTML(data.new_games, 'add')}</div>
+                    </div>
+                    <div id="update" class="steam-sync-section">
+                        <div class="steam-sync-header">
+                            <h3>Jogos Existentes para Atualizar</h3>
+                            <button class="toggle-all-btn" onclick="toggleAllCheckboxes('update', this)">Desmarcar Tudo</button>
+                        </div>
+                        <div class="steam-games-list">${createListHTML(data.games_to_update, 'update')}</div>
+                    </div>
+                    <div class="steam-sync-actions">
+                        <button class="apply-filters-btn" onclick="executeSteamSync()">Sincronizar Selecionados</button>
+                    </div>
                 </div>
-                <div class="steam-sync-section">
-                    <h3>Jogos Existentes para Atualizar (${data.games_to_update.length})</h3>
-                    <div class="steam-games-list">${createCheckboxList(data.games_to_update, 'update')}</div>
-                </div>
-                <div class="steam-sync-actions">
-                    <button class="apply-filters-btn" onclick="executeSteamSync()">Sincronizar Selecionados</button>
-                </div>
-            </div>
-        `;
-    } catch (error) {
-        content.innerHTML = `<p style="color: #cb2d3e;">${error.message}</p>`;
-    }
+            `;
+        })
+        .catch(error => {
+            content.innerHTML = `<p style="color: #cb2d3e; text-align: center;">${error.message}</p>`;
+        });
 }
 
-// 2. Adicione esta função
+function switchSteamSyncTab(event, tabName) {
+    document.querySelectorAll('#steamSyncContent .steam-sync-section').forEach(tc => tc.classList.remove('active'));
+    document.querySelectorAll('#steamSyncContent .tab-button').forEach(tb => tb.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+function toggleAllCheckboxes(section, button) {
+    const checkboxes = document.querySelectorAll(`.steam-sync-checkbox[data-section="${section}"]`);
+    const areAllChecked = Array.from(checkboxes).every(cb => cb.checked);
+    checkboxes.forEach(cb => { cb.checked = !areAllChecked; });
+    button.textContent = areAllChecked ? 'Marcar Tudo' : 'Desmarcar Tudo';
+}
+
 async function executeSteamSync() {
     const content = document.getElementById('steamSyncContent');
     const checkboxes = document.querySelectorAll('.steam-sync-checkbox:checked');
@@ -3363,14 +3432,13 @@ async function executeSteamSync() {
         <div class="steam-sync-loading">
             <p>Sincronizando ${gamesToSync.length} jogos... Isso pode levar um momento.</p>
             <div class="progress-bar-container">
-                <div id="steamSyncProgressBar" class="progress-bar-fill"></div>
+                <div class="progress-bar-fill" style="width: 100%;"></div>
             </div>
-            <p id="steamSyncStatus" style="font-size: 12px; margin-top: 8px;"></p>
+            <p style="font-size: 12px; margin-top: 8px; text-align: center;">Aguarde o processo ser concluído no servidor.</p>
         </div>
     `;
 
     try {
-        // A API agora processa em segundo plano, então apenas enviamos a lista
         const response = await fetch(`${API_URL}/games/steam/sync`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -3384,17 +3452,17 @@ async function executeSteamSync() {
 
         const result = await response.json();
         showToast(result.message);
-        document.getElementById('steamSyncModal').classList.remove('active');
-        fetchGameData(); // Recarrega os dados da biblioteca
+        closeSteamSyncModal();
+        fetchGameData();
 
     } catch (error) {
-        content.innerHTML = `<p style="color: #cb2d3e;">Erro: ${error.message}</p>`;
+        content.innerHTML = `<p style="color: #cb2d3e; text-align: center;">Erro: ${error.message}</p>`;
     }
 }
 
-// 3. Adicione esta função
 function closeSteamSyncModal() {
-    document.getElementById('steamSyncModal').classList.remove('active');
+    const modal = document.getElementById('steamSyncModal');
+    if (modal) modal.classList.remove('active');
 }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
