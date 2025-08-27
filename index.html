@@ -2479,7 +2479,7 @@ function renderWishlist(wishlist = []) {
             document.getElementById('gameDetailsModal').classList.add('active');
 
             // NOVA LÓGICA PARA BUSCAR E RENDERIZAR JOGOS SIMILARES
-            await renderSimilarGames(game.RAWG_ID);
+            await renderSimilarGames(game.Nome);
         }
         
         function closeGameDetailsModal() {
