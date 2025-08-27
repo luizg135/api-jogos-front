@@ -3192,7 +3192,7 @@ options: {
             setupListener('logoutBtn', 'click', () => { localStorage.removeItem('jwt_token'); window.location.href = 'login.html'; });
             
             setupListener('shareBtn', 'click', () => {
-                const shareLink = 'https://savepoint-hub.netlify.app/shareable.html';
+                const shareLink = 'https://savepoint-hub.com.br/shareable.html';
                 const tempInput = document.createElement('input');
                 document.body.appendChild(tempInput);
                 tempInput.value = shareLink;
@@ -3358,9 +3358,13 @@ function openSteamSyncModal() {
         .then(data => {
             const createListHTML = (games, type) => {
                 if (games.length === 0) return '<p style="font-size: 12px; color: var(--secondary-text); text-align: center; padding: 20px 0;">Nenhum jogo nesta categoria.</p>';
-                return games.map(game => `
+                return games.map(game => {
+                    // Corrige o bug de apóstrofos no nome do jogo
+                    const gameDataString = JSON.stringify(game).replace(/'/g, '&#39;');
+                    
+                    return `
                     <div class="steam-game-item">
-                        <input type="checkbox" class="steam-sync-checkbox" data-section="${type}" value='${JSON.stringify(game)}' checked>
+                        <input type="checkbox" class="steam-sync-checkbox" data-section="${type}" value='${gameDataString}' checked>
                         <img src="${game.cover_image}" alt="${game.name}">
                         <div class="steam-game-details">
                             <strong>${game.name}</strong>
@@ -3370,7 +3374,7 @@ function openSteamSyncModal() {
                             }
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             };
 
             content.innerHTML = `
