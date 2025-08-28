@@ -41,9 +41,10 @@
             background-color: transparent; border: none; color: var(--secondary-text); cursor: pointer;
             padding: 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
             width: 52px; height: 52px; transition: all 0.2s ease;
+            transition: all 0.2s ease-out;
         }
         .nav-button:hover { background-color: var(--surface-color); color: var(--primary-text); }
-        .nav-button.active { background-color: var(--accent-purple); color: white; }
+        .nav-button.active { background-color: var(--accent-purple); color: white; transform: scale(0.9);}
         .nav-button .material-symbols-outlined { font-size: 28px; }
         .sidebar-footer { margin-top: auto; display: flex; flex-direction: column; gap: 16px; }
         .main-content { flex-grow: 1; padding: clamp(16px, 4vw, 48px); overflow-y: auto; height: 100%; }
@@ -72,7 +73,7 @@
         .achievements-shortcut .material-symbols-outlined { font-size: 32px; }
         .level-progress { flex-grow: 1; }
         .level-text { font-size: 24px; font-weight: 700; }
-        .exp-bar-container { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .exp-bar-container { width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden; margin-top: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4); }
         .exp-bar-progress { height: 100%; border-radius: 44px; width: 0%; transition: width 0.5s ease; }
         .exp-bar-progress.rank-Mestre { background-color: var(--rank-mestre); box-shadow: 0 0 10px var(--rank-mestre); }
         .exp-bar-progress.rank-Diamante { background-color: var(--rank-diamante); box-shadow: 0 0 10px var(--rank-diamante); }
