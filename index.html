@@ -1189,6 +1189,22 @@
     height: 100%; width: 0%; background-color: var(--accent-purple);
     border-radius: 5px; transition: width 0.3s ease;
 }
+
+/* Efeitos para o botão de Sincronizar da Steam */
+.steam-sync-actions .apply-filters-btn {
+    transition: all 0.2s ease; /* Adiciona uma transição suave para todos os efeitos */
+}
+
+.steam-sync-actions .apply-filters-btn:hover {
+    background-color: #a884e9; /* Um tom de roxo um pouco mais claro */
+    transform: translateY(-2px); /* Efeito de "levantar" o botão */
+    box-shadow: 0 4px 15px rgba(147, 112, 219, 0.4); /* Adiciona uma sombra roxa suave */
+}
+
+.steam-sync-actions .apply-filters-btn:active {
+    transform: translateY(0); /* Efeito de "pressionar" o botão de volta ao lugar */
+    box-shadow: 0 2px 8px rgba(147, 112, 219, 0.3); /* Diminui a sombra ao clicar */
+}
     </style>
 </head>
 <body class="dark-mode">
